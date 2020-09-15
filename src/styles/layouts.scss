@@ -1,0 +1,42 @@
+/* flex layout */
+.flex { 
+  display: flex; 
+
+  &.column { flex-direction: column; }
+
+  &.align-center { align-items: center; }
+}
+
+
+/* container size */
+.full-view {
+  height: 100vh;
+  width: 100vw;
+}
+
+
+/* overflow */
+.ov-hidden { overflow: hidden; }
+.ov-overlay { overflow: overlay; }
+
+@-moz-document url-prefix() {
+  .ov-overlay { overflow: auto; }
+}
+
+
+/* margin & padding */
+$sizes: 0, 5, 10, 15, 20, 25, 30, 40;
+
+@each $size in $sizes {
+  .p-#{$size} { padding: #{$size}px };
+  .pl-#{$size}, .px-#{$size} { padding-left: #{$size}px; }
+  .pr-#{$size}, .px-#{$size} { padding-right: #{$size}px; }
+  .pt-#{$size}, .py-#{$size} { padding-top: #{$size}px; }
+  .pb-#{$size}, .py-#{$size} { padding-bottom: #{$size}px; }
+
+  .m-#{$size} { margin: #{$size}px };
+  .ml-#{$size}, .mx-#{$size} { margin-left: #{$size}px; }
+  .mr-#{$size}, .mx-#{$size} { margin-right: #{$size}px; }
+  .mt-#{$size}, .my-#{$size} { margin-top: #{$size}px; }
+  .mb-#{$size}, .my-#{$size} { margin-bottom: #{$size}px; }
+}
