@@ -1,1 +1,6 @@
-<h1 class="m-0 unselectable">STREETS</h1>
+<h1 class="m-0 unselectable">LASAGNES</h1>
+<div *ngIf="userService.currentUser$ | async as user" (click)="userService.logout()"
+  class="flex align-center ml-auto pointer">
+  <i class="material-icons mr-5">account_circle</i>
+  <span>{{ user.name }}</span>
+</div>

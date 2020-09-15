@@ -1,0 +1,3 @@
+<button *ngFor="let user of userService.users" (click)="userService.login(user)">
+  Log as {{ user.name }}
+</button>

@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { UserService } from '../../../../app/core';
 
 @Component({
   selector: 'app-header',
@@ -7,4 +8,6 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
   host: { 'class': 'flex align-center px-10 py-15' },
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class HeaderComponent { }
+export class HeaderComponent {
+  constructor(public userService: UserService) { }
+}
