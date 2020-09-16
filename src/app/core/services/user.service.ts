@@ -2,16 +2,14 @@ import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { BehaviorSubject } from 'rxjs';
 
-import { Role, User } from '../../../app/shared';
+import { User } from '../../../app/shared';
+import users from '../../../fake-data/users';
 
 @Injectable({
   providedIn: 'root'
 })
 export class UserService {
-  users: User[] = [
-    { name: 'PM user', role: Role.PM },
-    { name: 'AM user', role: Role.AM }
-  ];
+  users: User[] = users;
 
   currentUser$ = new BehaviorSubject<User>(null);
 

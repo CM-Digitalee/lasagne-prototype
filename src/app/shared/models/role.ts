@@ -1,4 +1,5 @@
 export enum Role {
-  PM,
-  AM
+  PM = 'PM',
+  AM = 'AM',
+  AO = 'AO'
 }
