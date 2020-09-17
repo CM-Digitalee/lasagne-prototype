@@ -1,0 +1,43 @@
+.line {
+  border-bottom: 1px solid #bbb;
+  padding: 10px 0;
+
+  &:not(.header):hover {
+    background: #eee;
+  }
+}
+
+.label { 
+  flex-basis: 40%; 
+}
+
+.item { 
+  flex-basis: 20%;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.expand-icon {
+  transition: transform 250ms ease-in-out;
+  
+  &.expanded {
+    transform: rotate(180deg);
+  }
+}
+
+input[type="number"] {
+  background: inherit;
+  border: none;
+  border-bottom: 1px solid black;
+  text-align: right;
+
+  -moz-appearance: textfield;
+
+  &::-webkit-outer-spin-button,
+  &::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+
+  &:focus { outline: none; }
+}

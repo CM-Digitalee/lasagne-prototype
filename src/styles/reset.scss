@@ -1,0 +1,46 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+/* Remove default margin */
+body, h1, h2, p {
+  margin: 0;
+}
+
+/* Set core body defaults */
+body {
+  min-height: 100vh;
+  scroll-behavior: smooth;
+  text-rendering: optimizeSpeed;
+  line-height: 1.5;
+}
+
+/* Make images easier to work with */
+img {
+  max-width: 100%;
+  display: block;
+}
+
+/* Inherit fonts for inputs and buttons */
+input,
+.input,
+button,
+textarea,
+select {
+  font: inherit;
+  color: inherit;
+}
+
+/* Anchor tags */
+a {
+  cursor: pointer;
+  color: inherit;
+  text-decoration: none;
+}
+
+/* Normal font-weight */
+h1, h2 {
+  font-weight: normal;
+}

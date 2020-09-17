@@ -1,1 +1,61 @@
-<p>budget works!</p>
+<ng-container *ngIf="budget$ | async as budget">
+  <div class="p-40">
+    <form #form="ngForm">
+      <ng-template #nodeTmpl let-node="node" let-totalParent="totalParent" let-level="level">
+        <ng-container *ngIf="node.children else leafTmpl" #accordionItem="cdkAccordionItem" cdkAccordionItem expanded>
+          <div class="line flex pointer" (click)="accordionItem.toggle()" total [totalParent]="totalParent"
+            #total="total">
+            <div class="label flex align-center" [style.padding-left.px]="level*30">
+              <i class="material-icons expand-icon" [ngClass]="{'expanded': accordionItem.expanded}">expand_less</i>
+              <span>{{ node.label }}</span>
+            </div>
+            <span class="item">{{ total.total | number }}</span>
+            <span class="item">
+              {{ total.totalRoot.totalRevenue ? (total.total / total.totalRoot.totalRevenue | percent: '1.2-2') : 'x' }}
+            </span>
+            <span class="item">
+              {{ total.totalRoot.totalOpex ? (total.total / total.totalRoot.totalOpex | percent: '1.2-2') : 'x' }}
+            </span>
+          </div>
+          <div [@expand]="accordionItem.expanded" style="overflow: hidden;">
+            <ng-container *ngFor="let node of node.children">
+              <ng-container *ngTemplateOutlet="nodeTmpl; context: {node: node, totalParent: total, level: level + 1}">
+              </ng-container>
+            </ng-container>
+          </div>
+        </ng-container>
+
+        <ng-template #leafTmpl>
+          <div class="line flex" total [totalParent]="totalParent" [isRevenue]="!!node.accountIsRevenue"
+            [isOpex]="!!node.accountIsOpex" #total="total">
+            <span class="label" [style.padding-left.px]="level*30">
+              {{ node.subAccountDescription || node.accountDescription }}
+            </span>
+            <input type="number" [name]="node.subAccount ? node.account + '/' + node.subAccount : node.account" ngModel
+              (ngModelChange)="total.value = +$event" class="item">
+            <span class="item">
+              {{ total.totalRoot.totalRevenue ? (total.total / total.totalRoot.totalRevenue | percent: '1.2-2') : 'x' }}
+            </span>
+            <span class="item">
+              {{ total.totalRoot.totalOpex ? (total.total / total.totalRoot.totalOpex | percent: '1.2-2') : 'x' }}
+            </span>
+          </div>
+        </ng-template>
+      </ng-template>
+
+      <div class="line header flex">
+        <div class="label">Category</div>
+        <div class="item">Budget 2021</div>
+        <div class="item">% of Rental Income</div>
+        <div class="item">% of Rental Expenses</div>
+      </div>
+
+      <div total #total="total" class="ov-auto" style="height: calc(100vh - 200px);">
+        <ng-container *ngFor="let node of budget">
+          <ng-container *ngTemplateOutlet="nodeTmpl; context: {node: node, totalParent: total, level: 0}">
+          </ng-container>
+        </ng-container>
+      </div>
+    </form>
+  </div>
+</ng-container>
