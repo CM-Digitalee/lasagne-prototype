@@ -3,10 +3,10 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 @Component({
   selector: 'app-main-layout',
   template: `
-    <app-header></app-header>
-    <div class="flex" style="height: 100%; width: 100%;">
+    <app-header #header></app-header>
+    <div class="flex fill ov-auto">
       <app-sidenav class="no-shrink"></app-sidenav>
-      <div class="fill ov-auto">
+      <div class="fill">
         <router-outlet></router-outlet>
       </div>
     </div>

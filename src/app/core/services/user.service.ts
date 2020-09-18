@@ -11,7 +11,9 @@ import users from '../../../fake-data/users';
 export class UserService {
   users: User[] = users;
 
-  currentUser$ = new BehaviorSubject<User>(null);
+  // TODO
+  // currentUser$ = new BehaviorSubject<User>(null);
+  currentUser$ = new BehaviorSubject<User>(this.users[0]);
 
   constructor(private router: Router) { }
 

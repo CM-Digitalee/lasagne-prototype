@@ -1,9 +1,10 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { animate, state, style, transition, trigger } from '@angular/animations';
-import { of } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { of, Subject } from 'rxjs';
+import { map, switchMapTo } from 'rxjs/operators';
 
 import templateEntries from '../../fake-data/budget_accounting-plan';
+import { AssetService, BudgetService, PortfolioService } from '../core';
 
 const nodes = (entries: any, key: { id: string, name: string }) =>
   Object.values(
@@ -56,4 +57,12 @@ export class BudgetComponent {
         }))
     )
   );
+
+  // newBudget$ = new Subject().pipe(switchMapTo(this.budget$));
+
+  constructor(
+    public assetService: AssetService,
+    public portfolioService: PortfolioService,
+    public budgetService: BudgetService
+  ) { }
 }

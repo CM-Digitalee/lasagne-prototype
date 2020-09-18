@@ -1,7 +1,7 @@
 export interface Asset {
   id: number;
   name: string;
-  portfolio: number;
+  portfolioId: number;
   assetManagerId: number;
   assetOwnerId: number;
   propertyManagerId: number;

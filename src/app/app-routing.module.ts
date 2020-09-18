@@ -6,9 +6,7 @@ import { MainLayoutComponent, MainLayoutModule } from './layouts';
 
 const routes: Routes = [
   {
-    // TODO : reset AuthGuard
-    // path: '', canActivate: [AuthGuard], component: MainLayoutComponent, children: [
-    path: '', component: MainLayoutComponent, children: [
+    path: '', canActivate: [AuthGuard], component: MainLayoutComponent, children: [
       { path: '', pathMatch: 'full', redirectTo: 'budget' },
       { path: 'budget', loadChildren: () => import('./budget/budget.module').then(m => m.BudgetModule) }
     ]
