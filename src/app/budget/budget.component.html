@@ -75,13 +75,19 @@
           </ng-container>
 
           <ng-template #leafTmpl>
-            <div class="line flex" total [totalParent]="totalParent" [isRevenue]="!!node.accountIsRevenue"
-              [isOpex]="!!node.accountIsOpex" #total="total">
+            <div *permissions="{AM: true, PM: node.accountIsPmVisible}" class="line flex" total
+              [totalParent]="totalParent" [isRevenue]="!!node.accountIsRevenue" [isOpex]="!!node.accountIsOpex"
+              #total="total">
               <span class="label" [style.padding-left.px]="level*30">
                 {{ node.subAccountDescription || node.accountDescription }}
               </span>
-              <input type="number" [name]="node.subAccount ? node.account + '/' + node.subAccount : node.account"
-                ngModel (ngModelChange)="total.value = +$event" class="item">
+              <!-- TODO: refacto permissions -->
+              <input *permissions="{PM: true, AM: !node.accountIsPmVisible}" type="number"
+                [name]="node.subAccount ? node.account + '/' + node.subAccount : node.account" ngModel
+                (ngModelChange)="total.value = +$event" class="item">
+              <input *permissions="{AM: node.accountIsPmVisible}" type="number"
+                [name]="node.subAccount ? node.account + '/' + node.subAccount : node.account" ngModel
+                (ngModelChange)="total.value = +$event" disabled class="item">
               <span class="item">
                 {{ total.totalRoot.totalRevenue ? (total.total / total.totalRoot.totalRevenue | percent: '1.2-2') : 'x' }}
               </span>

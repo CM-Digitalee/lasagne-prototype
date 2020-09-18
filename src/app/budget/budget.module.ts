@@ -6,6 +6,7 @@ import { MatInputModule } from '@angular/material/input';
 import { CdkAccordionModule } from '@angular/cdk/accordion';
 
 import { FilterByModule } from '../shared';
+import { PermissionsModule } from '../core/permissions';
 import { BudgetRoutingModule } from './budget-routing.module';
 import { BudgetComponent } from './budget.component';
 import { TotalDirective } from './total.directive';
@@ -22,7 +23,8 @@ import { TotalDirective } from './total.directive';
     MatInputModule,
     CdkAccordionModule,
     BudgetRoutingModule,
-    FilterByModule
+    FilterByModule,
+    PermissionsModule
   ]
 })
 export class BudgetModule { }

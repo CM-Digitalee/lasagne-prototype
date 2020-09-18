@@ -4,9 +4,9 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
   selector: 'app-main-layout',
   template: `
     <app-header #header></app-header>
-    <div class="flex fill ov-auto">
+    <div class="flex fill">
       <app-sidenav class="no-shrink"></app-sidenav>
-      <div class="fill">
+      <div class="fill ov-auto" style="height: calc(100vh - 60px)">
         <router-outlet></router-outlet>
       </div>
     </div>

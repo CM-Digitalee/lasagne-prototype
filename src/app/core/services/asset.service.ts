@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { map, shareReplay } from 'rxjs/operators';
-import assets from 'src/fake-data/assets';
+import assets from '../../../fake-data/assets';
 
 import { UserService } from './user.service';
 
