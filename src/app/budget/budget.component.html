@@ -1,33 +1,36 @@
 <div class="p-40">
-  <form #form="ngForm" (ngSubmit)="budgetService.add(form.value)">
-    <mat-form-field class="mr-20">
-      <mat-label>Portfolio</mat-label>
-      <mat-select #portfolioSelect="ngModel" name="portfolioId" ngModel (ngModelChange)="assetSelect.reset()">
-        <mat-option *ngFor="let portfolio of portfolioService.portfolios$ | async" [value]="portfolio.id">
-          {{ portfolio.name }}
-        </mat-option>
-      </mat-select>
-    </mat-form-field>
-
-    <mat-form-field class="mr-20">
-      <mat-label>Asset</mat-label>
-      <!-- TODO <mat-select #assetSelect="ngModel" name="assetId" ngModel (ngModelChange)="budgetSelect?.reset()" [disabled]="!portfolioSelect.value"> -->
-      <mat-select #assetSelect="ngModel" name="assetId" ngModel [disabled]="!portfolioSelect.value">
-        <mat-option *ngFor="let asset of assetService.assets$ | async | filterBy: 'portfolioId': portfolioSelect.value"
-          [value]="asset.id">
-          {{ asset.name }}
-        </mat-option>
-      </mat-select>
-    </mat-form-field>
-
-    <ng-container
-      *ngIf="budgetService.budgets$ | async | filterBy: 'portfolioId': portfolioSelect.value| filterBy: 'assetId': assetSelect.value as budgets">
+  <ng-container *ngIf="budget$ | async as budget">
+    <form #selectForm="ngForm">
       <mat-form-field class="mr-20">
+        <mat-label>Portfolio</mat-label>
+        <mat-select name="portfolio" #portfolioSelect="ngModel" [ngModel]="budget.portfolioId"
+          (ngModelChange)="assetSelect.reset()">
+          <mat-option *ngFor="let portfolio of portfolioService.portfolios$ | async" [value]="portfolio.id">
+            {{ portfolio.name }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field class="mr-20">
+        <mat-label>Asset</mat-label>
+        <mat-select name="asset" #assetSelect="ngModel" [ngModel]="budget.assetId"
+          (ngModelChange)="selectForm.form.get('budget')?.reset();" [disabled]="!portfolioSelect.value">
+          <mat-option
+            *ngFor="let asset of assetService.assets$ | async | filterBy: 'portfolioId': portfolioSelect.value"
+            [value]="asset.id">
+            {{ asset.name }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field
+        *ngIf="(budgetService.budgets$ | async | filterBy: 'portfolioId': portfolioSelect.value | filterBy: 'assetId': assetSelect.value || []) as budgets"
+        class="mr-20">
         <mat-label>Budget</mat-label>
-        <mat-select #budgetSelect="ngModel" [ngModel]="assetSelect.value && !budgets.length && 'noBudget'"
-          [ngModelOptions]="{standalone: true}" [disabled]="!assetSelect.value || !budgets.length">
+        <mat-select name="budget" [ngModel]="budget.id || assetSelect.value && !budgets.length && 'noBudget'"
+          [disabled]="!assetSelect.value || !budgets.length" (ngModelChange)="$event && goToBudget($event)">
           <ng-container *ngIf="budgets.length else noBudget">
-            <mat-option *ngFor="let budget of budgets" [value]="budget">
+            <mat-option *ngFor="let budget of budgets" [value]="budget.id">
               {{ budget.name }}
             </mat-option>
           </ng-container>
@@ -37,84 +40,106 @@
         </mat-select>
       </mat-form-field>
 
-      <button type="button" #createBtn *ngIf="portfolioSelect.value && assetSelect.value && !budgets.length"
-        (click)="budgetFormAccordion.open()">
-        Create
-      </button>
-    </ng-container>
+      <button *ngIf="portfolioSelect.value && assetSelect.value" type="button" mat-raised-button color="primary"
+        (click)="dialog.open(createBudget)">Create</button>
+    </form>
 
-    <div cdkAccordionItem #budgetFormAccordion="cdkAccordionItem">
-      <ng-container *ngIf="budgetFormAccordion.expanded && budget$ | async as budget">
+    <ng-template #createBudget let-dialogRef="dialogRef">
+      <form (ngSubmit)="create(portfolioSelect.value, assetSelect.value, budgetName.value, dialogRef)">
         <mat-form-field>
           <mat-label>Name</mat-label>
-          <input matInput name="name" ngModel>
+          <input matInput type="text" name="budget" ngModel #budgetName="ngModel" required>
         </mat-form-field>
+        <button type="submit" mat-raised-button color="primary">Create</button>
+        <button type="button" mat-raised-button (click)="dialogRef.close()">Cancel</button>
+      </form>
+    </ng-template>
 
-        <ng-template #nodeTmpl let-node="node" let-totalParent="totalParent" let-level="level">
-          <ng-container *ngIf="node.children else leafTmpl" #accordionItem="cdkAccordionItem" cdkAccordionItem expanded>
-            <div class="line flex pointer" (click)="accordionItem.toggle()" total [totalParent]="totalParent"
-              #total="total">
-              <div class="label flex align-center" [style.padding-left.px]="level*30">
-                <i class="material-icons expand-icon" [ngClass]="{'expanded': accordionItem.expanded}">expand_less</i>
-                <span>{{ node.label }}</span>
-              </div>
-              <span class="item">{{ total.total | number }}</span>
-              <span class="item">
-                {{ total.totalRoot.totalRevenue ? (total.total / total.totalRoot.totalRevenue | percent: '1.2-2') : 'x' }}
-              </span>
-              <span class="item">
-                {{ total.totalRoot.totalOpex ? (total.total / total.totalRoot.totalOpex | percent: '1.2-2') : 'x' }}
-              </span>
+    <ng-container *ngIf="selectForm.form.get('budget')?.value">
+      <span *ngFor="let version of budget.versions | orderBy: 'number'" class="mr-5">
+        <a routerLink="./" [queryParams]="{version: version.number}" mat-raised-button
+          [color]="(currentVersion$ | async).number === version.number ? 'primary' : ''">
+          {{ version.number }}
+        </a>
+      </span>
+
+      <ng-container *ngIf="currentVersion$ | async as currentVersion">
+        <ng-container *ngIf="accountingPlan$ | async as accountingPlan">
+          <form #form="ngForm">
+            <ng-template #nodeTmpl let-node="node" let-totalParent="totalParent" let-level="level">
+              <ng-container *ngIf="node.children else leafTmpl" #accordionItem="cdkAccordionItem" cdkAccordionItem
+                expanded>
+                <div class="line flex pointer" (click)="accordionItem.toggle()" total [totalParent]="totalParent"
+                  #total="total">
+                  <div class="label flex align-center" [style.padding-left.px]="level*30">
+                    <i class="material-icons expand-icon"
+                      [ngClass]="{'expanded': accordionItem.expanded}">expand_less</i>
+                    <span>{{ node.label }}</span>
+                  </div>
+                  <span class="item">{{ total.total | number }}</span>
+                  <span class="item">
+                    <!-- TODO: remove 'x' -->
+                    {{ total.totalRoot.totalRevenue ? (total.total / total.totalRoot.totalRevenue | percent: '1.2-2') : 'x' }}
+                  </span>
+                  <span class="item">
+                    <!-- TODO: remove 'x' -->
+                    {{ total.totalRoot.totalOpex ? (total.total / total.totalRoot.totalOpex | percent: '1.2-2') : 'x' }}
+                  </span>
+                </div>
+                <div [@expand]="accordionItem.expanded" style="overflow: hidden;">
+                  <ng-container *ngFor="let node of node.children">
+                    <ng-container
+                      *ngTemplateOutlet="nodeTmpl; context: {node: node, totalParent: total, level: level + 1}">
+                    </ng-container>
+                  </ng-container>
+                </div>
+              </ng-container>
+
+              <ng-template #leafTmpl>
+                <ng-container *ngIf="node.subAccount ? node.account + '/' + node.subAccount : node.account as key">
+                  <div *permissions="{AM: true, PM: node.accountIsPmVisible}" class="line flex" total
+                    [totalParent]="totalParent" [value]="+currentVersion.accountingPlan[key] || 0"
+                    [isRevenue]="!!node.accountIsRevenue" [isOpex]="!!node.accountIsOpex" #total="total">
+                    <span class="label" [style.padding-left.px]="level*30">
+                      {{ node.subAccountDescription || node.accountDescription }}
+                    </span>
+                    <!-- TODO: refacto permissions -->
+                    <input *permissions="{PM: true, AM: !node.accountIsPmVisible}" type="number" [name]="key"
+                      [(ngModel)]="total.value" class="item">
+                    <!-- <input *permissions="{AM: node.accountIsPmVisible}" type="number" [name]="key" ngModel
+                      (ngModelChange)="total.value = +$event" disabled class="item"> -->
+                    <!-- TODO: remove 'x' -->
+                    <span class="item">
+                      {{ total.totalRoot.totalRevenue ? (total.total / total.totalRoot.totalRevenue | percent: '1.2-2') : 'x' }}
+                    </span>
+                    <!-- TODO: remove 'x' -->
+                    <span class="item">
+                      {{ total.totalRoot.totalOpex ? (total.total / total.totalRoot.totalOpex | percent: '1.2-2') : 'x' }}
+                    </span>
+                  </div>
+                </ng-container>
+              </ng-template>
+            </ng-template>
+
+            <div class="line header flex">
+              <div class="label">Category</div>
+              <div class="item">Budget 2021</div>
+              <div class="item">% of Rental Income</div>
+              <div class="item">% of Rental Expenses</div>
             </div>
-            <div [@expand]="accordionItem.expanded" style="overflow: hidden;">
-              <ng-container *ngFor="let node of node.children">
-                <ng-container *ngTemplateOutlet="nodeTmpl; context: {node: node, totalParent: total, level: level + 1}">
+
+            <div total #total="total" class="ov-auto" style="height: calc(100vh - 250px);">
+              <ng-container *ngFor="let node of accountingPlan">
+                <ng-container *ngTemplateOutlet="nodeTmpl; context: {node: node, totalParent: total, level: 0}">
                 </ng-container>
               </ng-container>
             </div>
-          </ng-container>
-
-          <ng-template #leafTmpl>
-            <div *permissions="{AM: true, PM: node.accountIsPmVisible}" class="line flex" total
-              [totalParent]="totalParent" [isRevenue]="!!node.accountIsRevenue" [isOpex]="!!node.accountIsOpex"
-              #total="total">
-              <span class="label" [style.padding-left.px]="level*30">
-                {{ node.subAccountDescription || node.accountDescription }}
-              </span>
-              <!-- TODO: refacto permissions -->
-              <input *permissions="{PM: true, AM: !node.accountIsPmVisible}" type="number"
-                [name]="node.subAccount ? node.account + '/' + node.subAccount : node.account" ngModel
-                (ngModelChange)="total.value = +$event" class="item">
-              <input *permissions="{AM: node.accountIsPmVisible}" type="number"
-                [name]="node.subAccount ? node.account + '/' + node.subAccount : node.account" ngModel
-                (ngModelChange)="total.value = +$event" disabled class="item">
-              <span class="item">
-                {{ total.totalRoot.totalRevenue ? (total.total / total.totalRoot.totalRevenue | percent: '1.2-2') : 'x' }}
-              </span>
-              <span class="item">
-                {{ total.totalRoot.totalOpex ? (total.total / total.totalRoot.totalOpex | percent: '1.2-2') : 'x' }}
-              </span>
+            <div class="flex justify-end">
+              <button type="button" (click)="save(currentVersion, form.value)">Enregistrer</button>
             </div>
-          </ng-template>
-        </ng-template>
-
-        <div class="line header flex">
-          <div class="label">Category</div>
-          <div class="item">Budget 2021</div>
-          <div class="item">% of Rental Income</div>
-          <div class="item">% of Rental Expenses</div>
-        </div>
-
-        <div total #total="total" class="ov-auto" style="height: calc(100vh - 250px);">
-          <ng-container *ngFor="let node of budget">
-            <ng-container *ngTemplateOutlet="nodeTmpl; context: {node: node, totalParent: total, level: 0}">
-            </ng-container>
-          </ng-container>
-        </div>
-        <div class="flex justify-end">
-          <button type="submit">Enregistrer</button>
-        </div>
+          </form>
+        </ng-container>
       </ng-container>
-    </div>
-  </form>
+    </ng-container>
+  </ng-container>
 </div>

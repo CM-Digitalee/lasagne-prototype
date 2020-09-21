@@ -11,7 +11,10 @@ export class TotalDirective implements AfterViewInit {
 
   children: TotalDirective[] = [];
 
-  value = 0;
+  @Input() value = 0;
+  // _value = 0;
+  // @Input() set value(value: number) { this._value = value; }
+  // get value() { return this._value; }
 
   get total() {
     return this.children.length

@@ -1,10 +1,13 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 import { animate, state, style, transition, trigger } from '@angular/animations';
-import { of } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { iif, of } from 'rxjs';
+import { filter, map, pluck, shareReplay, switchMap } from 'rxjs/operators';
 
-import templateEntries from '../../fake-data/budget_accounting-plan';
+import { BudgetVersion, BudgetWithVersions } from '../shared';
 import { AssetService, BudgetService, PortfolioService } from '../core';
+import accountingPlan from '../../fake-data/budget_accounting-plan';
 
 const nodes = (entries: any, key: { id: string, name: string }) =>
   Object.values(
@@ -36,7 +39,26 @@ const nodes = (entries: any, key: { id: string, name: string }) =>
   ]
 })
 export class BudgetComponent {
-  budget$ = of(templateEntries).pipe(
+  budget$ = this.route.params.pipe(
+    pluck('id'),
+    switchMap((id: string) => iif(() => !!id, this.budgetService.get(+id), of({} as BudgetWithVersions))),
+    shareReplay({ refCount: true, bufferSize: 1 })
+  );
+
+  currentVersion$ = this.budget$.pipe(
+    filter(budget => !!budget),
+    switchMap(budget => this.route.queryParams.pipe(
+      pluck('version'),
+      map((versionNumber: string) =>
+        budget.versions.find(version =>
+          version.number === (+versionNumber || budget.versions.map(v => v.number).sort((a, b) => b - a)[0])
+        )
+      )
+    )),
+    shareReplay({ refCount: true, bufferSize: 1 })
+  );
+
+  accountingPlan$ = of(accountingPlan).pipe(
     map(templateEntries => templateEntries.filter(({ clientId }) => clientId === 3)),
     map(templateEntries =>
       nodes(templateEntries, { id: 'category', name: 'categoryDescription' })
@@ -58,11 +80,29 @@ export class BudgetComponent {
     )
   );
 
-  // newBudget$ = new Subject().pipe(switchMapTo(this.budget$));
-
   constructor(
+    public dialog: MatDialog,
     public assetService: AssetService,
     public portfolioService: PortfolioService,
-    public budgetService: BudgetService
+    public budgetService: BudgetService,
+    private router: Router,
+    private route: ActivatedRoute
   ) { }
+
+  create(portfolioId: number, assetId: number, name: string, dialogRef: MatDialogRef<any>) {
+    this.budgetService.create({ portfolioId, assetId, name }).subscribe(
+      budget => {
+        dialogRef.close();
+        this.goToBudget(budget.id);
+      }
+    );
+  }
+
+  save(version: BudgetVersion, form: { [key: string]: string }) {
+    this.budgetService.saveVersion({ ...version, accountingPlan: form });
+  }
+
+  goToBudget(id: number) {
+    this.router.navigate([id], { relativeTo: this.route.snapshot.params.id ? this.route.parent : this.route });
+  }
 }

@@ -1,15 +1,25 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
 
-import budgets from '../../../fake-data/budgets';
+import { Budget, BudgetVersion, BudgetWithVersions } from '../../../app/shared';
+import { HttpFakeService } from './http-fake.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class BudgetService {
-  budgets$ = new BehaviorSubject(budgets);
+  budgets$ = this.http.getAll<BudgetWithVersions[]>('budgets');
 
-  add(formValue) {
-    this.budgets$.next([...this.budgets$.value, { ...formValue, id: Date.now() }]);
+  constructor(private http: HttpFakeService) { }
+
+  get(id: number) {
+    return this.http.get<BudgetWithVersions>('budgets', id);
+  }
+
+  create(newBudget: Omit<Budget, 'id'>) {
+    return this.http.post<Budget>('budgets', newBudget);
+  }
+
+  saveVersion(version: BudgetVersion) {
+    return this.http.patch<BudgetVersion>('budgets/versions', version.id, version);
   }
 }
