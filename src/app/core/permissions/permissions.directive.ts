@@ -1,7 +1,7 @@
-import { Directive, Input, OnChanges, SimpleChanges, TemplateRef, ViewContainerRef } from '@angular/core';
+import { Directive, Input, OnChanges, TemplateRef, ViewContainerRef } from '@angular/core';
 
 import { Role } from '../../../app/shared';
-import { UserService } from '../services';
+import { PermissionsService } from './permissions.service';
 
 @Directive({
   selector: '[permissions]'
@@ -12,11 +12,11 @@ export class PermissionsDirective implements OnChanges {
   constructor(
     private vcr: ViewContainerRef,
     private tmpl: TemplateRef<any>,
-    private userService: UserService
+    private permissionService: PermissionsService
   ) { }
 
   ngOnChanges() {
-    if (this.permissions[this.userService.currentUser$.value.role]) {
+    if (this.permissions[this.permissionService.currentUser.role]) {
       this.vcr.createEmbeddedView(this.tmpl);
     }
   }

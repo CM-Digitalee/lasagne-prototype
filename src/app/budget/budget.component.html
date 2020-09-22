@@ -27,7 +27,7 @@
         *ngIf="(budgetService.budgets$ | async | filterBy: 'portfolioId': portfolioSelect.value | filterBy: 'assetId': assetSelect.value || []) as budgets"
         class="mr-20">
         <mat-label>Budget</mat-label>
-        <mat-select name="budget" [ngModel]="budget.id || assetSelect.value && !budgets.length && 'noBudget'"
+        <mat-select name="budget" [ngModel]="budget.id || assetSelect.value && !budgets.length && ''"
           [disabled]="!assetSelect.value || !budgets.length" (ngModelChange)="$event && goToBudget($event)">
           <ng-container *ngIf="budgets.length else noBudget">
             <mat-option *ngFor="let budget of budgets" [value]="budget.id">
@@ -35,7 +35,7 @@
             </mat-option>
           </ng-container>
           <ng-template #noBudget>
-            <mat-option value="noBudget">Aucun budget</mat-option>
+            <mat-option value="">Aucun budget</mat-option>
           </ng-template>
         </mat-select>
       </mat-form-field>
@@ -112,12 +112,8 @@
                       <span class="item">{{ total.currentYear | number: '1.0-2' }}</span>
                       <!-- TODO: refacto permissions -->
                       <app-input-amount [(ngModel)]="total.value" [name]="key"
-                        [disabled]="currentVersion.number !== lastVersion.number" class="item"></app-input-amount>
-                      <!-- <input *ngIf="currentVersion.number === lastVersion.number else static" type="number" [name]="key"
-                        [(ngModel)]="total.value" class="item"> -->
-                      <ng-template #static>
-                        <span class="item">{{ total.value | number: '1.0-2' }}</span>
-                      </ng-template>
+                        [disabled]="currentVersion.number !== lastVersion.number || ({roles: ['AM', 'AO'], condition: node.accountIsPmVisible} | permissions: false)"
+                        class="item"></app-input-amount>
                       <!-- TODO: remove 'x' -->
                       <span class="item">
                         {{ total.totalRoot.totalRevenue ? (total.total / total.totalRoot.totalRevenue | percent: '1.2-2') : 'x' }}
@@ -151,7 +147,7 @@
                 <button type="button" mat-raised-button (click)="save(currentVersion, budgetForm.value)">
                   Enregistrer
                 </button>
-                <button type="button" mat-raised-button color="primary">Soumettre</button>
+                <!-- <button type="button" mat-raised-button color="primary">Soumettre</button> -->
               </div>
             </form>
           </ng-container>
