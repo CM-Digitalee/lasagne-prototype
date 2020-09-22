@@ -9,7 +9,7 @@ import { UserService } from './user.service';
 })
 export class AssetService {
   assets$ = this.userService.currentUser$.pipe(
-    map(user => assets.filter(a => a.propertyManagerId === user.id)),
+    map(user => assets.filter(a => [a.propertyManagerId, a.assetManagerId, a.assetOwnerId].includes(user.id))),
     shareReplay({ refCount: true, bufferSize: 1 })
   );
 

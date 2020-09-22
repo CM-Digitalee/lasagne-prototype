@@ -6,8 +6,7 @@ import { asyncScheduler, iif, of } from 'rxjs';
 import { filter, map, pluck, shareReplay, switchMap, tap } from 'rxjs/operators';
 
 import { BudgetVersion, BudgetWithVersionsAndRealised } from '../shared';
-import { AssetService, BudgetService, PortfolioService } from '../core';
-import accountingPlan from '../../fake-data/budget_accounting-plan';
+import { AccountingPlanService, AssetService, BudgetService, PortfolioService } from '../core';
 
 const nodes = (entries: any, key: { id: string, name: string }) =>
   Object.values(
@@ -67,33 +66,38 @@ export class BudgetComponent {
     shareReplay({ refCount: true, bufferSize: 1 })
   );
 
-  accountingPlan$ = of(accountingPlan).pipe(
-    map(templateEntries => templateEntries.filter(({ clientId }) => clientId === 3)),
-    map(templateEntries =>
-      nodes(templateEntries, { id: 'category', name: 'categoryDescription' })
-        .map((node: any) => ({
-          ...node,
-          children: nodes(node.children, { id: 'subCategory', name: 'subCategoryDescription' })
+  accountingPlan$ = this.budget$.pipe(
+    switchMap(budget =>
+      this.accountingPlanService.accountingPlan$.pipe(
+        map(templateEntries => templateEntries.filter(entry => entry.portfolioId === budget.portfolioId)),
+        map(templateEntries =>
+          nodes(templateEntries, { id: 'category', name: 'categoryDescription' })
             .map((node: any) => ({
               ...node,
-              children: nodes(node.children, { id: 'group', name: 'groupDescription' })
+              children: nodes(node.children, { id: 'subCategory', name: 'subCategoryDescription' })
                 .map((node: any) => ({
                   ...node,
-                  children: [
-                    ...node.children.filter(entry => !entry.subAccount),
-                    ...nodes(node.children.filter(entry => !!entry.subAccount), { id: 'account', name: 'accountDescription' })
-                  ]
+                  children: nodes(node.children, { id: 'group', name: 'groupDescription' })
+                    .map((node: any) => ({
+                      ...node,
+                      children: [
+                        ...node.children.filter(entry => !entry.subAccount),
+                        ...nodes(node.children.filter(entry => !!entry.subAccount), { id: 'account', name: 'accountDescription' })
+                      ]
+                    }))
                 }))
             }))
-        }))
+        )
+      )
     )
   );
 
   constructor(
-    public dialog: MatDialog,
+    public accountingPlanService: AccountingPlanService,
     public assetService: AssetService,
     public portfolioService: PortfolioService,
     public budgetService: BudgetService,
+    public dialog: MatDialog,
     private router: Router,
     private route: ActivatedRoute,
     private cdr: ChangeDetectorRef
