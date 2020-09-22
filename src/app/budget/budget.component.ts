@@ -5,7 +5,7 @@ import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { asyncScheduler, iif, of } from 'rxjs';
 import { filter, map, pluck, shareReplay, switchMap, tap } from 'rxjs/operators';
 
-import { BudgetVersion, BudgetWithVersions } from '../shared';
+import { BudgetVersion, BudgetWithVersionsAndRealised } from '../shared';
 import { AssetService, BudgetService, PortfolioService } from '../core';
 import accountingPlan from '../../fake-data/budget_accounting-plan';
 
@@ -41,7 +41,7 @@ const nodes = (entries: any, key: { id: string, name: string }) =>
 export class BudgetComponent {
   budget$ = this.route.params.pipe(
     pluck('id'),
-    switchMap((id: string) => iif(() => !!id, this.budgetService.get(+id), of({} as BudgetWithVersions))),
+    switchMap((id: string) => iif(() => !!id, this.budgetService.get(+id), of({} as BudgetWithVersionsAndRealised))),
     shareReplay({ refCount: true, bufferSize: 1 })
   );
 

@@ -2,9 +2,10 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject, combineLatest, of } from 'rxjs';
 import { map } from 'rxjs/operators';
 
-import { Budget, BudgetVersion, BudgetVersionState, BudgetWithVersions } from '../../../app/shared';
+import { Budget, BudgetVersion, BudgetVersionState, BudgetWithVersionsAndRealised } from '../../../app/shared';
 import budgets from '../../../fake-data/budgets';
 import budgetVersions from '../../../fake-data/budget-versions';
+import blpps from '../../../fake-data/asset_bl-pp_2019-2020';
 
 @Injectable({
   providedIn: 'root'
@@ -20,8 +21,10 @@ export class BudgetFakeServerService {
     ]).pipe(
       map(([budgets, versions]) => budgets.map(budget => ({
         ...budget,
-        versions: versions.filter(({ budgetId }) => budget.id === budgetId)
-      }) as BudgetWithVersions))
+        versions: versions.filter(({ budgetId }) => budget.id === budgetId),
+        previousYear: blpps.filter(blpp => +blpp.asset === budget.assetId && blpp.date.includes('2019')),
+        currentYear: blpps.filter(blpp => +blpp.asset === budget.assetId && blpp.date.includes('2020'))
+      }) as BudgetWithVersionsAndRealised))
     );
   }
 

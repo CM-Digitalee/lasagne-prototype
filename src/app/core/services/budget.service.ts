@@ -1,18 +1,18 @@
 import { Injectable } from '@angular/core';
 
-import { Budget, BudgetVersion, BudgetWithVersions } from '../../../app/shared';
+import { Budget, BudgetVersion, BudgetWithVersionsAndRealised } from '../../../app/shared';
 import { HttpFakeService } from './http-fake.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class BudgetService {
-  budgets$ = this.http.getAll<BudgetWithVersions[]>('budgets');
+  budgets$ = this.http.getAll<BudgetWithVersionsAndRealised[]>('budgets');
 
   constructor(private http: HttpFakeService) { }
 
   get(id: number) {
-    return this.http.get<BudgetWithVersions>('budgets', id);
+    return this.http.get<BudgetWithVersionsAndRealised>('budgets', id);
   }
 
   create(newBudget: Omit<Budget, 'id'>) {

@@ -15,7 +15,11 @@ export interface BudgetVersion {
   };
 }
 
-export type BudgetWithVersions = Budget & { versions: BudgetVersion[] };
+export type BudgetWithVersionsAndRealised = Budget & {
+  versions: BudgetVersion[];
+  previousYear: Blpp[];
+  currentYear: Blpp[];
+};
 
 export enum BudgetVersionState {
   Pending,
@@ -23,3 +27,5 @@ export enum BudgetVersionState {
   Accepted,
   Rejected
 }
+
+declare type Blpp = any;

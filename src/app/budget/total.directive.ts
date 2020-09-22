@@ -8,13 +8,12 @@ export class TotalDirective implements AfterViewInit {
   @Input() totalParent: TotalDirective;
   @Input() isRevenue: boolean;
   @Input() isOpex: boolean;
+  @Input() previousYear: number;
+  @Input() currentYear: number;
 
   children: TotalDirective[] = [];
 
   @Input() value = 0;
-  // _value = 0;
-  // @Input() set value(value: number) { this._value = value; }
-  // get value() { return this._value; }
 
   get total() {
     return this.children.length
@@ -32,6 +31,18 @@ export class TotalDirective implements AfterViewInit {
     return this.children.length
       ? this.children.reduce((total, child) => total + child.totalOpex, 0)
       : this.isOpex ? this.value : 0;
+  }
+
+  get totalPreviousYear() {
+    return this.children.length
+      ? this.children.reduce((total, child) => total + child.totalPreviousYear, 0)
+      : this.previousYear;
+  }
+
+  get totalCurrentYear() {
+    return this.children.length
+      ? this.children.reduce((total, child) => total + child.totalCurrentYear, 0)
+      : this.currentYear;
   }
 
   ngAfterViewInit() {
