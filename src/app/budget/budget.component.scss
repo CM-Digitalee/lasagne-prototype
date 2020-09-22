@@ -24,23 +24,3 @@
     transform: rotate(180deg);
   }
 }
-
-input[type="number"] {
-  background: inherit;
-  border: none;
-  text-align: right;
-  
-  &:not([disabled]) {
-    border-bottom: 1px solid black;
-  }
-  
-  -moz-appearance: textfield;
-
-  &::-webkit-outer-spin-button,
-  &::-webkit-inner-spin-button {
-    -webkit-appearance: none;
-    margin: 0;
-  }
-
-  &:focus { outline: none; }
-}

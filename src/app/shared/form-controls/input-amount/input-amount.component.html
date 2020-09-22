@@ -1,0 +1,6 @@
+<input #input *ngIf="focus else static" type="text" [value]="value" [disabled]="disabled"
+  (input)="onInput($event.target.value)" (focus)="input.select()" (blur)="focus = false">
+
+<ng-template #static><span>{{ value | number }}</span></ng-template>
+
+<div *ngIf="!disabled" class="border"></div>

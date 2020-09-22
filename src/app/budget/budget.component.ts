@@ -1,9 +1,9 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { animate, state, style, transition, trigger } from '@angular/animations';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { iif, of } from 'rxjs';
-import { filter, map, pluck, shareReplay, switchMap } from 'rxjs/operators';
+import { asyncScheduler, iif, of } from 'rxjs';
+import { filter, map, pluck, shareReplay, switchMap, tap } from 'rxjs/operators';
 
 import { BudgetVersion, BudgetWithVersions } from '../shared';
 import { AssetService, BudgetService, PortfolioService } from '../core';
@@ -45,6 +45,14 @@ export class BudgetComponent {
     shareReplay({ refCount: true, bufferSize: 1 })
   );
 
+  lastVersion$ = this.budget$.pipe(
+    filter(budget => !!budget),
+    map(budget => budget.versions.find(
+      version => version.number === budget.versions.map(v => v.number).sort((a, b) => b - a)[0]
+    )),
+    shareReplay({ refCount: true, bufferSize: 1 })
+  );
+
   currentVersion$ = this.budget$.pipe(
     filter(budget => !!budget),
     switchMap(budget => this.route.queryParams.pipe(
@@ -55,6 +63,7 @@ export class BudgetComponent {
         )
       )
     )),
+    tap(() => asyncScheduler.schedule(() => this.cdr.detectChanges())),
     shareReplay({ refCount: true, bufferSize: 1 })
   );
 
@@ -86,7 +95,8 @@ export class BudgetComponent {
     public portfolioService: PortfolioService,
     public budgetService: BudgetService,
     private router: Router,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private cdr: ChangeDetectorRef
   ) { }
 
   create(portfolioId: number, assetId: number, name: string, dialogRef: MatDialogRef<any>) {

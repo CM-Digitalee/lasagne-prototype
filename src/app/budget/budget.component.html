@@ -64,80 +64,88 @@
       </span>
 
       <ng-container *ngIf="currentVersion$ | async as currentVersion">
-        <ng-container *ngIf="accountingPlan$ | async as accountingPlan">
-          <form #form="ngForm">
-            <ng-template #nodeTmpl let-node="node" let-totalParent="totalParent" let-level="level">
-              <ng-container *ngIf="node.children else leafTmpl" #accordionItem="cdkAccordionItem" cdkAccordionItem
-                expanded>
-                <div class="line flex pointer" (click)="accordionItem.toggle()" total [totalParent]="totalParent"
-                  #total="total">
-                  <div class="label flex align-center" [style.padding-left.px]="level*30">
-                    <i class="material-icons expand-icon"
-                      [ngClass]="{'expanded': accordionItem.expanded}">expand_less</i>
-                    <span>{{ node.label }}</span>
-                  </div>
-                  <span class="item">{{ total.total | number }}</span>
-                  <span class="item">
-                    <!-- TODO: remove 'x' -->
-                    {{ total.totalRoot.totalRevenue ? (total.total / total.totalRoot.totalRevenue | percent: '1.2-2') : 'x' }}
-                  </span>
-                  <span class="item">
-                    <!-- TODO: remove 'x' -->
-                    {{ total.totalRoot.totalOpex ? (total.total / total.totalRoot.totalOpex | percent: '1.2-2') : 'x' }}
-                  </span>
-                </div>
-                <div [@expand]="accordionItem.expanded" style="overflow: hidden;">
-                  <ng-container *ngFor="let node of node.children">
-                    <ng-container
-                      *ngTemplateOutlet="nodeTmpl; context: {node: node, totalParent: total, level: level + 1}">
-                    </ng-container>
-                  </ng-container>
-                </div>
-              </ng-container>
-
-              <ng-template #leafTmpl>
-                <ng-container *ngIf="node.subAccount ? node.account + '/' + node.subAccount : node.account as key">
-                  <div *permissions="{AM: true, PM: node.accountIsPmVisible}" class="line flex" total
-                    [totalParent]="totalParent" [value]="+currentVersion.accountingPlan[key] || 0"
-                    [isRevenue]="!!node.accountIsRevenue" [isOpex]="!!node.accountIsOpex" #total="total">
-                    <span class="label" [style.padding-left.px]="level*30">
-                      {{ node.subAccountDescription || node.accountDescription }}
-                    </span>
-                    <!-- TODO: refacto permissions -->
-                    <input *permissions="{PM: true, AM: !node.accountIsPmVisible}" type="number" [name]="key"
-                      [(ngModel)]="total.value" class="item">
-                    <!-- <input *permissions="{AM: node.accountIsPmVisible}" type="number" [name]="key" ngModel
-                      (ngModelChange)="total.value = +$event" disabled class="item"> -->
-                    <!-- TODO: remove 'x' -->
+        <ng-container *ngIf="lastVersion$ | async as lastVersion">
+          <ng-container *ngIf="accountingPlan$ | async as accountingPlan">
+            <form #budgetForm="ngForm">
+              <ng-template #nodeTmpl let-node="node" let-totalParent="totalParent" let-level="level">
+                <ng-container *ngIf="node.children else leafTmpl" #accordionItem="cdkAccordionItem" cdkAccordionItem
+                  expanded>
+                  <div class="line flex pointer" (click)="accordionItem.toggle()" total [totalParent]="totalParent"
+                    #total="total">
+                    <div class="label flex align-center" [style.padding-left.px]="level*30">
+                      <i class="material-icons expand-icon"
+                        [ngClass]="{'expanded': accordionItem.expanded}">expand_less</i>
+                      <span>{{ node.label }}</span>
+                    </div>
+                    <span class="item">{{ total.total | number }}</span>
                     <span class="item">
+                      <!-- TODO: remove 'x' -->
                       {{ total.totalRoot.totalRevenue ? (total.total / total.totalRoot.totalRevenue | percent: '1.2-2') : 'x' }}
                     </span>
-                    <!-- TODO: remove 'x' -->
                     <span class="item">
+                      <!-- TODO: remove 'x' -->
                       {{ total.totalRoot.totalOpex ? (total.total / total.totalRoot.totalOpex | percent: '1.2-2') : 'x' }}
                     </span>
                   </div>
+                  <div [@expand]="accordionItem.expanded" style="overflow: hidden;">
+                    <ng-container *ngFor="let node of node.children">
+                      <ng-container
+                        *ngTemplateOutlet="nodeTmpl; context: {node: node, totalParent: total, level: level + 1}">
+                      </ng-container>
+                    </ng-container>
+                  </div>
                 </ng-container>
+
+                <ng-template #leafTmpl>
+                  <ng-container *ngIf="node.subAccount ? node.account + '/' + node.subAccount : node.account as key">
+                    <div total [value]="+currentVersion.accountingPlan[key] || 0" [totalParent]="totalParent"
+                      [isRevenue]="!!node.accountIsRevenue" [isOpex]="!!node.accountIsOpex" #total="total"
+                      class="line flex">
+                      <span class="label" [style.padding-left.px]="level*30">
+                        {{ node.subAccountDescription || node.accountDescription }}
+                      </span>
+                      <!-- TODO: refacto permissions -->
+                      <app-input-amount [(ngModel)]="total.value" [name]="key"
+                        [disabled]="currentVersion.number !== lastVersion.number" class="item"></app-input-amount>
+                      <!-- <input *ngIf="currentVersion.number === lastVersion.number else static" type="number" [name]="key"
+                        [(ngModel)]="total.value" class="item"> -->
+                      <ng-template #static>
+                        <span class="item">{{ total.value | number }}</span>
+                      </ng-template>
+                      <!-- TODO: remove 'x' -->
+                      <span class="item">
+                        {{ total.totalRoot.totalRevenue ? (total.total / total.totalRoot.totalRevenue | percent: '1.2-2') : 'x' }}
+                      </span>
+                      <!-- TODO: remove 'x' -->
+                      <span class="item">
+                        {{ total.totalRoot.totalOpex ? (total.total / total.totalRoot.totalOpex | percent: '1.2-2') : 'x' }}
+                      </span>
+                    </div>
+                  </ng-container>
+                </ng-template>
               </ng-template>
-            </ng-template>
 
-            <div class="line header flex">
-              <div class="label">Category</div>
-              <div class="item">Budget 2021</div>
-              <div class="item">% of Rental Income</div>
-              <div class="item">% of Rental Expenses</div>
-            </div>
+              <div class="line header flex">
+                <div class="label">Category</div>
+                <div class="item">Budget 2021</div>
+                <div class="item">% of Rental Income</div>
+                <div class="item">% of Rental Expenses</div>
+              </div>
 
-            <div total #total="total" class="ov-auto" style="height: calc(100vh - 250px);">
-              <ng-container *ngFor="let node of accountingPlan">
-                <ng-container *ngTemplateOutlet="nodeTmpl; context: {node: node, totalParent: total, level: 0}">
+              <div total #total="total" class="ov-auto" style="height: calc(100vh - 350px);">
+                <ng-container *ngFor="let node of accountingPlan">
+                  <ng-container *ngTemplateOutlet="nodeTmpl; context: {node: node, totalParent: total, level: 0}">
+                  </ng-container>
                 </ng-container>
-              </ng-container>
-            </div>
-            <div class="flex justify-end">
-              <button type="button" (click)="save(currentVersion, form.value)">Enregistrer</button>
-            </div>
-          </form>
+              </div>
+              <div *ngIf="currentVersion.number === lastVersion.number" class="flex justify-end">
+                <button type="button" mat-raised-button (click)="save(currentVersion, budgetForm.value)">
+                  Enregistrer
+                </button>
+                <button type="button" mat-raised-button color="primary">Soumettre</button>
+              </div>
+            </form>
+          </ng-container>
         </ng-container>
       </ng-container>
     </ng-container>

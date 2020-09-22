@@ -7,7 +7,8 @@ export default [
     state: BudgetVersionState.Pending,
     number: 2,
     accountingPlan: {
-      300000: '20000'
+      300000: '-20000',
+      310000: '22000'
     }
   },
   {
@@ -16,7 +17,8 @@ export default [
     state: BudgetVersionState.Rejected,
     number: 1,
     accountingPlan: {
-      300000: '10000'
+      300000: '10000',
+      310000: '11000'
     }
   }
 ];
