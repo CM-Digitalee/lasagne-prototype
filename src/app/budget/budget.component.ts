@@ -56,7 +56,6 @@ export class BudgetComponent {
     filter(budget => !!budget),
     switchMap(budget => this.route.queryParams.pipe(
       pluck('version'),
-      filter(versionNumber => !!versionNumber),
       map((versionNumber: string) =>
         budget.versions.find(version =>
           version.number === (+versionNumber || budget.versions.map(v => v.number).sort((a, b) => b - a)[0])
