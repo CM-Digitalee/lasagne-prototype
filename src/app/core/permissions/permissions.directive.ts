@@ -1,23 +1,26 @@
-import { Directive, Input, OnChanges, TemplateRef, ViewContainerRef } from '@angular/core';
+import { Directive, Input, TemplateRef, ViewContainerRef } from '@angular/core';
 
-import { Role } from '../../../app/shared';
 import { PermissionsService } from './permissions.service';
+import { Permission } from './permission';
+import { asyncScheduler } from 'rxjs';
 
 @Directive({
   selector: '[permissions]'
 })
-export class PermissionsDirective implements OnChanges {
-  @Input() permissions: { [key in Role]: boolean };
+export class PermissionsDirective {
+  @Input() set permissions(permissions: Permission | Permission[]) {
+    asyncScheduler.schedule(() => {
+      if (this.permissionService.getPermission(permissions, this.permissionsFallback)) {
+        this.vcr.createEmbeddedView(this.tmpl);
+      }
+    });
+  }
+
+  @Input() permissionsFallback = false;
 
   constructor(
     private vcr: ViewContainerRef,
     private tmpl: TemplateRef<any>,
     private permissionService: PermissionsService
   ) { }
-
-  ngOnChanges() {
-    if (this.permissions[this.permissionService.currentUser.role]) {
-      this.vcr.createEmbeddedView(this.tmpl);
-    }
-  }
 }

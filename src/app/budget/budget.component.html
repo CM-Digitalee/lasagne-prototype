@@ -40,8 +40,10 @@
         </mat-select>
       </mat-form-field>
 
-      <button *ngIf="portfolioSelect.value && assetSelect.value" type="button" mat-raised-button color="primary"
-        (click)="dialog.open(createBudget)">Create</button>
+      <ng-container *ngIf="portfolioSelect.value && assetSelect.value">
+        <button *permissions="{roles: ['PM']}" type="button" mat-raised-button color="primary"
+          (click)="dialog.open(createBudget)">Create</button>
+      </ng-container>
     </form>
 
     <ng-template #createBudget let-dialogRef="dialogRef">
@@ -112,7 +114,7 @@
                       <span class="item">{{ total.currentYear | number: '1.0-2' }}</span>
                       <!-- TODO: refacto permissions -->
                       <app-input-amount [(ngModel)]="total.value" [name]="key"
-                        [disabled]="currentVersion.number !== lastVersion.number || ({roles: ['AM', 'AO'], condition: node.accountIsPmVisible} | permissions: false)"
+                        [disabled]="currentVersion.number !== lastVersion.number || ({roles: ['AM', 'AO'], condition: node.accountIsPmVisible || false} | permissions)"
                         class="item"></app-input-amount>
                       <!-- TODO: remove 'x' -->
                       <span class="item">
