@@ -24,7 +24,7 @@ export class HttpFakeService {
   post<T>(url: string, data: any) {
     switch (url) {
       case 'budgets':
-        return this.budgetFakeService.postBudget(data);
+        return this.budgetFakeService.createBudget(data);
     }
   }
 

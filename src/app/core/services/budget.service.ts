@@ -34,11 +34,11 @@ export class BudgetService {
     return this.budgetFakeServerService.submitVersion(version.id, version);
   }
 
-  acceptVersion(version: BudgetVersion) {
-    return this.budgetFakeServerService.acceptVersion(version.id, version);
+  acceptVersion(versionId: number) {
+    return this.budgetFakeServerService.acceptVersion(versionId);
   }
 
-  rejectVersion(version: BudgetVersion) {
-    return this.budgetFakeServerService.rejectVersion(version.id, version);
+  rejectVersion(versionId: number) {
+    return this.budgetFakeServerService.rejectVersion(versionId);
   }
 }

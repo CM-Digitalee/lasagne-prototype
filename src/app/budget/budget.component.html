@@ -66,10 +66,12 @@
               {{ version.number }}
             </a>
           </span>
-          <button
-            *permissions="{roles: ['PM'], condition: lastVersion.state === budgetService.budgetVersionState.Rejected}"
-            type="button" mat-raised-button (click)="createBudgetVersion(budget.id)"><i
-              class="material-icons">add</i></button>
+          <button *permissions="[
+              {roles: ['PM'], condition: lastVersion.state === budgetService.budgetVersionState.Rejected},
+              {roles: ['AM', 'AO'], condition: lastVersion.state === budgetService.budgetVersionState.Submitted}
+            ]" type="button" mat-raised-button (click)="createBudgetVersion(budget.id)">
+            <i class="material-icons">add</i>
+          </button>
 
           <span *ngIf="currentVersion.state !== budgetService.budgetVersionState.Pending">
             This version was
@@ -127,10 +129,14 @@
                       </span>
                       <span class="item">{{ total.previousYear | number: '1.0-2' }}</span>
                       <span class="item">{{ total.currentYear | number: '1.0-2' }}</span>
-                      <app-input-amount [(ngModel)]="total.value" [name]="key" [disabled]="[
-                          {roles: ['PM'], condition: currentVersion.state !== budgetService.budgetVersionState.Pending},
-                          {roles: ['AM', 'AO'], condition: currentVersion.state !== budgetService.budgetVersionState.Submitted || (node.accountIsPmVisible || false)}
-                        ] | permissions" class="item"></app-input-amount>
+                      <app-input-amount
+                        *ngIf="currentVersion.state === budgetService.budgetVersionState.Pending else notEditable"
+                        [(ngModel)]="total.value" [name]="key"
+                        [disabled]="{roles: ['AM', 'AO'], condition: node.accountIsPmVisible || false} | permissions"
+                        class="item"></app-input-amount>
+                      <ng-template #notEditable>
+                        <span class="item">{{ total.value | number: '1.0-2' }}</span>
+                      </ng-template>
                       <!-- TODO: remove 'x' -->
                       <span class="item">
                         {{ total.totalRoot.totalRevenue ? (total.total / total.totalRoot.totalRevenue | percent: '1.2-2') : 'x' }}
@@ -160,14 +166,13 @@
                 </ng-container>
               </div>
 
-              <div class="flex justify-end">
-                <ng-container
-                  *permissions="{roles: ['PM'], condition: currentVersion.state === budgetService.budgetVersionState.Pending}">
-                  <div class="mr-5">
-                    <button type="button" mat-raised-button (click)="save(currentVersion, budgetForm.value)">
-                      Enregistrer
-                    </button>
-                  </div>
+              <div *ngIf="currentVersion.state === budgetService.budgetVersionState.Pending" class="flex justify-end">
+                <div class="mr-5">
+                  <button type="button" mat-raised-button (click)="save(currentVersion, budgetForm.value)">
+                    Enregistrer
+                  </button>
+                </div>
+                <ng-container *permissions="{roles: ['PM']}">
                   <div>
                     <button type="button" mat-raised-button color="primary"
                       (click)="submit(currentVersion, budgetForm.value)">
@@ -175,13 +180,7 @@
                     </button>
                   </div>
                 </ng-container>
-                <ng-container
-                  *permissions="{roles: ['AM', 'AO'], condition: currentVersion.state === budgetService.budgetVersionState.Submitted}">
-                  <div class="mr-5">
-                    <button type="button" mat-raised-button (click)="save(currentVersion, budgetForm.value)">
-                      Enregistrer
-                    </button>
-                  </div>
+                <ng-container *permissions="{roles: ['AM', 'AO']}">
                   <div class="mr-5">
                     <button type="button" mat-raised-button color="primary"
                       (click)="accept(currentVersion, budgetForm.value)">

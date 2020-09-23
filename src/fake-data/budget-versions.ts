@@ -16,7 +16,7 @@ export default [
   {
     budgetId: 1600597556690,
     id: 2,
-    state: BudgetVersionState.Pending,
+    state: BudgetVersionState.Submitted,
     stateDate: 1600866390450,
     stateUserId: 1,
     number: 2,

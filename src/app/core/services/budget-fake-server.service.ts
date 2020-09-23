@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject, combineLatest, of } from 'rxjs';
 import { map } from 'rxjs/operators';
 
-import { Budget, BudgetVersion, BudgetVersionState, BudgetWithVersionsAndRealised, User } from '../../../app/shared';
+import { Budget, BudgetVersion, BudgetVersionState, BudgetWithVersionsAndRealised, Role, User } from '../../../app/shared';
 import budgets from '../../../fake-data/budgets';
 import budgetVersions from '../../../fake-data/budget-versions';
 import blpps from '../../../fake-data/asset_bl-pp_2019-2020';
@@ -26,15 +26,35 @@ export class BudgetFakeServerService {
       this.budgets$,
       this.budgetVersions$
     ]).pipe(
-      map(([budgets, versions]) => budgets.map(budget => ({
-        ...budget,
-        versions: versions.filter(({ budgetId }) => budget.id === budgetId).map(version => ({
-          ...version,
-          stateUserName: this.userService.users.find(user => user.id === version.stateUserId).name
-        })),
-        previousYear: blpps.filter(blpp => +blpp.asset === budget.assetId && blpp.date.includes('2019')),
-        currentYear: blpps.filter(blpp => +blpp.asset === budget.assetId && blpp.date.includes('2020'))
-      }) as BudgetWithVersionsAndRealised))
+      map(([budgets, allVersions]) => budgets.map(budget => {
+        const versions = allVersions
+          .filter(({ budgetId }) => budget.id === budgetId)
+          .sort((a, b) => a.number - b.number);
+
+        if (versions.length) {
+          const lastVersionState = versions[versions.length - 1].state;
+          const lastVersionUserRole = this.userService.users.find(user => user.id === versions[versions.length - 1].stateUserId).role;
+          const currentUserRole = this.currentUser.role;
+          if (
+            lastVersionState === BudgetVersionState.Pending && !(
+              [lastVersionUserRole, currentUserRole].every(role => role === Role.PM) ||
+              [lastVersionUserRole, currentUserRole].every(role => role === Role.AM || role === Role.AO)
+            )
+          ) {
+            versions.pop();
+          }
+        }
+
+        return {
+          ...budget,
+          versions: versions.map(version => ({
+            ...version,
+            stateUserName: this.userService.users.find(user => user.id === version.stateUserId).name
+          })),
+          previousYear: blpps.filter(blpp => +blpp.asset === budget.assetId && blpp.date.includes('2019')),
+          currentYear: blpps.filter(blpp => +blpp.asset === budget.assetId && blpp.date.includes('2020'))
+        } as BudgetWithVersionsAndRealised;
+      }))
     );
   }
 
@@ -42,7 +62,7 @@ export class BudgetFakeServerService {
     return this.getAll().pipe(map(budgets => budgets.find(budget => budget.id === id)));
   }
 
-  postBudget(budget: Budget) {
+  createBudget(budget: Budget) {
     const newBudget = { id: Date.now(), ...budget };
     this.budgets$.next([...this.budgets$.value, newBudget]);
     this.createVersion(newBudget.id);
@@ -50,9 +70,9 @@ export class BudgetFakeServerService {
   }
 
   createVersion(budgetId: number) {
-    const lastVersion = this.budgetVersions$.value.find(
-      version => version.number === this.budgetVersions$.value.map(v => v.number).sort((a, b) => b - a)[0]
-    );
+    const lastVersion = this.budgetVersions$.value
+      .filter(version => version.budgetId === budgetId)
+      .find(version => version.number === this.budgetVersions$.value.map(v => v.number).sort((a, b) => b - a)[0]);
 
     const newVersion = {
       id: Date.now(),
@@ -89,11 +109,11 @@ export class BudgetFakeServerService {
     return this.patchVersion(id, { ...data, state: BudgetVersionState.Submitted });
   }
 
-  acceptVersion(id: number, data: Partial<BudgetVersion>) {
-    return this.patchVersion(id, { ...data, state: BudgetVersionState.Accepted });
+  acceptVersion(id: number) {
+    return this.patchVersion(id, { state: BudgetVersionState.Accepted });
   }
 
-  rejectVersion(id: number, data: Partial<BudgetVersion>) {
-    return this.patchVersion(id, { ...data, state: BudgetVersionState.Rejected });
+  rejectVersion(id: number) {
+    return this.patchVersion(id, { state: BudgetVersionState.Rejected });
   }
 }
