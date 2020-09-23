@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { BehaviorSubject } from 'rxjs';
-import { filter } from 'rxjs/operators';
 
 import { User } from '../../../app/shared';
 import users from '../../../fake-data/users';
@@ -14,8 +13,8 @@ export class UserService {
 
   // TODO
   // private _currentUser$ = new BehaviorSubject<User>(this.users[0]);
-  _currentUser$ = new BehaviorSubject<User>(null);
-  get currentUser$() { return this._currentUser$.asObservable().pipe(filter(user => !!user)); }
+  private _currentUser$ = new BehaviorSubject<User>(null);
+  get currentUser$() { return this._currentUser$.asObservable(); }
 
   constructor(private router: Router) { }
 
