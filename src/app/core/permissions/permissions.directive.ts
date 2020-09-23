@@ -10,6 +10,7 @@ import { asyncScheduler } from 'rxjs';
 export class PermissionsDirective {
   @Input() set permissions(permissions: Permission | Permission[]) {
     asyncScheduler.schedule(() => {
+      this.vcr.clear();
       if (this.permissionService.getPermission(permissions, this.permissionsFallback)) {
         this.vcr.createEmbeddedView(this.tmpl);
       }

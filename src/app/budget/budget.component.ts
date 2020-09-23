@@ -89,7 +89,8 @@ export class BudgetComponent {
             }))
         )
       )
-    )
+    ),
+    shareReplay({ refCount: true, bufferSize: 1 })
   );
 
   constructor(
@@ -113,7 +114,25 @@ export class BudgetComponent {
   }
 
   save(version: BudgetVersion, form: { [key: string]: string }) {
-    this.budgetService.saveVersion({ ...version, accountingPlan: form });
+    this.budgetService.saveVersion({ ...version, accountingPlan: form }).subscribe();
+  }
+
+  submit(version: BudgetVersion, form: { [key: string]: string }) {
+    this.budgetService.submitVersion({ ...version, accountingPlan: form }).subscribe();
+  }
+
+  accept(version: BudgetVersion, form: { [key: string]: string }) {
+    this.budgetService.acceptVersion({ ...version, accountingPlan: form }).subscribe();
+  }
+
+  reject(version: BudgetVersion, form: { [key: string]: string }) {
+    this.budgetService.rejectVersion({ ...version, accountingPlan: form }).subscribe();
+  }
+
+  createBudgetVersion(budgetId: number) {
+    this.budgetService.createVersion(budgetId).subscribe(version =>
+      this.router.navigate(['./'], { relativeTo: this.route, queryParams: { version: version.number } })
+    );
   }
 
   goToBudget(id: number) {

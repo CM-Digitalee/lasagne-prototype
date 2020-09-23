@@ -47,7 +47,7 @@ export class InputAmountComponent implements ControlValueAccessor {
       this.value = value;
     }
     else {
-      if (this.input) { this.input.nativeElement.value = this.value.toString(); }
+      this.input.nativeElement.value = this.value.toString();
     }
   }
 }

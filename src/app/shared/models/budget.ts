@@ -10,13 +10,14 @@ export interface BudgetVersion {
   budgetId: number;
   number: number;
   state: BudgetVersionState;
+  stateDate: number;
   accountingPlan: {
     [key: string]: string;
   };
 }
 
 export type BudgetWithVersionsAndRealised = Budget & {
-  versions: BudgetVersion[];
+  versions: (BudgetVersion & { stateUserName: string })[];
   previousYear: Blpp[];
   currentYear: Blpp[];
 };

@@ -58,15 +58,30 @@
     </ng-template>
 
     <ng-container *ngIf="selectForm.form.get('budget')?.value">
-      <span *ngFor="let version of budget.versions | orderBy: 'number'" class="mr-5">
-        <a routerLink="./" [queryParams]="{version: version.number}" mat-raised-button
-          [color]="(currentVersion$ | async).number === version.number ? 'primary' : ''">
-          {{ version.number }}
-        </a>
-      </span>
-
       <ng-container *ngIf="currentVersion$ | async as currentVersion">
         <ng-container *ngIf="lastVersion$ | async as lastVersion">
+          <span *ngFor="let version of budget.versions | orderBy: 'number'" class="mr-5">
+            <a routerLink="./" [queryParams]="{version: version.number}" mat-raised-button
+              [color]="currentVersion.number === version.number ? 'primary' : ''">
+              {{ version.number }}
+            </a>
+          </span>
+          <button
+            *permissions="{roles: ['PM'], condition: lastVersion.state === budgetService.budgetVersionState.Rejected}"
+            type="button" mat-raised-button (click)="createBudgetVersion(budget.id)"><i
+              class="material-icons">add</i></button>
+
+          <span *ngIf="currentVersion.state !== budgetService.budgetVersionState.Pending">
+            This version was
+            {{ currentVersion.state === budgetService.budgetVersionState.Submitted  ? 'submitted' : '' }}
+            {{ currentVersion.state === budgetService.budgetVersionState.Accepted  ? 'accepted' : '' }}
+            {{ currentVersion.state === budgetService.budgetVersionState.Rejected  ? 'rejected' : '' }}
+            by
+            {{ currentVersion.stateUserName }}
+            on
+            {{ currentVersion.stateDate | date: 'medium' }}
+          </span>
+
           <ng-container *ngIf="accountingPlan$ | async as accountingPlan">
             <form #budgetForm="ngForm">
               <ng-template #nodeTmpl let-node="node" let-totalParent="totalParent" let-level="level">
@@ -112,10 +127,10 @@
                       </span>
                       <span class="item">{{ total.previousYear | number: '1.0-2' }}</span>
                       <span class="item">{{ total.currentYear | number: '1.0-2' }}</span>
-                      <!-- TODO: refacto permissions -->
-                      <app-input-amount [(ngModel)]="total.value" [name]="key"
-                        [disabled]="currentVersion.number !== lastVersion.number || ({roles: ['AM', 'AO'], condition: node.accountIsPmVisible || false} | permissions)"
-                        class="item"></app-input-amount>
+                      <app-input-amount [(ngModel)]="total.value" [name]="key" [disabled]="[
+                          {roles: ['PM'], condition: currentVersion.state !== budgetService.budgetVersionState.Pending},
+                          {roles: ['AM', 'AO'], condition: currentVersion.state !== budgetService.budgetVersionState.Submitted || (node.accountIsPmVisible || false)}
+                        ] | permissions" class="item"></app-input-amount>
                       <!-- TODO: remove 'x' -->
                       <span class="item">
                         {{ total.totalRoot.totalRevenue ? (total.total / total.totalRoot.totalRevenue | percent: '1.2-2') : 'x' }}
@@ -145,11 +160,41 @@
                 </ng-container>
               </div>
 
-              <div *ngIf="currentVersion.number === lastVersion.number" class="flex justify-end">
-                <button type="button" mat-raised-button (click)="save(currentVersion, budgetForm.value)">
-                  Enregistrer
-                </button>
-                <!-- <button type="button" mat-raised-button color="primary">Soumettre</button> -->
+              <div class="flex justify-end">
+                <ng-container
+                  *permissions="{roles: ['PM'], condition: currentVersion.state === budgetService.budgetVersionState.Pending}">
+                  <div class="mr-5">
+                    <button type="button" mat-raised-button (click)="save(currentVersion, budgetForm.value)">
+                      Enregistrer
+                    </button>
+                  </div>
+                  <div>
+                    <button type="button" mat-raised-button color="primary"
+                      (click)="submit(currentVersion, budgetForm.value)">
+                      Soumettre
+                    </button>
+                  </div>
+                </ng-container>
+                <ng-container
+                  *permissions="{roles: ['AM', 'AO'], condition: currentVersion.state === budgetService.budgetVersionState.Submitted}">
+                  <div class="mr-5">
+                    <button type="button" mat-raised-button (click)="save(currentVersion, budgetForm.value)">
+                      Enregistrer
+                    </button>
+                  </div>
+                  <div class="mr-5">
+                    <button type="button" mat-raised-button color="primary"
+                      (click)="accept(currentVersion, budgetForm.value)">
+                      Accepter
+                    </button>
+                  </div>
+                  <div>
+                    <button type="button" mat-raised-button color="warn"
+                      (click)="reject(currentVersion, budgetForm.value)">
+                      Rejeter
+                    </button>
+                  </div>
+                </ng-container>
               </div>
             </form>
           </ng-container>
