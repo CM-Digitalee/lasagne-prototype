@@ -39,6 +39,11 @@
 /* overflow */
 .ov-auto { overflow: auto; }
 .ov-hidden { overflow: hidden; }
+.ov-overlay { overflow: overlay; }
+
+@-moz-document url-prefix() {
+  .ov-overlay { overflow: auto; }
+}
 
 
 /* margin & padding */

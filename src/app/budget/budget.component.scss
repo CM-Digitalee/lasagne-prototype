@@ -1,6 +1,7 @@
 .line {
   border-bottom: 1px solid #bbb;
   padding: 10px 0;
+  padding-right: 15px; // scrollbar width 15px;
 
   &:not(.header):hover {
     background: #eee;
@@ -13,7 +14,7 @@
 
 .item { 
   margin: 0 10px;
-  flex-basis: 10%;
+  flex: 1 0 10%;
   display: flex;
   justify-content: flex-end;
 
