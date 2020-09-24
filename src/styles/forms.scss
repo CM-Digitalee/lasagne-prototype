@@ -1,0 +1,13 @@
+input.no-border {
+  padding: 0;
+  background: inherit;
+  border: none;
+  border-bottom: 1px solid black;
+  text-align: right;
+  box-sizing: border-box;
+  &:focus { outline: none; }
+  
+  &[disabled] {
+    border-bottom-color:transparent;
+  }
+}

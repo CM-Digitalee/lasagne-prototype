@@ -100,13 +100,12 @@
                     <span class="item">{{ total.totalCurrentYear | number: '1.0-2' }}</span>
                     <span class="item">{{ total.total | number: '1.0-2' }}</span>
                     <span class="item">
-                      <!-- TODO: remove 'x' -->
                       {{ total.totalRoot.totalRevenue ? (total.total / total.totalRoot.totalRevenue | percent: '1.2-2') : 'x' }}
                     </span>
                     <span class="item">
-                      <!-- TODO: remove 'x' -->
                       {{ total.totalRoot.totalOpex ? (total.total / total.totalRoot.totalOpex | percent: '1.2-2') : 'x' }}
                     </span>
+                    <span class="item comment"></span>
                   </div>
                   <div [@expand]="accordionItem.expanded" style="overflow: hidden;">
                     <ng-container *ngFor="let node of node.children">
@@ -119,8 +118,9 @@
 
                 <ng-template #leafTmpl>
                   <ng-container *ngIf="node.subAccount ? node.account + '/' + node.subAccount : node.account as key">
-                    <div total [value]="+currentVersion.accountingPlan[key] || 0" [totalParent]="totalParent"
-                      [isRevenue]="!!node.accountIsRevenue" [isOpex]="!!node.accountIsOpex" #total="total"
+                    <div [ngModelGroup]="key" total #total="total"
+                      [value]="+currentVersion.accountingPlan[key]?.value || 0" [totalParent]="totalParent"
+                      [isRevenue]="!!node.accountIsRevenue" [isOpex]="!!node.accountIsOpex"
                       [previousYear]="+(budget.previousYear | filterBy: 'account': node.blppAccountMapping)[0]?.amount || 0"
                       [currentYear]="+(budget.currentYear | filterBy: 'account': node.blppAccountMapping)[0]?.amount || 0"
                       class="line flex">
@@ -131,19 +131,22 @@
                       <span class="item">{{ total.currentYear | number: '1.0-2' }}</span>
                       <app-input-amount
                         *ngIf="currentVersion.state === budgetService.budgetVersionState.Pending else notEditable"
-                        [(ngModel)]="total.value" [name]="key"
+                        [(ngModel)]="total.value" name="value"
                         [disabled]="{roles: ['AM', 'AO'], condition: node.accountIsPmVisible || false} | permissions"
                         class="item"></app-input-amount>
                       <ng-template #notEditable>
                         <span class="item">{{ total.value | number: '1.0-2' }}</span>
                       </ng-template>
-                      <!-- TODO: remove 'x' -->
                       <span class="item">
                         {{ total.totalRoot.totalRevenue ? (total.total / total.totalRoot.totalRevenue | percent: '1.2-2') : 'x' }}
                       </span>
-                      <!-- TODO: remove 'x' -->
                       <span class="item">
                         {{ total.totalRoot.totalOpex ? (total.total / total.totalRoot.totalOpex | percent: '1.2-2') : 'x' }}
+                      </span>
+                      <span class="item comment">
+                        <input type="text" [ngModel]="currentVersion.accountingPlan[key]?.comment" name="comment"
+                          class="no-border"
+                          [disabled]="currentVersion.state !== budgetService.budgetVersionState.Pending">
                       </span>
                     </div>
                   </ng-container>
@@ -157,42 +160,50 @@
                 <div class="item">Budget 2021</div>
                 <div class="item">% of Rental Income</div>
                 <div class="item">% of Rental Expenses</div>
+                <div class="item comment">Comment</div>
               </div>
 
-              <div total #total="total" class="ov-auto mb-15" style="height: calc(100vh - 350px);">
+              <div total #total="total" class="ov-auto mb-15" style="height: calc(100vh - 400px);">
                 <ng-container *ngFor=" let node of accountingPlan">
                   <ng-container *ngTemplateOutlet="nodeTmpl; context: {node: node, totalParent: total, level: 0}">
                   </ng-container>
                 </ng-container>
               </div>
 
-              <div *ngIf="currentVersion.state === budgetService.budgetVersionState.Pending" class="flex justify-end">
-                <div class="mr-5">
-                  <button type="button" mat-raised-button (click)="save(currentVersion, budgetForm.value)">
-                    Enregistrer
-                  </button>
-                </div>
-                <ng-container *permissions="{roles: ['PM']}">
-                  <div>
-                    <button type="button" mat-raised-button color="primary"
-                      (click)="submit(currentVersion, budgetForm.value)">
-                      Soumettre
-                    </button>
-                  </div>
-                </ng-container>
-                <ng-container *permissions="{roles: ['AM', 'AO']}">
+              <div class="flex align-center">
+                <mat-form-field class="fill mr-20">
+                  <mat-label>Comment</mat-label>
+                  <textarea matInput mat-autosize [ngModel]="currentVersion.accountingPlan?.comment" name="comment"
+                    [disabled]="currentVersion.state !== budgetService.budgetVersionState.Pending"></textarea>
+                </mat-form-field>
+                <ng-container *ngIf="currentVersion.state === budgetService.budgetVersionState.Pending">
                   <div class="mr-5">
-                    <button type="button" mat-raised-button color="primary"
-                      (click)="accept(currentVersion, budgetForm.value)">
-                      Accepter
+                    <button type="button" mat-raised-button (click)="save(currentVersion, budgetForm.value)">
+                      Save draft
                     </button>
                   </div>
-                  <div>
-                    <button type="button" mat-raised-button color="warn"
-                      (click)="reject(currentVersion, budgetForm.value)">
-                      Rejeter
-                    </button>
-                  </div>
+                  <ng-container *permissions="{roles: ['PM']}">
+                    <div>
+                      <button type="button" mat-raised-button color="primary"
+                        (click)="submit(currentVersion, budgetForm.value)">
+                        Submit
+                      </button>
+                    </div>
+                  </ng-container>
+                  <ng-container *permissions="{roles: ['AM', 'AO']}">
+                    <div class="mr-5">
+                      <button type="button" mat-raised-button color="primary"
+                        (click)="accept(currentVersion, budgetForm.value)">
+                        Accept
+                      </button>
+                    </div>
+                    <div>
+                      <button type="button" mat-raised-button color="warn"
+                        (click)="reject(currentVersion, budgetForm.value)">
+                        Reject
+                      </button>
+                    </div>
+                  </ng-container>
                 </ng-container>
               </div>
             </form>

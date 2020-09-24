@@ -81,7 +81,19 @@ export class BudgetFakeServerService {
       state: BudgetVersionState.Pending,
       stateDate: Date.now(),
       stateUserId: this.currentUser.id,
-      accountingPlan: lastVersion?.accountingPlan || {}
+      accountingPlan: lastVersion?.accountingPlan
+        ? Object.assign(
+          {},
+          ...Object.entries(lastVersion.accountingPlan).map(([key, value]) => {
+            if (typeof value === 'object') {
+              const newValue = { ...value };
+              delete newValue.comment;
+              return { [key]: newValue };
+            }
+            return;
+          })
+        )
+        : {}
     };
 
     this.budgetVersions$.next([...this.budgetVersions$.value, newVersion]);
