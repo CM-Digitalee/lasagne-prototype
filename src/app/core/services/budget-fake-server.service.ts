@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, combineLatest, of } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { map, shareReplay } from 'rxjs/operators';
 
 import { Budget, BudgetVersion, BudgetVersionState, BudgetWithVersionsAndRealised, Role, User } from '../../../app/shared';
 import budgets from '../../../fake-data/budgets';
@@ -54,7 +54,8 @@ export class BudgetFakeServerService {
           previousYear: blpps.filter(blpp => +blpp.asset === budget.assetId && blpp.date.includes('2019')),
           currentYear: blpps.filter(blpp => +blpp.asset === budget.assetId && blpp.date.includes('2020'))
         } as BudgetWithVersionsAndRealised;
-      }))
+      })),
+      shareReplay({ refCount: true, bufferSize: 1 })
     );
   }
 

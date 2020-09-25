@@ -3,7 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { animate, state, style, transition, trigger } from '@angular/animations';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { asyncScheduler, iif, of } from 'rxjs';
-import { filter, map, pluck, shareReplay, switchMap, tap } from 'rxjs/operators';
+import { filter, map, pluck, shareReplay, switchMap, take, tap } from 'rxjs/operators';
 
 import { BudgetVersion, BudgetWithVersionsAndRealised } from '../shared';
 import { AccountingPlanService, AssetService, BudgetService, PortfolioService } from '../core';
@@ -99,13 +99,13 @@ export class BudgetComponent {
     public portfolioService: PortfolioService,
     public budgetService: BudgetService,
     public dialog: MatDialog,
+    public route: ActivatedRoute,
     private router: Router,
-    private route: ActivatedRoute,
     private cdr: ChangeDetectorRef
   ) { }
 
   create(portfolioId: number, assetId: number, name: string, dialogRef: MatDialogRef<any>) {
-    this.budgetService.create({ portfolioId, assetId, name }).subscribe(
+    this.budgetService.create({ portfolioId, assetId, name }).pipe(take(1)).subscribe(
       budget => {
         dialogRef.close();
         this.goToBudget(budget.id);

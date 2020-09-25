@@ -27,7 +27,7 @@
         *ngIf="(budgetService.budgets$ | async | filterBy: 'portfolioId': portfolioSelect.value | filterBy: 'assetId': assetSelect.value || []) as budgets"
         class="mr-20">
         <mat-label>Budget</mat-label>
-        <mat-select name="budget" [ngModel]="+(route.params | async).id"
+        <mat-select name="budget" [ngModel]="budget.id || assetSelect.value && !budgets.length && ''"
           [disabled]="!assetSelect.value || !budgets.length" (ngModelChange)="$event && goToBudget($event)">
           <ng-container *ngIf="budgets.length else noBudget">
             <mat-option *ngFor="let budget of budgets" [value]="budget.id">
