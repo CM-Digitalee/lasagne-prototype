@@ -27,7 +27,7 @@
         *ngIf="(budgetService.budgets$ | async | filterBy: 'portfolioId': portfolioSelect.value | filterBy: 'assetId': assetSelect.value || []) as budgets"
         class="mr-20">
         <mat-label>Budget</mat-label>
-        <mat-select name="budget" [ngModel]="budget.id || assetSelect.value && !budgets.length && ''"
+        <mat-select name="budget" [ngModel]="+(route.params | async).id"
           [disabled]="!assetSelect.value || !budgets.length" (ngModelChange)="$event && goToBudget($event)">
           <ng-container *ngIf="budgets.length else noBudget">
             <mat-option *ngFor="let budget of budgets" [value]="budget.id">
@@ -89,13 +89,16 @@
               <ng-template #nodeTmpl let-node="node" let-totalParent="totalParent" let-level="level">
                 <ng-container *ngIf="node.children else leafTmpl" #accordionItem="cdkAccordionItem" cdkAccordionItem
                   expanded>
-                  <div class="line flex pointer" (click)="accordionItem.toggle()" total [totalParent]="totalParent"
+                  <div class="node line flex pointer" (click)="accordionItem.toggle()" total [totalParent]="totalParent"
                     #total="total">
-                    <div class="label flex align-center" [style.padding-left.px]="level*30">
+                    <span class="label flex align-center ov-hidden" [style.padding-left.px]="level*20">
                       <i class="material-icons expand-icon"
-                        [ngClass]="{'expanded': accordionItem.expanded}">expand_less</i>
-                      <span>{{ node.label }}</span>
-                    </div>
+                        [ngClass]="{'expanded': accordionItem.expanded}">navigate_next</i>
+                      <span #elmt [matTooltip]="node.label" [matTooltipDisabled]="elmt.scrollWidth <= elmt.offsetWidth"
+                        class="truncate">
+                        {{ node.label }}
+                      </span>
+                    </span>
                     <span class="item">{{ total.totalPreviousYear | amount }}</span>
                     <span class="item">{{ total.totalCurrentYear | amount }}</span>
                     <span class="item">{{ total.total | amount }}</span>
@@ -124,7 +127,9 @@
                       [previousYear]="+(budget.previousYear | filterBy: 'account': node.blppAccountMapping)[0]?.amount || 0"
                       [currentYear]="+(budget.currentYear | filterBy: 'account': node.blppAccountMapping)[0]?.amount || 0"
                       class="line flex">
-                      <span class="label" [style.padding-left.px]="level*30">
+                      <span #elmt [matTooltip]="node.subAccountDescription || node.accountDescription"
+                        [matTooltipDisabled]="elmt.scrollWidth <= elmt.offsetWidth" class="label truncate"
+                        [style.padding-left.px]="level*30">
                         {{ node.subAccountDescription || node.accountDescription }}
                       </span>
                       <span class="item">{{ total.previousYear | amount }}</span>
@@ -174,7 +179,8 @@
                 <mat-form-field class="fill mr-20">
                   <mat-label>Comment</mat-label>
                   <textarea matInput mat-autosize [ngModel]="currentVersion.accountingPlan?.comment" name="comment"
-                    [disabled]="currentVersion.state !== budgetService.budgetVersionState.Pending"></textarea>
+                    [disabled]="currentVersion.state !== budgetService.budgetVersionState.Pending"
+                    style="overflow: hidden;"></textarea>
                 </mat-form-field>
                 <ng-container *ngIf="currentVersion.state === budgetService.budgetVersionState.Pending">
                   <div class="mr-5">

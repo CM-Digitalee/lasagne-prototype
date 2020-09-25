@@ -1,15 +1,27 @@
+
 .line {
   border-bottom: 1px solid #bbb;
   padding: 10px 0;
   padding-right: 15px; // scrollbar width 15px;
+  transition: background 100ms;
 
-  &:not(.header):hover {
+  &.node {
+    background: #f5f5f5;
+  }
+  
+  &:not(.header):not(.node):hover {
     background: #eee;
   }
 }
 
 .label { 
   flex-basis: 30%; 
+}
+
+.truncate {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .item { 
@@ -32,6 +44,6 @@
   transition: transform 250ms ease-in-out;
   
   &.expanded {
-    transform: rotate(180deg);
+    transform: rotate(90deg);
   }
 }
