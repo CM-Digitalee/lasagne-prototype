@@ -7,7 +7,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatDialogModule } from '@angular/material/dialog';
 import { CdkAccordionModule } from '@angular/cdk/accordion';
 
-import { FilterByModule, InputAmountModule, OrderByModule } from '../shared';
+import { AmountModule, FilterByModule, InputAmountModule, OrderByModule } from '../shared';
 import { PermissionsModule } from '../core/permissions';
 import { BudgetRoutingModule } from './budget-routing.module';
 import { BudgetComponent } from './budget.component';
@@ -30,7 +30,8 @@ import { TotalDirective } from './total.directive';
     FilterByModule,
     OrderByModule,
     PermissionsModule,
-    InputAmountModule
+    InputAmountModule,
+    AmountModule
   ]
 })
 export class BudgetModule { }

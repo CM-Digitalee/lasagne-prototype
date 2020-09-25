@@ -96,9 +96,9 @@
                         [ngClass]="{'expanded': accordionItem.expanded}">expand_less</i>
                       <span>{{ node.label }}</span>
                     </div>
-                    <span class="item">{{ total.totalPreviousYear | number: '1.2-2' }}</span>
-                    <span class="item">{{ total.totalCurrentYear | number: '1.2-2' }}</span>
-                    <span class="item">{{ total.total | number: '1.2-2' }}</span>
+                    <span class="item">{{ total.totalPreviousYear | amount }}</span>
+                    <span class="item">{{ total.totalCurrentYear | amount }}</span>
+                    <span class="item">{{ total.total | amount }}</span>
                     <span class="item">
                       {{ total.totalRoot.totalRevenue ? (total.total / total.totalRoot.totalRevenue | percent: '1.2-2') : 'x' }}
                     </span>
@@ -127,15 +127,15 @@
                       <span class="label" [style.padding-left.px]="level*30">
                         {{ node.subAccountDescription || node.accountDescription }}
                       </span>
-                      <span class="item">{{ total.previousYear | number: '1.2-2' }}</span>
-                      <span class="item">{{ total.currentYear | number: '1.2-2' }}</span>
+                      <span class="item">{{ total.previousYear | amount }}</span>
+                      <span class="item">{{ total.currentYear | amount }}</span>
                       <app-input-amount
                         *ngIf="currentVersion.state === budgetService.budgetVersionState.Pending else notEditable"
                         [(ngModel)]="total.value" name="value"
                         [disabled]="{roles: ['AM', 'AO'], condition: node.accountIsPmVisible || false} | permissions"
                         class="item"></app-input-amount>
                       <ng-template #notEditable>
-                        <span class="item">{{ total.value | number: '1.2-2' }}</span>
+                        <span class="item">{{ total.value | amount }}</span>
                       </ng-template>
                       <span class="item">
                         {{ total.totalRoot.totalRevenue ? (total.total / total.totalRoot.totalRevenue | percent: '1.2-2') : 'x' }}
