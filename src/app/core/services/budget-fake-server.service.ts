@@ -73,7 +73,7 @@ export class BudgetFakeServerService {
   createVersion(budgetId: number) {
     const lastVersion = this.budgetVersions$.value
       .filter(version => version.budgetId === budgetId)
-      .find(version => version.number === this.budgetVersions$.value.map(v => v.number).sort((a, b) => b - a)[0]);
+      .sort((a, b) => b.number - a.number)[0];
 
     const newVersion = {
       id: Date.now(),
