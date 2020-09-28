@@ -82,19 +82,7 @@ export class BudgetFakeServerService {
       state: BudgetVersionState.Pending,
       stateDate: Date.now(),
       stateUserId: this.currentUser.id,
-      accountingPlan: lastVersion?.accountingPlan
-        ? Object.assign(
-          {},
-          ...Object.entries(lastVersion.accountingPlan).map(([key, value]) => {
-            if (typeof value === 'object') {
-              const newValue = { ...value };
-              delete newValue.comment;
-              return { [key]: newValue };
-            }
-            return;
-          })
-        )
-        : {}
+      accountingPlan: lastVersion?.accountingPlan || {}
     };
 
     this.budgetVersions$.next([...this.budgetVersions$.value, newVersion]);
@@ -122,11 +110,11 @@ export class BudgetFakeServerService {
     return this.patchVersion(id, { ...data, state: BudgetVersionState.Submitted });
   }
 
-  acceptVersion(id: number) {
-    return this.patchVersion(id, { state: BudgetVersionState.Accepted });
+  acceptVersion(id: number, data: Partial<BudgetVersion>) {
+    return this.patchVersion(id, { ...data, state: BudgetVersionState.Accepted });
   }
 
-  rejectVersion(id: number) {
-    return this.patchVersion(id, { state: BudgetVersionState.Rejected });
+  rejectVersion(id: number, data: Partial<BudgetVersion>) {
+    return this.patchVersion(id, { ...data, state: BudgetVersionState.Rejected });
   }
 }

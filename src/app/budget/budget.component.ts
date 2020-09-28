@@ -114,19 +114,19 @@ export class BudgetComponent {
   }
 
   save(version: BudgetVersion, form: { [key: string]: string }) {
-    this.budgetService.saveVersion({ ...version, accountingPlan: form }).subscribe();
+    this.budgetService.saveVersion({ ...version, accountingPlan: { ...version.accountingPlan, ...form } }).subscribe();
   }
 
   submit(version: BudgetVersion, form: { [key: string]: string }) {
-    this.budgetService.submitVersion({ ...version, accountingPlan: form }).subscribe();
+    this.budgetService.submitVersion({ ...version, accountingPlan: { ...version.accountingPlan, ...form } }).subscribe();
   }
 
-  accept(version: BudgetVersion) {
-    this.budgetService.acceptVersion(version.id).subscribe();
+  accept(version: BudgetVersion, form: { [key: string]: string }) {
+    this.budgetService.acceptVersion({ ...version, accountingPlan: { ...version.accountingPlan, ...form } }).subscribe();
   }
 
-  reject(version: BudgetVersion) {
-    this.budgetService.rejectVersion(version.id).subscribe();
+  reject(version: BudgetVersion, form: { [key: string]: string }) {
+    this.budgetService.rejectVersion({ ...version, accountingPlan: { ...version.accountingPlan, ...form } }).subscribe();
   }
 
   createBudgetVersion(budgetId: number) {
