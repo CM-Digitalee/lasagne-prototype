@@ -1,10 +1,10 @@
-import { AfterViewInit, Directive, Input } from '@angular/core';
+import { AfterViewInit, Directive, Input, OnDestroy } from '@angular/core';
 
 @Directive({
   selector: '[total]',
   exportAs: 'total'
 })
-export class TotalDirective implements AfterViewInit {
+export class TotalDirective implements AfterViewInit, OnDestroy {
   @Input() totalParent: TotalDirective;
   @Input() isRevenue: boolean;
   @Input() isOpex: boolean;
@@ -49,8 +49,16 @@ export class TotalDirective implements AfterViewInit {
     if (this.totalParent) { this.totalParent.register(this); }
   }
 
+  ngOnDestroy() {
+    if (this.totalParent) { this.totalParent.unregister(this); }
+  }
+
   register(total: TotalDirective) {
     this.children = [...this.children, total];
+  }
+
+  unregister(total: TotalDirective) {
+    this.children = this.children.filter(child => child !== total);
   }
 
   get totalRoot() {
