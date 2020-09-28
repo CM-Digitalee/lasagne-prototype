@@ -4,14 +4,15 @@ import { Injectable } from '@angular/core';
   providedIn: 'root'
 })
 export class LocaleService {
-  supportedLocales = [
-    'fr-FR',
-    'fr-CH',
-    'de-CH',
-    'it-CH'
-  ];
+  private supportedLocaleMapping = {
+    'fr': 'fr-FR',
+    'fr-FR': 'fr-FR',
+    'fr-CH': 'fr-CH',
+    'de-CH': 'de-CH',
+    'it-CH': 'it-CH'
+  };
 
   getLocale() {
-    return this.supportedLocales.find(locale => locale === navigator.language) || 'en';
+    return this.supportedLocaleMapping[navigator.language] || 'en';
   }
 }
