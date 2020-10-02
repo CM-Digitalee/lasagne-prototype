@@ -12,8 +12,8 @@ export class UserService {
   users: User[] = users;
 
   // TODO
-  // private _currentUser$ = new BehaviorSubject<User>(this.users[0]);
-  private _currentUser$ = new BehaviorSubject<User>(null);
+  private _currentUser$ = new BehaviorSubject<User>(this.users[2]);
+  // private _currentUser$ = new BehaviorSubject<User>(null);
   get currentUser$() { return this._currentUser$.asObservable(); }
 
   constructor(private router: Router) { }

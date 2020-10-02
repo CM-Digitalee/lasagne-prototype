@@ -11,12 +11,14 @@ export interface BudgetVersion {
   number: number;
   state: BudgetVersionState;
   stateDate: number;
-  accountingPlan: {
-    comment?: string;
-    [key: string]: string | {
-      value: string;
-      comment: string;
-    };
+  accountingPlan: AccountingPlan;
+}
+
+export interface AccountingPlan {
+  comment?: string;
+  [key: string]: string | {
+    value: string;
+    comment: string;
   };
 }
 

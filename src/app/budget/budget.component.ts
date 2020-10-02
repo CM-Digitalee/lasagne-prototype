@@ -5,7 +5,7 @@ import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { asyncScheduler, iif, of } from 'rxjs';
 import { filter, map, pluck, shareReplay, switchMap, take, tap } from 'rxjs/operators';
 
-import { BudgetVersion, BudgetWithVersionsAndRealised } from '../shared';
+import { AccountingPlan, BudgetVersion, BudgetWithVersionsAndRealised } from '../shared';
 import { AccountingPlanService, AssetService, BudgetService, PortfolioService } from '../core';
 
 const nodes = (entries: any, key: { id: string, name: string }) =>
@@ -113,20 +113,20 @@ export class BudgetComponent {
     );
   }
 
-  save(version: BudgetVersion, form: { [key: string]: string }) {
-    this.budgetService.saveVersion({ ...version, accountingPlan: { ...version.accountingPlan, ...form } }).subscribe();
+  save(versionId: number, formValue: AccountingPlan) {
+    this.budgetService.saveVersion(versionId, formValue).subscribe();
   }
 
-  submit(version: BudgetVersion, form: { [key: string]: string }) {
-    this.budgetService.submitVersion({ ...version, accountingPlan: { ...version.accountingPlan, ...form } }).subscribe();
+  submit(versionId: number, formValue: AccountingPlan) {
+    this.budgetService.submitVersion(versionId, formValue).subscribe();
   }
 
-  accept(version: BudgetVersion, form: { [key: string]: string }) {
-    this.budgetService.acceptVersion({ ...version, accountingPlan: { ...version.accountingPlan, ...form } }).subscribe();
+  accept(versionId: number, formValue: AccountingPlan) {
+    this.budgetService.acceptVersion(versionId, formValue).subscribe();
   }
 
-  reject(version: BudgetVersion, form: { [key: string]: string }) {
-    this.budgetService.rejectVersion({ ...version, accountingPlan: { ...version.accountingPlan, ...form } }).subscribe();
+  reject(versionId: number, formValue: AccountingPlan) {
+    this.budgetService.rejectVersion(versionId, formValue).subscribe();
   }
 
   createBudgetVersion(budgetId: number) {
@@ -138,4 +138,6 @@ export class BudgetComponent {
   goToBudget(id: number) {
     this.router.navigate([id], { relativeTo: this.route.snapshot.params.id ? this.route.parent : this.route });
   }
+
+  trackByFn(index: number) { return index; }
 }

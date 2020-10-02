@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject, combineLatest, of } from 'rxjs';
 import { map, shareReplay } from 'rxjs/operators';
 
-import { Budget, BudgetVersion, BudgetVersionState, BudgetWithVersionsAndRealised, Role, User } from '../../../app/shared';
+import { AccountingPlan, Budget, BudgetVersion, BudgetVersionState, BudgetWithVersionsAndRealised, Role, User } from '../../../app/shared';
 import budgets from '../../../fake-data/budgets';
 import budgetVersions from '../../../fake-data/budget-versions';
 import blpps from '../../../fake-data/asset_bl-pp_2019-2020';
@@ -89,15 +89,23 @@ export class BudgetFakeServerService {
     return of(newVersion);
   }
 
-  patchVersion(id: number, data: Partial<BudgetVersion>) {
+  patchVersion(id: number, data: AccountingPlan, state?: BudgetVersionState) {
     const budgetVersions = this.budgetVersions$.value;
     const colIndex = budgetVersions.findIndex(version => version.id === id);
     const updatedVersion = {
       ...budgetVersions[colIndex],
-      ...data,
+      accountingPlan: Object.assign(
+        budgetVersions[colIndex].accountingPlan,
+        ...Object.entries(data).map(([key, value]) =>
+          (typeof value === 'object' && value !== null)
+            ? { [key]: { ...budgetVersions[colIndex].accountingPlan[key] as object, ...value } }
+            : { [key]: value }
+        )),
       stateDate: Date.now(),
-      stateUserId: this.currentUser.id
+      stateUserId: this.currentUser.id,
+      ...(state && { state })
     };
+
     this.budgetVersions$.next([
       ...budgetVersions.slice(0, colIndex),
       updatedVersion,
@@ -106,15 +114,15 @@ export class BudgetFakeServerService {
     return of(updatedVersion as BudgetVersion);
   }
 
-  submitVersion(id: number, data: Partial<BudgetVersion>) {
-    return this.patchVersion(id, { ...data, state: BudgetVersionState.Submitted });
+  submitVersion(id: number, data: AccountingPlan) {
+    return this.patchVersion(id, data, BudgetVersionState.Submitted);
   }
 
-  acceptVersion(id: number, data: Partial<BudgetVersion>) {
-    return this.patchVersion(id, { ...data, state: BudgetVersionState.Accepted });
+  acceptVersion(id: number, data: AccountingPlan) {
+    return this.patchVersion(id, data, BudgetVersionState.Accepted);
   }
 
-  rejectVersion(id: number, data: Partial<BudgetVersion>) {
-    return this.patchVersion(id, { ...data, state: BudgetVersionState.Rejected });
+  rejectVersion(id: number, data: AccountingPlan) {
+    return this.patchVersion(id, data, BudgetVersionState.Rejected);
   }
 }

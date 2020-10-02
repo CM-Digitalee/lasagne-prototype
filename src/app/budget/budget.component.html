@@ -47,12 +47,14 @@
     </form>
 
     <ng-template #createBudget let-dialogRef="dialogRef">
-      <form (ngSubmit)="create(portfolioSelect.value, assetSelect.value, budgetName.value, dialogRef)">
+      <form #createForm="ngForm"
+        (ngSubmit)="create(portfolioSelect.value, assetSelect.value, budgetName.value, dialogRef)">
         <mat-form-field>
           <mat-label>Name</mat-label>
-          <input matInput type="text" name="budget" ngModel #budgetName="ngModel" required>
+          <input matInput type="text" name="budget" ngModel #budgetName="ngModel"
+            (input)="budgetName.control.setValue($event.target.value.trimStart())" required>
         </mat-form-field>
-        <button type="submit" mat-raised-button color="primary">Create</button>
+        <button type="submit" mat-raised-button color="primary" [disabled]="createForm.invalid">Create</button>
         <button type="button" mat-raised-button (click)="dialogRef.close()">Cancel</button>
       </form>
     </ng-template>
@@ -111,7 +113,7 @@
                     <span class="item comment"></span>
                   </div>
                   <div [@expand]="accordionItem.expanded" style="overflow: hidden;">
-                    <ng-container *ngFor="let node of node.children">
+                    <ng-container *ngFor="let node of node.children; trackBy: trackByFn">
                       <ng-container
                         *ngTemplateOutlet="nodeTmpl; context: {node: node, totalParent: total, level: level + 1}">
                       </ng-container>
@@ -169,7 +171,7 @@
               </div>
 
               <div total #total="total" class="ov-overlay mb-15" style="height: calc(100vh - 400px);">
-                <ng-container *ngFor=" let node of accountingPlan">
+                <ng-container *ngFor=" let node of accountingPlan; trackBy: trackByFn">
                   <ng-container *ngTemplateOutlet="nodeTmpl; context: {node: node, totalParent: total, level: 0}">
                   </ng-container>
                 </ng-container>
@@ -184,14 +186,14 @@
                 </mat-form-field>
                 <ng-container *ngIf="currentVersion.state === budgetService.budgetVersionState.Pending">
                   <div class="mr-5">
-                    <button type="button" mat-raised-button (click)="save(currentVersion, budgetForm.value)">
+                    <button type="button" mat-raised-button (click)="save(currentVersion.id, budgetForm.value)">
                       Save draft
                     </button>
                   </div>
                   <ng-container *permissions="{roles: ['PM']}">
                     <div>
                       <button type="button" mat-raised-button color="primary"
-                        (click)="submit(currentVersion, budgetForm.value)">
+                        (click)="submit(currentVersion.id, budgetForm.value)">
                         Submit
                       </button>
                     </div>
@@ -199,13 +201,13 @@
                   <ng-container *permissions="{roles: ['AM', 'AO']}">
                     <div class="mr-5">
                       <button type="button" mat-raised-button color="primary"
-                        (click)="accept(currentVersion, budgetForm.value)">
+                        (click)="accept(currentVersion.id, budgetForm.value)">
                         Accept
                       </button>
                     </div>
                     <div>
                       <button type="button" mat-raised-button color="warn"
-                        (click)="reject(currentVersion, budgetForm.value)">
+                        (click)="reject(currentVersion.id, budgetForm.value)">
                         Reject
                       </button>
                     </div>

@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 
-import { Budget, BudgetVersion, BudgetVersionState, BudgetWithVersionsAndRealised } from '../../../app/shared';
+import { AccountingPlan, Budget, BudgetVersion, BudgetVersionState, BudgetWithVersionsAndRealised } from '../../../app/shared';
 import { BudgetFakeServerService } from './budget-fake-server.service';
 import { HttpFakeService } from './http-fake.service';
 
@@ -26,19 +26,19 @@ export class BudgetService {
     return this.budgetFakeServerService.createVersion(budgetId);
   }
 
-  saveVersion(version: BudgetVersion) {
-    return this.budgetFakeServerService.patchVersion(version.id, version);
+  saveVersion(versionId: number, formValue: AccountingPlan) {
+    return this.budgetFakeServerService.patchVersion(versionId, formValue);
   }
 
-  submitVersion(version: BudgetVersion) {
-    return this.budgetFakeServerService.submitVersion(version.id, version);
+  submitVersion(versionId: number, formValue: AccountingPlan) {
+    return this.budgetFakeServerService.submitVersion(versionId, formValue);
   }
 
-  acceptVersion(version: BudgetVersion) {
-    return this.budgetFakeServerService.acceptVersion(version.id, version);
+  acceptVersion(versionId: number, formValue: AccountingPlan) {
+    return this.budgetFakeServerService.acceptVersion(versionId, formValue);
   }
 
-  rejectVersion(version: BudgetVersion) {
-    return this.budgetFakeServerService.rejectVersion(version.id, version);
+  rejectVersion(versionId: number, formValue: AccountingPlan) {
+    return this.budgetFakeServerService.rejectVersion(versionId, formValue);
   }
 }
