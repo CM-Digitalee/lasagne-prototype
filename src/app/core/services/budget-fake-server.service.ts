@@ -82,7 +82,7 @@ export class BudgetFakeServerService {
       state: BudgetVersionState.Pending,
       stateDate: Date.now(),
       stateUserId: this.currentUser.id,
-      accountingPlan: lastVersion?.accountingPlan || {}
+      accountingPlan: { ...lastVersion?.accountingPlan } || {}
     };
 
     this.budgetVersions$.next([...this.budgetVersions$.value, newVersion]);
@@ -95,12 +95,13 @@ export class BudgetFakeServerService {
     const updatedVersion = {
       ...budgetVersions[colIndex],
       accountingPlan: Object.assign(
-        budgetVersions[colIndex].accountingPlan,
+        { ...budgetVersions[colIndex].accountingPlan },
         ...Object.entries(data).map(([key, value]) =>
           (typeof value === 'object' && value !== null)
             ? { [key]: { ...budgetVersions[colIndex].accountingPlan[key] as object, ...value } }
             : { [key]: value }
-        )),
+        )
+      ),
       stateDate: Date.now(),
       stateUserId: this.currentUser.id,
       ...(state && { state })

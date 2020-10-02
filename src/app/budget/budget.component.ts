@@ -5,7 +5,7 @@ import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { asyncScheduler, iif, of } from 'rxjs';
 import { filter, map, pluck, shareReplay, switchMap, take, tap } from 'rxjs/operators';
 
-import { AccountingPlan, BudgetVersion, BudgetWithVersionsAndRealised } from '../shared';
+import { AccountingPlan, BudgetWithVersionsAndRealised } from '../shared';
 import { AccountingPlanService, AssetService, BudgetService, PortfolioService } from '../core';
 
 const nodes = (entries: any, key: { id: string, name: string }) =>
@@ -137,6 +137,19 @@ export class BudgetComponent {
 
   goToBudget(id: number) {
     this.router.navigate([id], { relativeTo: this.route.snapshot.params.id ? this.route.parent : this.route });
+  }
+
+  updateCurrentVersion(currentAccountingPlan: AccountingPlan, budgetForm: AccountingPlan) {
+    Object.assign(
+      currentAccountingPlan,
+      ...Object.entries(budgetForm).map(([key, value]) =>
+        (typeof value === 'object' && value !== null)
+          ? { [key]: { ...currentAccountingPlan[key] as object, ...value } }
+          : { [key]: value }
+      )
+    );
+
+    this.cdr.detectChanges();
   }
 
   trackByFn(index: number) { return index; }

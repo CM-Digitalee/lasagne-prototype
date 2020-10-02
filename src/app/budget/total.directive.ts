@@ -6,14 +6,13 @@ import { AfterViewInit, Directive, Input, OnDestroy } from '@angular/core';
 })
 export class TotalDirective implements AfterViewInit, OnDestroy {
   @Input() totalParent: TotalDirective;
-  @Input() isRevenue: boolean;
-  @Input() isOpex: boolean;
+  @Input() value: number;
   @Input() previousYear: number;
   @Input() currentYear: number;
+  @Input() isRevenue: boolean;
+  @Input() isOpex: boolean;
 
   children: TotalDirective[] = [];
-
-  @Input() value = 0;
 
   get total() {
     return this.children.length

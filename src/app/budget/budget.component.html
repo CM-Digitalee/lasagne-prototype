@@ -60,33 +60,34 @@
     </ng-template>
 
     <ng-container *ngIf="selectForm.form.get('budget')?.value">
-      <ng-container *ngIf="currentVersion$ | async as currentVersion">
-        <ng-container *ngIf="lastVersion$ | async as lastVersion">
-          <span *ngFor="let version of budget.versions | orderBy: 'number'" class="mr-5">
-            <a routerLink="./" [queryParams]="{version: version.number}" mat-raised-button
-              [color]="currentVersion.number === version.number ? 'primary' : ''">
-              {{ version.number }}
-            </a>
-          </span>
-          <button *permissions="[
+      <ng-container *ngIf="accountingPlan$ | async as accountingPlan">
+        <ng-container *ngIf="currentVersion$ | async as currentVersion">
+          <ng-container *ngIf="lastVersion$ | async as lastVersion">
+            <span *ngFor="let version of budget.versions | orderBy: 'number'" class="mr-5">
+              <a mat-raised-button routerLink="./" [queryParams]="{version: version.number}"
+                (click)="currentVersion === lastVersion && updateCurrentVersion(currentVersion.accountingPlan, budgetForm.value)"
+                [color]="currentVersion.number === version.number ? 'primary' : ''">
+                {{ version.number }}
+              </a>
+            </span>
+            <button *permissions="[
               {roles: ['PM'], condition: lastVersion.state === budgetService.budgetVersionState.Rejected},
               {roles: ['AM', 'AO'], condition: lastVersion.state === budgetService.budgetVersionState.Submitted}
             ]" type="button" mat-raised-button (click)="createBudgetVersion(budget.id)">
-            <i class="material-icons">add</i>
-          </button>
+              <i class="material-icons">add</i>
+            </button>
 
-          <span *ngIf="currentVersion.state !== budgetService.budgetVersionState.Pending">
-            This version was
-            {{ currentVersion.state === budgetService.budgetVersionState.Submitted  ? 'submitted' : '' }}
-            {{ currentVersion.state === budgetService.budgetVersionState.Accepted  ? 'accepted' : '' }}
-            {{ currentVersion.state === budgetService.budgetVersionState.Rejected  ? 'rejected' : '' }}
-            by
-            {{ currentVersion.stateUserName }}
-            on
-            {{ currentVersion.stateDate | date: 'medium' }}
-          </span>
+            <span *ngIf="currentVersion.state !== budgetService.budgetVersionState.Pending">
+              This version was
+              {{ currentVersion.state === budgetService.budgetVersionState.Submitted  ? 'submitted' : '' }}
+              {{ currentVersion.state === budgetService.budgetVersionState.Accepted  ? 'accepted' : '' }}
+              {{ currentVersion.state === budgetService.budgetVersionState.Rejected  ? 'rejected' : '' }}
+              by
+              {{ currentVersion.stateUserName }}
+              on
+              {{ currentVersion.stateDate | date: 'medium' }}
+            </span>
 
-          <ng-container *ngIf="accountingPlan$ | async as accountingPlan">
             <form #budgetForm="ngForm">
               <ng-template #nodeTmpl let-node="node" let-totalParent="totalParent" let-level="level">
                 <ng-container *ngIf="node.children else leafTmpl" #accordionItem="cdkAccordionItem" cdkAccordionItem
@@ -136,14 +137,9 @@
                       </span>
                       <span class="item">{{ total.previousYear | amount }}</span>
                       <span class="item">{{ total.currentYear | amount }}</span>
-                      <app-input-amount
-                        *ngIf="currentVersion.state === budgetService.budgetVersionState.Pending else notEditable"
-                        [(ngModel)]="total.value" name="value"
-                        [disabled]="{roles: ['AM', 'AO'], condition: node.accountIsPmVisible || false} | permissions"
+                      <app-input-amount [(ngModel)]="total.value" name="value"
+                        [disabled]="currentVersion.state !== budgetService.budgetVersionState.Pending || ({roles: ['AM', 'AO'], condition: node.accountIsPmVisible || false} | permissions)"
                         class="item"></app-input-amount>
-                      <ng-template #notEditable>
-                        <span class="item">{{ total.value | amount }}</span>
-                      </ng-template>
                       <span class="item">
                         {{ total.totalRoot.totalRevenue ? (total.total / total.totalRoot.totalRevenue | percent: '1.2-2') : 'x' }}
                       </span>
