@@ -20,7 +20,7 @@ function initializeKeycloak(keycloak: KeycloakService) {
         url: 'https://openid.xtech.io/auth',
         clientId: 'iccube-dev-public'
       },
-      bearerExcludedUrls: ['/assets', '/clients/public'], //@TODO : remove budget and token below.
+      // bearerExcludedUrls: ['/assets', '/clients/public'],
       initOptions: {
         onLoad: 'check-sso',
         silentCheckSsoRedirectUri:
