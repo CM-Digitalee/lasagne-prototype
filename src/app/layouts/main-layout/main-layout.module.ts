@@ -16,7 +16,7 @@ function initializeKeycloak(keycloak: KeycloakService) {
     keycloak.init({
       config: {
         realm: 'New STREETS',
-        url: 'http://openid.xtech.io/auth',
+        url: 'https://openid.xtech.io/auth',
         clientId: 'iccube-dev'
       },
       // bearerExcludedUrls: ['/assets', '/clients/public'],
