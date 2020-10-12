@@ -20,11 +20,13 @@ function initializeKeycloak(keycloak: KeycloakService) {
         url: 'https://openid.xtech.io/auth',
         clientId: 'iccube-dev-public'
       },
-      // bearerExcludedUrls: ['/assets', '/clients/public'],
+      bearerExcludedUrls: ['/assets'],
       initOptions: {
-        onLoad: 'check-sso',
-        silentCheckSsoRedirectUri:
-          window.location.origin + '/assets/silent-check-sso.html',
+        onLoad: 'login-required',
+        checkLoginIframe: false
+        // onLoad: 'check-sso',
+        // silentCheckSsoRedirectUri:
+        //   window.location.origin + '/assets/silent-check-sso.html',
       }
     });
 }

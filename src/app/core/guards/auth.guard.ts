@@ -24,6 +24,7 @@ export class AuthGuard extends KeycloakAuthGuard {
   ) {
     // Force the user to log in if currently unauthenticated.
     if (!this.authenticated) {
+      console.log('here');
       await this.keycloak.login({
         redirectUri: window.location.origin + state.url,
       });
