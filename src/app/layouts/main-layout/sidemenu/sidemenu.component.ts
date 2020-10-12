@@ -1,4 +1,6 @@
-import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
+import {Component, OnInit, ChangeDetectionStrategy, Input} from '@angular/core';
+import {Observable} from 'rxjs';
+import {ItemsMenuService} from '../../../service/items-menu.service';
 
 @Component({
   selector: 'app-sidemenu',
@@ -8,7 +10,12 @@ import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 })
 export class SidemenuComponent implements OnInit {
 
-  constructor() { }
+  @Input()
+  result$: Observable<any>;
+
+  constructor(private itemsService: ItemsMenuService) {
+    this.result$ = itemsService.resolveItems();
+  }
 
   ngOnInit(): void {
   }

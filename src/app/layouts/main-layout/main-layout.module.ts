@@ -5,6 +5,8 @@ import { RouterModule } from '@angular/router';
 import { MainLayoutComponent } from './main-layout.component';
 import { SidenavComponent } from './sidenav/sidenav.component';
 import { HeaderComponent } from './header/header.component';
+import { HttpClientModule } from '@angular/common/http';
+
 
 import { KeycloakAngularModule, KeycloakService } from 'keycloak-angular';
 import { BrowserModule } from '@angular/platform-browser';
@@ -33,7 +35,7 @@ function initializeKeycloak(keycloak: KeycloakService) {
 
 @NgModule({
   declarations: [MainLayoutComponent, SidenavComponent, HeaderComponent, SidemenuComponent],
-  imports: [CommonModule, RouterModule, BrowserModule, KeycloakAngularModule],
+  imports: [CommonModule, RouterModule, BrowserModule, KeycloakAngularModule, HttpClientModule],
   providers: [
     {
       provide: APP_INITIALIZER,

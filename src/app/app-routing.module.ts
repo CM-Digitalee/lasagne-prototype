@@ -4,6 +4,7 @@ import { Routes, RouterModule } from '@angular/router';
 import { AuthGuard } from './core';
 import { MainLayoutComponent, MainLayoutModule } from './layouts';
 
+
 const routes: Routes = [
   {
     // data : {roles : ''}
