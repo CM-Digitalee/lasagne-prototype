@@ -15,6 +15,7 @@ export class SidemenuComponent implements OnInit {
 
   constructor(private itemsService: ItemsMenuService) {
     this.result$ = itemsService.resolveItems();
+    console.log(this.result$);
   }
 
   ngOnInit(): void {
