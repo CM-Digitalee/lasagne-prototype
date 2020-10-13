@@ -2,15 +2,16 @@
   <ul *ngIf="itemsMenu && itemsMenu.length > 0">
     <li *ngFor="let item of itemsMenu | keyvalue">
       <div>
-
+      <span class="pointer">
         <i *ngIf="item.value.menus && item.value.menus.length > 0"  (click)="toggleMenu(item.key)" class="material-icons pointer">arrow_right</i>
+      </span>
       <a routerLink="{{item.value.resourceUrl}}">
 <!--        <i class="material-icons pointer">{{item.iconId}}</i> -->
         <i class="material-icons pointer">search</i>
         {{item.value.genericLabel}}
       </a>
       </div>
-      <ul *ngIf="item.value.menus && item.value.menus.length > 0 && item.value.show == true">
+      <ul class="submenu" *ngIf="item.value.menus && item.value.menus.length > 0 && item.value.show == true">
         <li *ngFor="let submenu of item.value.menus">
           <div>
           <a routerLink="{{submenu.resourceUrl}}">
@@ -23,4 +24,6 @@
       </ul>
     </li>
   </ul>
+  <div class="separator"></div>
+  <div class="title">Administration</div>
 </div>

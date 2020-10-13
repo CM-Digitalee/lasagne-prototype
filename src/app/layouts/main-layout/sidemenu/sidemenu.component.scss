@@ -20,11 +20,12 @@ $font-family-notif: lato-regular, serif;
   background: white;
   font-family: $font-family-menu;
   font-size:14px;
-  line-height:22px;
-  letter-spacing: 0.3px;
   text-align: left;
   color: $txt-menu-color;
   text-transform: capitalize;
+  font-weight: 600;
+  letter-spacing: 0.25px;
+  line-height: 22px;
   ul{
     padding-left:0;
     list-style-type: none;
@@ -39,7 +40,13 @@ $font-family-notif: lato-regular, serif;
         padding-top:14px;
         padding-bottom:14px;
         margin-bottom:8px;
-        padding-left:32px;
+        padding-left:8px;
+        height: 46px;
+        width: 254px;
+        border-radius: 0 23px 23px 0;
+        span.pointer{
+          width: 24px;
+        }
         .notif{
           height: 32px;
           width: 32px;
@@ -48,10 +55,20 @@ $font-family-notif: lato-regular, serif;
           line-height:15px;
           font-size:12px;
           color:$txt-menu-notif;
+          letter-spacing: 0.34px;
+          border-radius: 25px;
+          .number {
+            height: 16px;
+            width: 16px;
+            color: #16194C;
+            line-height: 16px;
+            margin-top:8px;
+            margin-bottom: 8px;
+          }
         }
         &.active{
           background-color:$txt-menu-color-active-back;
-          border-radius: 0 23px 23px 0;
+          color: $txt-menu-color-active;
         }
 
         >a {
@@ -59,9 +76,32 @@ $font-family-notif: lato-regular, serif;
           align-items: center;
           > i {
             margin-right:8px;
+            font-size: 24px;
           }
         }
       }
     }
+  }
+
+  .separator{
+    height:1px;
+    width: 238px;
+    background-color: #E4E7EB;
+    margin-left:16px;
+  }
+
+  .title{
+    color: #16194C;
+    font-family: lato-regular, serif;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    line-height: 12px;
+    margin-top:27px;
+    margin-left:31px;
+  }
+
+  ul.submenu{
+    margin-left:52px; //24px //To align with other items
   }
 }
