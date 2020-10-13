@@ -9,9 +9,13 @@ import {catchError} from 'rxjs/operators';
 
 export class Tools {
 
-  // URL which returns list of JSON items (API end-point URL)
+  menuUrl;
+  apiUrl;
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient) {
+    this.menuUrl = 'https://ns-msrv-backend-dev.xtech.io/ui/menus';
+    this.apiUrl = 'https://ns-msrv-backend-dev.xtech.io/ui/menus';
+  }
   // create a method named: resolveItems()
   // this method returns list-of-items in form of Observable
   // every HTTTP call returns Observable object
@@ -72,7 +76,7 @@ export class Tools {
         })
       ); //.suscribe();
   }
-  put(url): Observable<any> {
+  put(url, data): Observable<any> {
     console.log('Put Request is sent!');
     // this.http is a HttpClient library provide by @angular/common
     // we are calling .get() method over this.http object
@@ -83,7 +87,26 @@ export class Tools {
       'Access-Control-Allow-Origin': '*',
       'Access-Control-Allow-Credentials' : 'true'
     });
-    return this.http.put(url, {withCredentials: true, headers: pheaders})
+    return this.http.put(url, data,{withCredentials: true, headers: pheaders})
+      .pipe(
+        catchError(error => {
+          console.log('Caught in CatchError. Returning 0')
+          return of(0);
+        })
+      ); //.suscribe();
+  }
+  patch(url, data): Observable<any> {
+    console.log('Put Request is sent!');
+    // this.http is a HttpClient library provide by @angular/common
+    // we are calling .get() method over this.http object
+    // this .get() method takes URL to call API
+    const pheaders = new HttpHeaders({
+      // Authorization: 'Authorization: Bearer ' + access_token
+      Accept: 'application/json',
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Credentials' : 'true'
+    });
+    return this.http.patch(url, data, {withCredentials: true, headers: pheaders})
       .pipe(
         catchError(error => {
           console.log('Caught in CatchError. Returning 0')
