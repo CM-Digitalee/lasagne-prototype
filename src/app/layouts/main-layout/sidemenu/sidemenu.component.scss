@@ -1,0 +1,67 @@
+@font-face { font-family: overpass-semibold;
+  src: url('../../../../assets/font/Overpass/Overpass-SemiBold.ttf')
+}
+@font-face { font-family: lato-regular;
+  src: url('../../../../assets/font/Lato/Lato-Regular.ttf')
+}
+
+
+$txt-menu-color: #6F7588;
+$txt-menu-color-active : #5A3BDD;
+$txt-menu-color-active-back : #E9EAFF;
+$back-notif: "#F4F6F9";
+$txt-menu-notif: "#16194C";
+$font-family-menu: overpass-semibold, serif;
+$font-family-notif: lato-regular, serif;
+
+.sideMenu{
+  width:304px;
+  height: 100%;
+  background: white;
+  font-family: $font-family-menu;
+  font-size:14px;
+  line-height:22px;
+  letter-spacing: 0.3px;
+  text-align: left;
+  color: $txt-menu-color;
+  text-transform: capitalize;
+  ul{
+    padding-left:0;
+    list-style-type: none;
+    li{
+      margin-top:4px;
+      margin-bottom:4px;
+
+      > div {
+        display: flex;
+        vertical-align: middle;
+        align-items: center;
+        padding-top:14px;
+        padding-bottom:14px;
+        margin-bottom:8px;
+        padding-left:32px;
+        .notif{
+          height: 32px;
+          width: 32px;
+          background-color: $back-notif;
+          font-family: lato-regular, serif;
+          line-height:15px;
+          font-size:12px;
+          color:$txt-menu-notif;
+        }
+        &.active{
+          background-color:$txt-menu-color-active-back;
+          border-radius: 0 23px 23px 0;
+        }
+
+        >a {
+          display: flex;
+          align-items: center;
+          > i {
+            margin-right:8px;
+          }
+        }
+      }
+    }
+  }
+}

@@ -10,7 +10,8 @@ import { HttpClientModule } from '@angular/common/http';
 
 import { KeycloakAngularModule, KeycloakService } from 'keycloak-angular';
 import { BrowserModule } from '@angular/platform-browser';
-import { SidemenuComponent } from './sidemenu/sidemenu.component';
+//import { SidemenuComponent } from './sidemenu/sidemenu.component';
+import { SidemenuModule } from './sidemenu/sidemenu.module';
 
 
 // tslint:disable-next-line:typedef
@@ -36,8 +37,8 @@ function initializeKeycloak(keycloak: KeycloakService) {
 }
 
 @NgModule({
-  declarations: [MainLayoutComponent, SidenavComponent, HeaderComponent, SidemenuComponent],
-  imports: [CommonModule, RouterModule, BrowserModule, KeycloakAngularModule, HttpClientModule],
+  declarations: [MainLayoutComponent, SidenavComponent, HeaderComponent],
+  imports: [CommonModule, RouterModule, BrowserModule, KeycloakAngularModule, HttpClientModule, SidemenuModule],
   providers: [
     {
       provide: APP_INITIALIZER,
