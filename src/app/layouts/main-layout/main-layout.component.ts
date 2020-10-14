@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
+import {UserService} from '../../core/services';
 
 @Component({
   selector: 'app-main-layout',
@@ -17,4 +18,6 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
   host: { 'class': 'flex column full-view ov-hidden' },
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class MainLayoutComponent { }
+export class MainLayoutComponent {
+
+}

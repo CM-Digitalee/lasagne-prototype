@@ -14,13 +14,20 @@ export class UserService {
   // TODO
   // private _currentUser$ = new BehaviorSubject<User>(this.users[0]);
   private _currentUser$ = new BehaviorSubject<User>(null);
-  get currentUser$() { return this._currentUser$.asObservable(); }
+  get currentUser$() {
+    return this._currentUser$.asObservable();
+  }
 
   constructor(private router: Router) { }
-
   login(user: User) {
     this._currentUser$.next(user);
     this.router.navigate(['']);
+  }
+
+  loginKeycloak(keycloak){
+    //@TODO : Add role from keycloak
+    const user = {id: 1, name: keycloak.username, role: 'AO'} as User;
+    this._currentUser$.next(user);
   }
 
   logout() {

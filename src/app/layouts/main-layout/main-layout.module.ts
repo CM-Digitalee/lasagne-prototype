@@ -10,12 +10,13 @@ import { HttpClientModule } from '@angular/common/http';
 
 import { KeycloakAngularModule, KeycloakService } from 'keycloak-angular';
 import { BrowserModule } from '@angular/platform-browser';
-//import { SidemenuComponent } from './sidemenu/sidemenu.component';
+// import { SidemenuComponent } from './sidemenu/sidemenu.component';
 import { SidemenuModule } from './sidemenu/sidemenu.module';
+import {UserService} from '../../core/services';
 
 
 // tslint:disable-next-line:typedef
-function initializeKeycloak(keycloak: KeycloakService) {
+function initializeKeycloak(keycloak: KeycloakService, userService: UserService) {
   return () =>
     keycloak.init({
       config: {
@@ -33,6 +34,21 @@ function initializeKeycloak(keycloak: KeycloakService) {
       },
       enableBearerInterceptor: true,
       bearerPrefix: 'Bearer'
+    }).then(authenticated => {
+      if (authenticated){
+        keycloak.loadUserProfile().then(profile => {
+          userService.loginKeycloak(profile);
+          localStorage.setItem('profile', JSON.stringify(profile));
+          console.log(profile) ;
+        }).catch(() => {
+          this.user = null ;
+        });
+      }else{
+        this.user = null ;
+      }
+    }).catch(() => {
+      alert('failed to initialize');
+      this.user = null ;
     });
 }
 
@@ -44,8 +60,9 @@ function initializeKeycloak(keycloak: KeycloakService) {
       provide: APP_INITIALIZER,
       useFactory: initializeKeycloak,
       multi: true,
-      deps: [KeycloakService],
+      deps: [KeycloakService, UserService],
     },
   ]
 })
-export class MainLayoutModule { }
+export class MainLayoutModule {
+}

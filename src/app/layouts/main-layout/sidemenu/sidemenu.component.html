@@ -1,9 +1,10 @@
 <div class="sideMenu">
-  <ul *ngIf="itemsMenu && itemsMenu.length > 0">
-    <li *ngFor="let item of itemsMenu | keyvalue">
+  <ul *ngIf="itemsService.itemsMenu$ | async as itemsMenu ">
+<!--  <ul *ngIf="itemsMenu && itemsMenu.length > 0 ">-->
+    <li *ngFor="let item of itemsMenu | keyvalue ">
       <div>
       <span class="pointer">
-        <i *ngIf="item.value.menus && item.value.menus.length > 0"  (click)="toggleMenu(item.key)" class="material-icons pointer">arrow_right</i>
+        <i *ngIf="item.value.menus && item.value.menus.length > 0"  (click)="toggleMenu(itemsMenu,item.key)" class="material-icons pointer">arrow_right</i>
       </span>
       <a routerLink="{{item.value.resourceUrl}}">
 <!--        <i class="material-icons pointer">{{item.iconId}}</i> -->
