@@ -1,11 +1,10 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { animate, state, style, transition, trigger } from '@angular/animations';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { asyncScheduler, iif, of } from 'rxjs';
 import { filter, map, pluck, shareReplay, switchMap, take, tap } from 'rxjs/operators';
 
-import { AccountingPlan, BudgetWithVersionsAndRealised } from '../shared';
+import { AccountingPlan, BudgetWithVersionsAndRealised, nodeToggle } from '../shared';
 import { AccountingPlanService, AssetService, BudgetService, PortfolioService } from '../core';
 
 const nodes = (entries: any, key: { id: string, name: string }) =>
@@ -29,13 +28,7 @@ const nodes = (entries: any, key: { id: string, name: string }) =>
   templateUrl: './budget.component.html',
   styleUrls: ['./budget.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  animations: [
-    trigger('expand', [
-      state('true', style({ height: '*' })),
-      state('false', style({ height: 0 })),
-      transition('* => *', animate('250ms ease-in-out'))
-    ])
-  ]
+  animations: [nodeToggle]
 })
 export class BudgetComponent {
   budget$ = this.route.params.pipe(

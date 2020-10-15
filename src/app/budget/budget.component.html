@@ -5,7 +5,7 @@
         <mat-label>Portfolio</mat-label>
         <mat-select name="portfolio" #portfolioSelect="ngModel" [ngModel]="budget.portfolioId"
           (ngModelChange)="assetSelect.reset()">
-          <mat-option *ngFor="let portfolio of portfolioService.portfolios$ | async" [value]="portfolio.id">
+          <mat-option *ngFor="let portfolio of ((portfolioService.portfolios$ | async) || [])" [value]="portfolio.id">
             {{ portfolio.name }}
           </mat-option>
         </mat-select>
@@ -16,7 +16,7 @@
         <mat-select name="asset" #assetSelect="ngModel" [ngModel]="budget.assetId"
           (ngModelChange)="selectForm.form.get('budget')?.reset();" [disabled]="!portfolioSelect.value">
           <mat-option
-            *ngFor="let asset of assetService.assets$ | async | filterBy: 'portfolioId': portfolioSelect.value"
+            *ngFor="let asset of ((assetService.assets$ | async) || []) | filterBy: 'portfolioId': portfolioSelect.value"
             [value]="asset.id">
             {{ asset.name }}
           </mat-option>
@@ -24,7 +24,7 @@
       </mat-form-field>
 
       <mat-form-field
-        *ngIf="(budgetService.budgets$ | async | filterBy: 'portfolioId': portfolioSelect.value | filterBy: 'assetId': assetSelect.value || []) as budgets"
+        *ngIf="((budgetService.budgets$ | async) || []) | filterBy: 'portfolioId': portfolioSelect.value | filterBy: 'assetId': assetSelect.value as budgets"
         class="mr-20">
         <mat-label>Budget</mat-label>
         <mat-select name="budget" [ngModel]="budget.id || assetSelect.value && !budgets.length && ''"
@@ -166,7 +166,7 @@
                 <div class="item comment">Comment</div>
               </div>
 
-              <div total #total="total" class="ov-overlay mb-15" style="height: calc(100vh - 400px);">
+              <div total #total="total" class="ov-overlay mb-15" style="max-height: calc(100vh - 400px);">
                 <ng-container *ngFor=" let node of accountingPlan; trackBy: trackByFn">
                   <ng-container *ngTemplateOutlet="nodeTmpl; context: {node: node, totalParent: total, level: 0}">
                   </ng-container>
