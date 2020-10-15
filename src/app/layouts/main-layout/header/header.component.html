@@ -1,6 +1,10 @@
-<h1 class="m-0 unselectable">LASAGNES</h1>
-<div *ngIf="userService.currentUser$ | async as user" (click)="userService.logout()"
-  class="flex align-center ml-auto pointer">
-  <i class="material-icons mr-5">account_circle</i>
-  <span>{{ user.name }}</span>
+<h1 class="m-0 unselectable"><a href="/"><img class="streets_logo" src="/assets/images/streets-white.png" alt="STREETS"></a></h1>
+<div class="topright">
+  <a class="import_button" href="https://streets-uat.xtech.io/nadi/w/Streets/upload-data"> Import data </a>
+  <div *ngIf="userService.currentUser$ | async as user" (click)="userService.logoutKeycloak()"
+       class="flex align-center ml-auto pointer">
+    <i class="material-icons mr-5">account_circle</i>
+    <span>{{ user.name }}</span>
+  </div>
 </div>
+

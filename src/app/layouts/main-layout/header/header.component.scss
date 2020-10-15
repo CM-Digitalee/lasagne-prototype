@@ -1,5 +1,37 @@
+@font-face { font-family: lato-regular;
+  src: url('../../../../assets/font/Lato/Lato-Regular.ttf')
+}
+
+.streets_logo{
+  height:30px;
+  width: auto;
+}
 :host {
   background: #251963;
   color: #fff;
   height: 60px;
+}
+div.topright{
+  position: absolute;
+  right: 30px;
+  display: flex;
+  padding: 12px 0 ;
+  .import_button{
+    height:40px;
+    width: 120px;
+    color: #FFFFFF;
+    border-radius: 4.24px;
+    background-color: #5A3BDD;
+    font-family: lato-regular;
+    font-size: 14px;
+    font-weight: bold;
+    letter-spacing: 0.25px;
+    line-height: 17px;
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-right:24px;
+  }
+
 }
