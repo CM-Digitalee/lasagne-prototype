@@ -11,10 +11,13 @@ import { UploadDataComponent } from './upload-data/upload-data.component';
 import { PunchlistComponent } from './punchlist/punchlist.component';
 import { DocumentValidationComponent } from './document-validation/document-validation.component';
 import { SettingsComponent } from './settings/settings.component';
+import { AnalyticsComponent } from './analytics/analytics.component';
+import { AnalyticsReferenceDataComponent } from './analytics/analytics-reference-data/analytics-reference-data.component';
+import { AnalyticsRentalDataComponent } from './analytics/analytics-rental-data/analytics-rental-data.component';
 // import { ItemsMenuComponent } from './items-menu/items-menu.component';
 
 @NgModule({
-  declarations: [AppComponent, DashboardComponent, UploadDataComponent, PunchlistComponent, DocumentValidationComponent, SettingsComponent],
+  declarations: [AppComponent, DashboardComponent, UploadDataComponent, PunchlistComponent, DocumentValidationComponent, SettingsComponent, AnalyticsComponent, AnalyticsReferenceDataComponent, AnalyticsRentalDataComponent],
   imports: [
     BrowserModule,
     AppRoutingModule,
