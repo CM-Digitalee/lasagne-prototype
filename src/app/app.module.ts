@@ -7,10 +7,14 @@ import { AppComponent } from './app.component';
 import { LocaleService } from './core';
 import { HttpClientModule } from '@angular/common/http';
 import { DashboardComponent } from './dashboard/dashboard.component';
+import { UploadDataComponent } from './upload-data/upload-data.component';
+import { PunchlistComponent } from './punchlist/punchlist.component';
+import { DocumentValidationComponent } from './document-validation/document-validation.component';
+import { SettingsComponent } from './settings/settings.component';
 // import { ItemsMenuComponent } from './items-menu/items-menu.component';
 
 @NgModule({
-  declarations: [AppComponent, DashboardComponent],
+  declarations: [AppComponent, DashboardComponent, UploadDataComponent, PunchlistComponent, DocumentValidationComponent, SettingsComponent],
   imports: [
     BrowserModule,
     AppRoutingModule,

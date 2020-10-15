@@ -27,7 +27,8 @@ function initializeKeycloak(keycloak: KeycloakService, userService: UserService)
       bearerExcludedUrls: ['/assets'],
       initOptions: {
         onLoad: 'login-required',
-        checkLoginIframe: false
+        checkLoginIframe: false,
+        redirectUri: window.location.href
         // onLoad: 'check-sso',
         // silentCheckSsoRedirectUri:
         //   window.location.origin + '/assets/silent-check-sso.html',

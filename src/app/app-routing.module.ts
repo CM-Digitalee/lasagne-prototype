@@ -4,6 +4,9 @@ import { Routes, RouterModule } from '@angular/router';
 import { AuthGuard } from './core';
 import { MainLayoutComponent, MainLayoutModule } from './layouts';
 import {DashboardComponent} from './dashboard/dashboard.component';
+import {UploadDataComponent} from './upload-data/upload-data.component';
+import {DocumentValidationComponent} from './document-validation/document-validation.component';
+import {PunchlistComponent} from './punchlist/punchlist.component';
 
 
 const routes: Routes = [
@@ -13,6 +16,9 @@ const routes: Routes = [
       { path: '', pathMatch: 'full', redirectTo: 'budget' },
       { path: 'budget', loadChildren: () => import('./budget/budget.module').then(m => m.BudgetModule) },
       { path: 'dashboard', component: DashboardComponent},
+      { path: 'upload-data', component: UploadDataComponent},
+      { path: 'document-validation', component: DocumentValidationComponent},
+      { path: 'punchlist', component: PunchlistComponent},
 
     ]
   },
