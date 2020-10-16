@@ -1,0 +1,61 @@
+<ng-container *ngIf="budget$ | async as budget">
+  <ng-template #nodeTmpl let-node="node" let-level="level" let-totalParent="totalParent">
+    <ng-container *ngIf="node.children else leafTmpl" #accordionItem="cdkAccordionItem" cdkAccordionItem expanded>
+      <div (click)="accordionItem.toggle()" total #total="total" [totalParent]="totalParent"
+        class="node line flex pointer">
+        <span class="label flex align-center ov-hidden" [style.padding-left.px]="level*20">
+          <i class="material-icons expand-icon" [ngClass]="{'expanded': accordionItem.expanded}">navigate_next</i>
+          <span>{{ node.label }}</span>
+        </span>
+        <span class="item">{{ total.total('pastYear') | amount }}</span>
+        <span class="item">{{ total.total('budget') | amount }}</span>
+        <span class="item">{{ total.total('ytd') | amount }}</span>
+        <span class="item">{{ total.total('nextBudget') | amount }}</span>
+      </div>
+      <div [@expand]="accordionItem.expanded" style="overflow: hidden;">
+        <ng-container *ngFor="let node of node.children; trackBy: trackByFn">
+          <ng-container *ngTemplateOutlet="nodeTmpl; context: {node: node, level: level + 1, totalParent: total}">
+          </ng-container>
+        </ng-container>
+      </div>
+    </ng-container>
+
+    <ng-template #leafTmpl>
+      <div total #total="total" [totalParent]="totalParent" [pastYear]="node.pastYear" [budget]="node.budget"
+        [ytd]="node.ytd" [nextBudget]="node.nextBudget" [isRevenue]="node.accountIsRevenue" class="line flex">
+        <span #elmt [matTooltip]="node.subAccountDescription || node.accountDescription"
+          [matTooltipDisabled]="elmt.scrollWidth <= elmt.offsetWidth" class="label truncate"
+          [style.padding-left.px]="level*30">{{ node.description }}</span>
+        <span class="item">
+          {{ budget.state === budgetService.budgetVersionState.Accepted ? (node.pastYear | amount) : '-' }}
+        </span>
+        <span class="item">{{ node.budget | amount }}</span>
+        <span class="item">{{ node.ytd | amount }}</span>
+        <span class="item">{{ node.nextBudget | amount }}</span>
+      </div>
+    </ng-template>
+  </ng-template>
+
+  <div class="line header flex pr-15">
+    <span class="label">Category</span>
+    <span class="item">Realised 2019</span>
+    <span class="item">Budget 2020</span>
+    <span class="item">Year to date 2020</span>
+    <span class="item">Budget 2021</span>
+  </div>
+
+  <div total #totalRoot="total" class="ov-overlay mb-15" style="max-height: calc(100vh - 400px);">
+    <ng-container *ngFor="let node of budget.accountingPlan; trackBy: trackByFn">
+      <ng-container *ngTemplateOutlet="nodeTmpl; context: {node: node, level: 0, totalParent: totalRoot}">
+      </ng-container>
+    </ng-container>
+  </div>
+
+  <div class="line footer flex pr-15">
+    <span class="label">Résultat</span>
+    <span class="item">{{ totalRoot.totalRevenue('pastYear') - totalRoot.totalCharge('pastYear') | amount }}</span>
+    <span class="item">{{ totalRoot.totalRevenue('budget') - totalRoot.totalCharge('budget') | amount }}</span>
+    <span class="item">{{ totalRoot.totalRevenue('ytd') - totalRoot.totalCharge('ytd') | amount }}</span>
+    <span class="item">{{ totalRoot.totalRevenue('nextBudget') - totalRoot.totalCharge('nextBudget') | amount }}</span>
+  </div>
+</ng-container>
