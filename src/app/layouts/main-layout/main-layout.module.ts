@@ -20,9 +20,12 @@ function initializeKeycloak(keycloak: KeycloakService, userService: UserService)
   return () =>
     keycloak.init({
       config: {
+        // realm: 'New STREETS',
+        // url: 'https://openid.xtech.io/auth',
+        // clientId: 'iccube-dev-public' // Client pour récupérer les menus
         realm: 'New STREETS',
         url: 'https://openid.xtech.io/auth',
-        clientId: 'iccube-dev-public'
+        clientId: 'newstreets' //Client Streets
       },
       bearerExcludedUrls: ['/assets'],
       initOptions: {
@@ -47,7 +50,8 @@ function initializeKeycloak(keycloak: KeycloakService, userService: UserService)
       }else{
         this.user = null ;
       }
-    }).catch(() => {
+    }).catch((e) => {
+      console.log(e);
       alert('failed to initialize');
       this.user = null ;
     });

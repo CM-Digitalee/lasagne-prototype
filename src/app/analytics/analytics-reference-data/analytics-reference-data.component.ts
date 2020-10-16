@@ -13,5 +13,8 @@ export class AnalyticsReferenceDataComponent implements OnInit {
 
   ngOnInit(): void {
   }
+  getUrl(): string {
+    return 'https://ns-iccube-dev.xtech.io/icCube/doc/ic3report?name=%2Fshared%2Fct%2F1)%20Donn%C3%A9es%20de%20r%C3%A9f%C3%A9rences'
+  }
 
 }

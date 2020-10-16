@@ -10,7 +10,7 @@ import {UserService} from '../../core/services';
       <app-sidenav class="no-shrink"></app-sidenav>
 -->
       <app-sidemenu class="no-shrink"></app-sidemenu>
-      <div class="fill ov-auto" style="height: calc(100vh - 60px)">
+      <div class="fill ov-auto" style="height: calc(100vh - 60px); background-color:#E9EAFF">
         <router-outlet></router-outlet>
       </div>
     </div>
