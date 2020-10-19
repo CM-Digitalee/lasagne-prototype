@@ -14,10 +14,11 @@ import { SettingsComponent } from './settings/settings.component';
 import { AnalyticsComponent } from './analytics/analytics.component';
 import { AnalyticsReferenceDataComponent } from './analytics/analytics-reference-data/analytics-reference-data.component';
 import { AnalyticsRentalDataComponent } from './analytics/analytics-rental-data/analytics-rental-data.component';
+import { IframeViewComponent } from './iframe-view/iframe-view.component';
 // import { ItemsMenuComponent } from './items-menu/items-menu.component';
 
 @NgModule({
-  declarations: [AppComponent, DashboardComponent, UploadDataComponent, PunchlistComponent, DocumentValidationComponent, SettingsComponent, AnalyticsComponent, AnalyticsReferenceDataComponent, AnalyticsRentalDataComponent],
+  declarations: [AppComponent, DashboardComponent, UploadDataComponent, PunchlistComponent, DocumentValidationComponent, SettingsComponent, AnalyticsComponent, AnalyticsReferenceDataComponent, AnalyticsRentalDataComponent, IframeViewComponent],
   imports: [
     BrowserModule,
     AppRoutingModule,
