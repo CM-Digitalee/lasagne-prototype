@@ -1,5 +1,8 @@
 <h1 class="m-0 unselectable"><a href="/"><img class="streets_logo" src="/assets/images/streets-white.png" alt="STREETS"></a></h1>
 <div class="topright">
+  <select class="lg-button" *ngIf="appLanguages.appLanguages | async as languages " [ngModel]="appLanguages.currentLanguageId" (change)="appLanguages.updateLanguage($event)" >>
+    <option *ngFor="let item of languages | keyvalue " [value]="item.value.iso" >{{item.value.label}}</option>
+  </select>
   <a class="import_button" href="https://streets-uat.xtech.io/nadi/w/Streets/upload-data" target="_blank"> Import data </a>
   <div *ngIf="userService.currentUser$ | async as user" (click)="userService.logoutKeycloak()"
        class="flex align-center ml-auto pointer">

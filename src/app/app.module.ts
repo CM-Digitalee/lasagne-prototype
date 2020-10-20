@@ -15,6 +15,8 @@ import { AnalyticsComponent } from './analytics/analytics.component';
 import { AnalyticsReferenceDataComponent } from './analytics/analytics-reference-data/analytics-reference-data.component';
 import { AnalyticsRentalDataComponent } from './analytics/analytics-rental-data/analytics-rental-data.component';
 import { IframeViewComponent } from './iframe-view/iframe-view.component';
+import { Globals } from './common/global';
+
 // import { ItemsMenuComponent } from './items-menu/items-menu.component';
 
 @NgModule({
@@ -30,7 +32,8 @@ import { IframeViewComponent } from './iframe-view/iframe-view.component';
       provide: LOCALE_ID,
       deps: [LocaleService],
       useFactory: (localeService: LocaleService) => localeService.getLocale()
-    }
+    },
+    Globals
   ],
   bootstrap: [AppComponent]
 })

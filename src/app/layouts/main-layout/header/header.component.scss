@@ -2,6 +2,25 @@
   src: url('../../../../assets/font/Lato/Lato-Regular.ttf')
 }
 
+.lg-button{
+  color: #251963;
+  font-weight: 700;
+  font-family: lato-regular, serif;
+  padding-right:16px;
+  padding-left:16px;
+  margin-right:10px;
+  border-radius: 4.24px;
+
+  &select{
+    color: #5A3BDD;
+
+  }
+  option{
+    color: #5A3BDD;
+
+  }
+}
+
 .streets_logo{
   height:30px;
   width: auto;

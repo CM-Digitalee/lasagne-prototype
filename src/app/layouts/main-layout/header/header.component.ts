@@ -1,5 +1,7 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { UserService } from '../../../../app/core';
+import {AppLanguagesService} from '../../../service/app-languages.service';
+import {Globals} from '../../../common/global';
 
 @Component({
   selector: 'app-header',
@@ -9,5 +11,7 @@ import { UserService } from '../../../../app/core';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class HeaderComponent {
-  constructor(public userService: UserService) { }
+  constructor(public userService: UserService, public appLanguages: AppLanguagesService, public globals: Globals) {
+    // appLanguages.resolveItems();
+  }
 }

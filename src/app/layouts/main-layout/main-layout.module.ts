@@ -13,6 +13,7 @@ import { BrowserModule } from '@angular/platform-browser';
 // import { SidemenuComponent } from './sidemenu/sidemenu.component';
 import { SidemenuModule } from './sidemenu/sidemenu.module';
 import {UserService} from '../../core/services';
+import {FormsModule} from '@angular/forms';
 
 
 // tslint:disable-next-line:typedef
@@ -59,7 +60,7 @@ function initializeKeycloak(keycloak: KeycloakService, userService: UserService)
 
 @NgModule({
   declarations: [MainLayoutComponent, SidenavComponent, HeaderComponent],
-  imports: [CommonModule, RouterModule, BrowserModule, KeycloakAngularModule, HttpClientModule, SidemenuModule],
+  imports: [CommonModule, RouterModule, BrowserModule, KeycloakAngularModule, HttpClientModule, SidemenuModule, FormsModule],
   providers: [
     {
       provide: APP_INITIALIZER,

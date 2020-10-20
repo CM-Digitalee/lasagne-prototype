@@ -4,7 +4,8 @@
   "scripts": {
     "ng": "ng",
     "start": "node server.js",
-    "dev": "ng serve --ssl --ssl-key C:\\Users\\Clotilde\\Work\\Config\\localhost.key  --ssl-cert C:\\Users\\Clotilde\\Work\\Config\\localhost.crt",    "build": "ng build",
+    "dev": "ng serve --ssl --ssl-key C:\\Users\\Clotilde\\Work\\Config\\localhost.key  --ssl-cert C:\\Users\\Clotilde\\Work\\Config\\localhost.crt",
+    "build": "ng build",
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e",
