@@ -2,7 +2,7 @@
   <ul *ngIf="itemsService.itemsMenu$ | async as itemsMenu ">
 <!--  <ul *ngIf="itemsMenu && itemsMenu.length > 0 ">-->
     <li *ngFor="let item of itemsMenu | keyvalue ">
-      <div [routerLink]="item.value.route" [routerLinkActive]="'active'">
+      <div [routerLink]="item.value.appplicationRoute" [routerLinkActive]="item.value.appplicationRoute ? 'active' : ''">
       <span class="pointer">
         <i *ngIf="item.value.menus && item.value.menus.length > 0"  (click)="toggleMenu(itemsMenu,item.key)" class="material-icons pointer">arrow_right</i>
       </span>
@@ -16,7 +16,7 @@
       <ul class="submenu" *ngIf="item.value.menus && item.value.menus.length > 0 && item.value.show == true">
         <li *ngFor="let submenu of item.value.menus">
           <div>
-          <a [routerLink]="submenu.route" [routerLinkActive]="'active'">
+          <a [routerLink]="submenu.appplicationRoute " [routerLinkActive]="submenu.applicationRoute ? 'active' : ''">
 <!--            <i class="material-icons pointer">{{submenu.iconId}}</i> -->
             <i class="material-icons pointer">{{submenu.iconMaterialDesign}}</i>
             {{submenu.label.text}}
