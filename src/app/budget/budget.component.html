@@ -49,14 +49,30 @@
 
   <ng-template #createBudget let-dialogRef="dialogRef">
     <form #createForm="ngForm"
-      (ngSubmit)="create(portfolioSelect.value, assetSelect.value, budgetName.value, dialogRef)">
+      (ngSubmit)="create(portfolioSelect.value, assetSelect.value, budgetName.value, startDate.value, dialogRef)"
+      class="flex column">
       <mat-form-field>
         <mat-label>{{tl.translate('ST.WORD.NAME','capitalize')}}</mat-label>
         <input matInput type="text" name="budget" ngModel #budgetName="ngModel"
           (input)="budgetName.control.setValue($event.target.value.trimStart())" required>
       </mat-form-field>
-      <button type="submit" mat-raised-button color="primary" [disabled]="createForm.invalid">{{tl.translate('ST.BUTTON.CREATE')}}</button>
-      <button type="button" mat-raised-button (click)="dialogRef.close()">{{tl.translate('ST.BUTTON.CANCEL')}}</button>
+
+      <mat-form-field appearance="fill">
+        <mat-label>Date de début d'exercice</mat-label>
+        <input matInput type="text" [matDatepicker]="datePicker" ngModel #startDate="ngModel" name="startDate">
+        <mat-datepicker-toggle matSuffix [for]="datePicker"></mat-datepicker-toggle>
+        <mat-datepicker #datePicker startView="year"
+          (monthSelected)="datePicker.close(); startDate.control.setValue($event)">
+        </mat-datepicker>
+      </mat-form-field>
+      <div class="flex justify-end">
+        <span class="mr-10">
+          <button type="submit" mat-raised-button color="primary" [disabled]="createForm.invalid">{{tl.translate('ST.BUTTON.CREATE')}}</button>
+        </span>
+        <span>
+          <button type="button" mat-raised-button (click)="dialogRef.close()">{{tl.translate('ST.BUTTON.CANCEL')}}</button>
+        </span>
+      </div>
     </form>
   </ng-template>
 
@@ -71,18 +87,28 @@
               {{ version.number }}
             </a>
           </span>
-          <button *permissions="[
-              {roles: ['PM'], condition: lastVersion.state === budgetService.budgetVersionState.Rejected},
-              {roles: ['AM', 'AO'], condition: lastVersion.state === budgetService.budgetVersionState.Submitted}
-            ]" type="button" mat-raised-button (click)="createBudgetVersion(budget.id)">
-            <i class="material-icons">add</i>
-          </button>
-          <button *permissions="[
-              {roles: ['PM'], condition: lastVersion.state === budgetService.budgetVersionState.Accepted},
-              {roles: ['AM', 'AO'], condition: lastVersion.state === budgetService.budgetVersionState.Submitted}
-            ]" type="button" mat-raised-button (click)="createBudgetRevision(budget.id)">
-            <span>{{tl.translate('ST.BUTTON.REVIEW')}}</span>
-          </button>
+          <span class="mr-5">
+            <button *permissions="[
+                {roles: ['PM'], condition: lastVersion.state === budgetService.budgetVersionState.Rejected},
+                {roles: ['AM', 'AO'], condition: lastVersion.state === budgetService.budgetVersionState.Submitted}
+              ]" type="button" mat-raised-button (click)="createBudgetVersion(budget.id)">
+              <i class="material-icons">add</i>
+            </button>
+          </span>
+          <span *ngIf="isNotStarted(budget.startDate)" class="mr-5">
+            <button *permissions="[
+                {roles: ['PM'], condition: lastVersion.state === budgetService.budgetVersionState.Accepted}
+              ]" type="button" mat-raised-button (click)="createBudgetVersion(budget.id)">
+              <span>Faire une révision</span>
+            </button>
+          </span>
+          <span *ngIf="isCurrentPeriod(budget.startDate)" class="mr-5">
+            <button *permissions="[
+                {roles: ['PM'], condition: lastVersion.state === budgetService.budgetVersionState.Accepted}
+              ]" type="button" mat-raised-button (click)="createBudgetExtension(budget.id)">
+              <span>Obtenir une rallonge</span>
+            </button>
+          </span>
 
           <span *ngIf="currentVersion.state !== budgetService.budgetVersionState.Pending">
             {{tl.translate('ST.SENTENCE.VERSION')}}
@@ -109,24 +135,23 @@
                       {{ node.label }}
                     </span>
                   </span>
-                  <ng-container *ngIf="!(revisionMode$ | async)">
-                    <span class="item">{{ total.totalPreviousYear | amount }}</span>
-                    <span class="item">{{ total.totalCurrentYear | amount }}</span>
-                    <span class="item">{{ total.total | amount }}</span>
+                  <ng-container *ngIf="!(extensionMode$ | async)">
+                    <span class="item">{{ total.totalPreviousYear | amount: '': '': '1.0-0' }}</span>
+                    <span class="item">{{ total.totalCurrentYear | amount: '': '': '1.0-0' }}</span>
+                    <span class="item">{{ total.total | amount: '': '': '1.0-0' }}</span>
                   </ng-container>
-                  <ng-container *ngIf="revisionMode$ | async">
-                    <!-- TODO display currentYear and nextYear -->
-                    <span class="item">{{ total.totalPreviousYear | amount }}</span>
-                    <span class="item">{{ total.totalCurrentYear | amount }}</span>
-                    <span class="item">{{ total.total | amount }}</span>
-                    <span class="item">{{ total.totalRevision | amount }}</span>
-                    <span class="item">{{ total.total + total.totalRevision | amount }}</span>
+                  <ng-container *ngIf="extensionMode$ | async">
+                    <span class="item">{{ total.totalPreviousYear | amount: '': '': '1.0-0' }}</span>
+                    <span class="item">{{ total.totalCurrentYear | amount: '': '': '1.0-0' }}</span>
+                    <span class="item">{{ total.total | amount: '': '': '1.0-0' }}</span>
+                    <span class="item">{{ total.totalExtension | amount: '': '': '1.0-0' }}</span>
+                    <span class="item">{{ total.total + total.totalExtension | amount: '': '': '1.0-0' }}</span>
                   </ng-container>
                   <span class="item">
-                    {{ total.totalRoot.totalRevenue ? (total.total / total.totalRoot.totalRevenue | percent: '1.2-2') : 'x' }}
+                    {{ total.totalRoot.totalRevenue ? (total.totalWithExtensions / total.totalRoot.totalRevenue | percent: '1.2-2') : 'x' }}
                   </span>
                   <span class="item">
-                    {{ total.totalRoot.totalOpex ? (total.total / total.totalRoot.totalOpex | percent: '1.2-2') : 'x' }}
+                    {{ total.totalRoot.totalOpex ? (total.totalWithExtensions / total.totalRoot.totalOpex | percent: '1.2-2') : 'x' }}
                   </span>
                   <span class="item comment"></span>
                 </div>
@@ -143,7 +168,7 @@
                 <ng-container *ngIf="node.subAccount ? node.account + '/' + node.subAccount : node.account as key">
                   <div [ngModelGroup]="key" total #total="total"
                     [value]="+currentVersion.accountingPlan[key]?.value || 0"
-                    [revision]="+currentVersion.accountingPlan[key]?.revision || 0" [totalParent]="totalParent"
+                    [extension]="+currentVersion.accountingPlan[key]?.extension || 0" [totalParent]="totalParent"
                     [isRevenue]="!!node.accountIsRevenue" [isOpex]="!!node.accountIsOpex"
                     [previousYear]="+(budget.previousYear | filterBy: 'account': node.blppAccountMapping)[0]?.amount || 0"
                     [currentYear]="+(budget.currentYear | filterBy: 'account': node.blppAccountMapping)[0]?.amount || 0"
@@ -153,32 +178,31 @@
                       class="label truncate" [style.padding-left.px]="level*30">
                       {{ node.subAccountDescription || node.accountDescription }}
                     </span>
-                    <ng-container *ngIf="!(revisionMode$ | async)">
-                      <span class="item">{{ total.previousYear | amount }}</span>
-                      <span class="item">{{ total.currentYear | amount }}</span>
+                    <ng-container *ngIf="!(extensionMode$ | async)">
+                      <span class="item">{{ total.previousYear | amount: '': '': '1.0-0' }}</span>
+                      <span class="item">{{ total.currentYear | amount: '': '': '1.0-0' }}</span>
                       <span class="item">
                         <app-input-amount [(ngModel)]="total.value" name="value"
                           [disabled]="currentVersion.state !== budgetService.budgetVersionState.Pending || ({roles: ['AM', 'AO'], condition: node.accountIsPmVisible || false} | permissions)">
                         </app-input-amount>
                       </span>
                     </ng-container>
-                    <ng-container *ngIf="revisionMode$ | async">
-                      <!-- TODO display currentYear and nextYear -->
-                      <span class="item">{{ total.previousYear | amount }}</span>
-                      <span class="item">{{ total.currentYear | amount }}</span>
-                      <span class="item">{{ total.value | amount }}</span>
+                    <ng-container *ngIf="extensionMode$ | async">
+                      <span class="item">{{ total.previousYear | amount: '': '': '1.0-0' }}</span>
+                      <span class="item">{{ total.currentYear | amount: '': '': '1.0-0' }}</span>
+                      <span class="item">{{ total.value | amount: '': '': '1.0-0' }}</span>
                       <span class="item">
-                        <app-input-amount [(ngModel)]="total.revision" name="revision"
+                        <app-input-amount [(ngModel)]="total.extension" name="extension"
                           [disabled]="currentVersion.state !== budgetService.budgetVersionState.Pending || ({roles: ['AM', 'AO'], condition: node.accountIsPmVisible || false} | permissions)">
                         </app-input-amount>
                       </span>
-                      <span class="item">{{ total.value + total.revision | amount }}</span>
+                      <span class="item">{{ total.value + total.extension | amount: '': '': '1.0-0' }}</span>
                     </ng-container>
                     <span class="item">
-                      {{ total.totalRoot.totalRevenue ? (total.total / total.totalRoot.totalRevenue | percent: '1.2-2') : 'x' }}
+                      {{ total.totalRoot.totalRevenue ? (total.totalWithExtensions / total.totalRoot.totalRevenue | percent: '1.2-2') : 'x' }}
                     </span>
                     <span class="item">
-                      {{ total.totalRoot.totalOpex ? (total.total / total.totalRoot.totalOpex | percent: '1.2-2') : 'x' }}
+                      {{ total.totalRoot.totalOpex ? (total.totalWithExtensions / total.totalRoot.totalOpex | percent: '1.2-2') : 'x' }}
                     </span>
                     <span class="item comment">
                       <input type="text" [ngModel]="currentVersion.accountingPlan[key]?.comment" name="comment"
@@ -192,17 +216,24 @@
 
             <div class="line header flex pr-15">
               <div class="label">{{tl.translate('ST.BUDGET.HEADER.CATEGORY')}}</div>
-              <ng-container *ngIf="!(revisionMode$ | async)">
-                <div class="item">{{tl.translate('ST.BUDGET.HEADER.REALISEDPAST')}}</div>
+              <ng-container *ngIf="!(extensionMode$ | async)">
+                <div class="item">
+                  {{tl.translate('ST.BUDGET.HEADER.REALISED')}} <br> {{ budget.startDate | startPreviousTwoYears | date: 'MM/yy' }} -
+                  {{ budget.startDate | endPreviousTwoYears | date: 'MM/yy' }}
+                </div>
                 <div class="item">{{tl.translate('ST.BUDGET.HEADER.YEAR_DATE')}}</div>
-                <div class="item">{{tl.translate('ST.BUDGET.HEADER.BUDGETN1')}}</div>
+                <div class="item">{{tl.translate('ST.BUDGET.HEADER.BUDGET')}} <br> {{ budget.startDate | date: 'MM/yy' }} -
+                  {{ budget.startDate | endNextYear | date: 'MM/yy' }}</div>
               </ng-container>
-              <ng-container *ngIf="revisionMode$ | async">
-                <div class="item">{{tl.translate('ST.BUDGET.HEADER.REALISEDN')}}</div>
-                <div class="item">{{tl.translate('ST.BUDGET.HEADER.YEAR_DATE_N1')}}</div>
-                <div class="item">{{tl.translate('ST.BUDGET.HEADER.BUDGETN1')}}</div>
+              <ng-container *ngIf="extensionMode$ | async">
+                <div class="item">{{tl.translate('ST.BUDGET.HEADER.REALISED')}} {{ budget.startDate | startPreviousYear | date: 'MM/yy' }} -
+                  {{ budget.startDate | endPreviousYear | date: 'MM/yy' }}</div>
+                <div class="item">{{tl.translate('ST.BUDGET.HEADER.YEAR_DATE')}}</div>
+                <div class="item">{{tl.translate('ST.BUDGET.HEADER.BUDGET')}} <br> {{ budget.startDate | date: 'MM/yy' }} -
+                  {{ budget.startDate | endNextYear | date: 'MM/yy' }}</div>
                 <div class="item">{{tl.translate('ST.BUDGET.HEADER.ADJUSTMENT')}}</div>
-                <div class="item">{{tl.translate('ST.BUDGET.HEADER.REVISED')}}</div>
+                <div class="item">{{tl.translate('ST.BUDGET.HEADER.REVISED')}} <br> {{ budget.startDate | date: 'MM/yy' }} -
+                  {{ budget.startDate | endNextYear | date: 'MM/yy' }}</div>
               </ng-container>
               <div class="item">{{tl.translate('ST.BUDGET.HEADER.RENTALINCOME')}}</div>
               <div class="item">{{tl.translate('ST.BUDGET.HEADER.RENTALEXPENSES')}}</div>

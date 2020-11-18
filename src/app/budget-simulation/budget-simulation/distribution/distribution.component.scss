@@ -1,0 +1,9 @@
+.grid {
+  display: grid;
+  justify-items: center;
+  grid-template-columns: repeat(15, 1fr);
+
+  .justify-self-start {
+    justify-self: start;
+  }
+}

@@ -1,0 +1,27 @@
+<mat-card *ngIf="budget$ | async as budget">
+  <form #selectForm="ngForm" class="mb-30">
+    <mat-form-field class="mr-20">
+      <mat-label>Portfolio</mat-label>
+      <mat-select name="portfolio" #portfolioSelect="ngModel" [ngModel]="budget?.portfolioId || filters.portfolioId"
+        (ngModelChange)="assetSelect.reset(); filters.portfolioId = $event">
+        <mat-option *ngFor="let portfolio of ((portfolioService.portfolios$ | async) || [])" [value]="portfolio.id">
+          {{ portfolio.name }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field class="mr-20">
+      <mat-label>Asset</mat-label>
+      <mat-select name="asset" #assetSelect="ngModel" [ngModel]="budget.assetId || filters.assetId"
+        (ngModelChange)="goToBudget($event); filters.assetId = $event" [disabled]="!portfolioSelect.value">
+        <mat-option
+          *ngFor="let asset of ((assetService.assets$ | async) || []) | filterBy: 'portfolioId': portfolioSelect.value"
+          [value]="asset.id">
+          {{ asset.name }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+  </form>
+
+  <router-outlet></router-outlet>
+</mat-card>

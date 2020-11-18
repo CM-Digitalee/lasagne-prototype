@@ -2,7 +2,7 @@ import { BudgetVersionState } from '../app/shared';
 
 export default [
   {
-    budgetId: 1600597556690,
+    budgetId: 1,
     id: 1,
     state: BudgetVersionState.Submitted,
     stateDate: 1600866328443,
@@ -14,7 +14,7 @@ export default [
     }
   },
   {
-    budgetId: 1600597556690,
+    budgetId: 1,
     id: 2,
     state: BudgetVersionState.Rejected,
     stateDate: 1600866390450,
@@ -26,7 +26,7 @@ export default [
     }
   },
   {
-    budgetId: 1600597556690,
+    budgetId: 1,
     id: 3,
     state: BudgetVersionState.Submitted,
     stateDate: 1600866390450,
@@ -37,7 +37,7 @@ export default [
     }
   },
   {
-    budgetId: 1600597556690,
+    budgetId: 1,
     id: 4,
     state: BudgetVersionState.Accepted,
     stateDate: 1600866390450,
@@ -48,15 +48,15 @@ export default [
     }
   },
   // {
-  //   budgetId: 1600597556690,
+  //   budgetId: 1,
   //   id: 5,
-  //   revision: true,
+  //   extension: true,
   //   state: BudgetVersionState.Pending,
   //   stateDate: 1600866390450,
   //   stateUserId: 1,
   //   number: 5,
   //   accountingPlan: {
-  //     300000: { value: '30000', revision: '10000', comment: 'comment 3' },
+  //     300000: { value: '30000', extension: '10000', comment: 'comment 3' },
   //   }
   // }
 ];

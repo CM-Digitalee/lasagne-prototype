@@ -1,0 +1,172 @@
+<form #simulationForm="ngForm" *ngIf="budget$ | async as budget"
+  (ngSubmit)="saveSimulation(budget.id, simulationForm.value)">
+  <div class="flex align-center">
+
+    <ng-container *ngIf="simulations$ | async as simulations">
+      <mat-form-field *ngIf="simulations.length" class="mr-20">
+        <mat-label>Version</mat-label>
+        <mat-select [value]="(currentSimulation$ | async)?.id" (valueChange)="goToSimulation($event)">
+          <mat-option *ngFor="let simulation of simulations" [value]="simulation.id">
+            {{ simulation.name }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+    </ng-container>
+
+    <a *ngIf="currentSimulation$ | async" type="button" mat-raised-button color="primary" routerLink="./">
+      Nouvelle simulation
+    </a>
+  </div>
+
+  <ng-template #nodeTmpl let-node="node" let-level="level" let-totalParent="totalParent"
+    let-simulationParent="simulationParent">
+    <ng-container *ngIf="node.children else leafTmpl" #accordionItem="cdkAccordionItem" cdkAccordionItem expanded>
+      <div (click)="accordionItem.toggle()" total #total="total" [totalParent]="totalParent" #simulation="simulation"
+        simulation [simulationParent]="simulationParent" class="node line flex pointer">
+        <span class="label flex align-center ov-hidden" [style.padding-left.px]="level*20">
+          <i class="material-icons expand-icon" [ngClass]="{'expanded': accordionItem.expanded}">navigate_next</i>
+          <span>{{ node.label }}</span>
+        </span>
+        <span class="item">{{ total.total('pastYear') | amount: '': '': '1.0-0' }}</span>
+        <span class="item">
+          {{ budget.state === budgetService.budgetVersionState.Accepted ? (total.total('budget') | amount: '': '': '1.0-0') : '-' }}
+        </span>
+        <span class="item">{{ total.total('ytd') | amount: '': '': '1.0-0' }}</span>
+        <span class="item">{{ simulation.projection$ | async | amount: '': '': '1.0-0' }}</span>
+        <span class="item">{{ simulation.restTendance$ | async | amount: '': '': '1.0-0' }}</span>
+        <span class="item">{{ simulation.restBudget$ | async | amount: '': '': '1.0-0' }}</span>
+        <span class="item options"></span>
+      </div>
+      <div [@expand]="accordionItem.expanded" style="overflow: hidden;">
+        <ng-container *ngFor="let node of node.children; trackBy: trackByFn">
+          <ng-container
+            *ngTemplateOutlet="nodeTmpl; context: {node: node, level: level + 1, totalParent: total, simulationParent: simulation}">
+          </ng-container>
+        </ng-container>
+      </div>
+    </ng-container>
+
+    <ng-template #leafTmpl>
+      <div total #total="total" [totalParent]="totalParent" [pastYear]="node.pastYear" [budget]="node.budget"
+        [ytd]="node.ytd" [nextBudget]="node.nextBudget" [isRevenue]="node.accountIsRevenue" class="line flex">
+        <span #elmt [matTooltip]="node.subAccountDescription || node.accountDescription"
+          [matTooltipDisabled]="elmt.scrollWidth <= elmt.offsetWidth" class="label truncate"
+          [style.padding-left.px]="level*30">{{ node.description }}</span>
+        <span class="item">{{ node.pastYear | amount: '': '': '1.0-0' }}</span>
+        <span class="item">
+          {{ budget.state === budgetService.budgetVersionState.Accepted ? (node.budget | amount: '': '': '1.0-0') : '-' }}
+        </span>
+        <span class="item">{{ node.ytd | amount: '': '': '1.0-0' }}</span>
+        <ng-container [ngModelGroup]="node.id" #simulation="simulation"
+          [simulation]="{budget: budget, post: node, distribution: distribution}" [simulationParent]="simulationParent"
+          [isRevenue]="node.accountIsRevenue">
+          <span class="item">{{ simulation.projection$ | async | amount: '': '': '1.0-0' }}</span>
+          <ng-container #warning="warning"
+            [warning]="{value: simulation.restTendance$, comparison: simulation.restBudget$, tolerance: tolerance, isRevenue: node.accountIsRevenue}">
+          </ng-container>
+          <span class="item" [ngClass]="warning.state$ | async">
+            {{ simulation.restTendance$ | async | amount: '': '': '1.0-0' }}
+          </span>
+          <span class="item" [ngClass]="warning.state$ | async">
+            {{ simulation.restBudget$ | async | amount: '': '': '1.0-0' }}
+          </span>
+          <span class="item options">
+            <ng-container distributionForm #distribution="ngModel"
+              [ngModel]="(currentSimulation$ | async)?.configuration[node.id].distribution || node.distribution"
+              name="distribution" [validatedMonth]="budget.validatedMonth" [post]="node">
+              <button type="button" mat-mini-fab color="secondary" matTooltip="Répartition par mois"
+                matTooltipPosition="above"
+                (click)="openDistributionDialog(node,budget.validatedMonth, distribution.control)">
+                <i class="material-icons">bar_chart</i>
+              </button>
+            </ng-container>
+            <ng-container toleranceForm #tolerance="ngModel"
+              [ngModel]="(currentSimulation$ | async)?.configuration[node.id].tolerance || node.tolerance"
+              name="tolerance">
+              <button type="button" mat-mini-fab color="secondary" matTooltip="Tolérance" matTooltipPosition="above"
+                (click)="openToleranceDialog(node, tolerance.control)">
+                <i class="material-icons" style="transform: rotate(180deg);">iso</i>
+              </button>
+            </ng-container>
+          </span>
+        </ng-container>
+      </div>
+    </ng-template>
+  </ng-template>
+
+  <div class="line header flex pr-15">
+    <span class="label">Category</span>
+    <span class="item">Realised 2019</span>
+    <span class="item">Budget 2020</span>
+    <span class="item">Year to date 2020</span>
+    <span class="item"
+      matTooltip="Projection en fin d'année en fonction de la valeur à ce jour et de la proportion de budget estimée"
+      matTooltipPosition="above">Projection en fin d'année</span>
+    <span class="item"
+      matTooltip="Reste du budget à consommer par rapport à la valeur à ce jour en fonction de la proportion de budget estimée"
+      matTooltipPosition="above">Reste à consommer selon tendance</span>
+    <span class="item" matTooltip="Reste du budget à consommer en fonction de la proportion de budget estimée"
+      matTooltipPosition="above">Reste à consommer selon budget</span>
+    <span class="item options"></span>
+  </div>
+
+  <div total #totalRoot="total" simulation #simulationRoot="simulation" class="ov-overlay mb-15"
+    style="max-height: calc(100vh - 400px);">
+    <ng-container *ngFor="let node of budget.accountingPlan; trackBy: trackByFn">
+      <ng-container
+        *ngTemplateOutlet="nodeTmpl; context: {node: node, level: 0, totalParent: totalRoot, simulationParent: simulationRoot}">
+      </ng-container>
+    </ng-container>
+  </div>
+
+  <div class="line footer flex pr-15">
+    <span class="label">Résultat</span>
+    <span class="item">
+      {{ totalRoot.totalRevenue('pastYear') - totalRoot.totalCharge('pastYear') | amount: '': '': '1.0-0' }}</span>
+    <span class="item">
+      {{ budget.state === budgetService.budgetVersionState.Accepted ? (totalRoot.totalRevenue('budget') - totalRoot.totalCharge('budget') | amount: '': '': '1.0-0') : '-' }}
+    </span>
+    <span
+      class="item">{{ totalRoot.totalRevenue('ytd') - totalRoot.totalCharge('ytd') | amount: '': '': '1.0-0' }}</span>
+    <span class="item">
+      {{ (simulationRoot.projectionRevenue$ | async) - (simulationRoot.projectionCharge$ | async) | amount: '': '': '1.0-0' }}
+    </span>
+    <span class="item">
+      {{ (simulationRoot.restTendanceRevenue$ | async) - (simulationRoot.restTendanceCharge$ | async) | amount: '': '': '1.0-0' }}
+    </span>
+    <span class="item">
+      {{ (simulationRoot.restBudgetRevenue$ | async) - (simulationRoot.restBudgetCharge$ | async) | amount: '': '': '1.0-0' }}
+    </span>
+    <span class="item options"></span>
+  </div>
+
+  <div class="flex justify-end mt-20">
+    <button type="submit" mat-raised-button color="primary">Enregistrer</button>
+  </div>
+
+  <button type="button" [draggableModal]="chartTmpl">Chart</button>
+  <ng-template #chartTmpl>
+    <div [lineChart]="chartData(simulationRoot, budget) | async" style="width: 100%;"></div>
+  </ng-template>
+</form>
+
+<ng-template #simulationNameTmpl let-dialogRef="dialogRef">
+  <form>
+    <mat-form-field>
+      <mat-label>Nom de la simulation</mat-label>
+      <input matInput type="text" ngModel #simulationName="ngModel" [ngModelOptions]="{standalone: true}"
+        (input)="simulationName.control.setValue($event.target.value.trimStart())" required>
+    </mat-form-field>
+    <div class="flex justify-end">
+      <span class="mr-10">
+        <button type="submit" mat-raised-button color="primary" [disabled]="simulationName.invalid"
+          [mat-dialog-close]="simulationName.value">
+          Créer
+        </button>
+      </span>
+      <span>
+        <button type="button" mat-raised-button (click)="dialogRef.close()">Annuler</button>
+      </span>
+    </div>
+  </form>
+</ng-template>

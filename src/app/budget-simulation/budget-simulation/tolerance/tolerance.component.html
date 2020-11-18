@@ -1,0 +1,28 @@
+<div class="flex column align-center mb-30">
+  <div>{{ data.post.description }}</div>
+  <div>{{tl.translate('ST.WORD.TOLERANCE')}} </div>
+</div>
+
+<form>
+  <mat-form-field class="mr-20">
+    <mat-label>{{tl.translate('ST.WORD.MIN')}}  (%)</mat-label>
+    <input type="number" matInput #min="ngModel" [(ngModel)]="tolerance.min" [ngModelOptions]="{standalone: true}">
+  </mat-form-field>
+
+  <mat-form-field>
+    <mat-label>{{tl.translate('ST.WORD.MAX')}} (%)</mat-label>
+    <input type="number" matInput #max="ngModel" [(ngModel)]="tolerance.max" [ngModelOptions]="{standalone: true}">
+  </mat-form-field>
+
+  <div class="flex align-center justify-end">
+    <span class="mr-10">
+      <button type="submit" mat-raised-button color="primary"
+        [disabled]="(!min.value && min.value !== 0) || (!max.value && max.value !== 0)" (click)="validate()">
+        {{tl.translate('ST.BUTTON.SUBMIT')}}
+      </button>
+    </span>
+    <span>
+      <button type="button" mat-raised-button (click)="dialogRef.close()">{{tl.translate('ST.BUTTON.CANCEL')}}</button>
+    </span>
+  </div>
+</form>

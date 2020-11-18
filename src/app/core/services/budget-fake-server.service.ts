@@ -70,7 +70,7 @@ export class BudgetFakeServerService {
     return this.get(newBudget.id);
   }
 
-  createVersion(budgetId: number, revision = false) {
+  createVersion(budgetId: number, extension = false) {
     const lastVersion = this.budgetVersions$.value
       .filter(version => version.budgetId === budgetId)
       .sort((a, b) => b.number - a.number)[0];
@@ -78,7 +78,7 @@ export class BudgetFakeServerService {
     const newVersion = {
       id: Date.now(),
       budgetId,
-      revision,
+      extension,
       number: (lastVersion?.number || 0) + 1,
       state: BudgetVersionState.Pending,
       stateDate: Date.now(),
@@ -90,7 +90,7 @@ export class BudgetFakeServerService {
     return of(newVersion);
   }
 
-  createRevision(budgetId: number) {
+  createExtension(budgetId: number) {
     return this.createVersion(budgetId, true);
   }
 

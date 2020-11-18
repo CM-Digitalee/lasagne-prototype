@@ -11,16 +11,16 @@ import {TranslationService} from '../service/translation.service';
 const nodes = (entries: any, key: { id: string, name: string }) =>
   Object.values(
     entries.reduce((acc, entry) =>
-      ({
-        ...acc,
-        ...
-        {
-          [entry[key.id]]: {
-            label: acc[entry[key.name]]?.name || entry[key.name],
-            children: [...(acc[entry[key.id]]?.children || []), entry]
-          }
+    ({
+      ...acc,
+      ...
+      {
+        [entry[key.id]]: {
+          label: acc[entry[key.name]]?.name || entry[key.name],
+          children: [...(acc[entry[key.id]]?.children || []), entry]
         }
-      })
+      }
+    })
       , {})
   );
 
@@ -60,8 +60,8 @@ export class BudgetComponent {
     shareReplay({ refCount: true, bufferSize: 1 })
   );
 
-  revisionMode$ = of(noop).pipe(
-    switchMap(() => this.currentVersion$.pipe(pluck('revision'))),
+  extensionMode$ = of(noop).pipe(
+    switchMap(() => this.currentVersion$.pipe(pluck('extension'))),
     shareReplay({ refCount: true, bufferSize: 1 })
   );
 
@@ -104,8 +104,8 @@ export class BudgetComponent {
     public tl: TranslationService
   ) { }
 
-  create(portfolioId: number, assetId: number, name: string, dialogRef: MatDialogRef<any>) {
-    this.budgetService.create({ portfolioId, assetId, name }).pipe(take(1)).subscribe(
+  create(portfolioId: number, assetId: number, name: string, startDate: Date, dialogRef: MatDialogRef<any>) {
+    this.budgetService.create({ portfolioId, assetId, name, startDate: startDate.getTime() }).pipe(take(1)).subscribe(
       budget => {
         dialogRef.close();
         this.goToBudget(budget.id);
@@ -152,10 +152,19 @@ export class BudgetComponent {
     this.cdr.detectChanges();
   }
 
-  createBudgetRevision(budgetId: number) {
-    this.budgetService.createRevision(budgetId).subscribe(version =>
+  createBudgetExtension(budgetId: number) {
+    this.budgetService.createExtension(budgetId).subscribe(version =>
       this.router.navigate(['./'], { relativeTo: this.route, queryParams: { version: version.number } })
     );
+  }
+
+  isNotStarted(startDate: number) {
+    return Date.now() < startDate;
+  }
+
+  isCurrentPeriod(startDate: number) {
+    const endDate = (new Date(startDate)).setFullYear((new Date(startDate)).getFullYear() + 1);
+    return startDate < Date.now() && Date.now() < endDate;
   }
 
   trackByFn(index: number) { return index; }

@@ -1,5 +1,5 @@
 import { BrowserModule } from '@angular/platform-browser';
-import {APP_INITIALIZER, LOCALE_ID, NgModule} from '@angular/core';
+import { APP_INITIALIZER, LOCALE_ID, NgModule } from '@angular/core';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 import { AppRoutingModule } from './app-routing.module';
@@ -13,11 +13,12 @@ import { DocumentValidationComponent } from './document-validation/document-vali
 import { AnalyticsComponent } from './analytics/analytics.component';
 import { Globals } from './common/global';
 import { IframeViewComponent } from './iframe-view/iframe-view.component';
+
 import {SettingsService} from './service/settings.service';
 import { ComponentLoaderComponent } from './component-loader/component-loader.component';
-import {ComponentLoaderService} from './component-loader/component-loader.service';
-import {ComponentLoaderDirective} from './component-loader/component-loader.directive';
-import {TranslationService} from './service/translation.service' ;
+import { ComponentLoaderService } from './component-loader/component-loader.service';
+import { ComponentLoaderDirective } from './component-loader/component-loader.directive';
+import { TranslationService } from './service/translation.service';
 // import {AddTranslationDialogComponent} from './translation/dialog/add-translation-dialog.component';
 import {MatFormFieldModule} from '@angular/material/form-field';
 import {MatDialogModule} from '@angular/material/dialog';
@@ -35,7 +36,7 @@ export function initSettings(settings: SettingsService) {
 }
 
 @NgModule({
-  declarations: [AppComponent, DashboardComponent, UploadDataComponent, PunchlistComponent, DocumentValidationComponent, AnalyticsComponent, IframeViewComponent, ComponentLoaderComponent, ComponentLoaderDirective ],
+  declarations: [AppComponent, DashboardComponent, UploadDataComponent, PunchlistComponent, DocumentValidationComponent, AnalyticsComponent, IframeViewComponent, ComponentLoaderComponent, ComponentLoaderDirective],
   imports: [
     BrowserModule,
     AppRoutingModule,
@@ -69,7 +70,7 @@ export function initSettings(settings: SettingsService) {
     },
     Globals
   ],
-  entryComponents: [ PunchlistComponent, DashboardComponent ],
+  entryComponents: [PunchlistComponent, DashboardComponent],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

@@ -1,3 +1,4 @@
+
 .line {
   border-bottom: 1px solid #bbb;
   padding-right: 15px; // scrollbar width 15px;
@@ -34,6 +35,14 @@
   display: flex;
   justify-content: flex-end;
   text-align: right;
+
+  &.options {
+    margin: 0;
+    padding: 0;
+    flex: 0 0 80px;
+    justify-content: center;
+    button { transform: scale(0.7); }
+  }
 }
 
 .expand-icon {
@@ -43,3 +52,6 @@
     transform: rotate(90deg);
   }
 }
+
+.warning { color: orange; }
+.danger { color: red; }

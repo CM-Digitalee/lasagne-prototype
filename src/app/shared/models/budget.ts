@@ -3,13 +3,14 @@ export interface Budget {
   portfolioId: number;
   assetId: number;
   name: string;
+  startDate: number;
 }
 
 export interface BudgetVersion {
   id: number;
   budgetId: number;
   number: number;
-  revision?: boolean;
+  extension?: boolean;
   state: BudgetVersionState;
   stateDate: number;
   accountingPlan: AccountingPlan;

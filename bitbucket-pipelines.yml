@@ -1,0 +1,12 @@
+pipelines:
+  branches:
+    uat:
+      - step:
+          script:
+            - export VERSION_TAG=$(git log -n1 --format="%h")
+            - docker login -u $DOCKER_USER -p $DOCKER_PWD registry.20005005.net4all-dns.com
+            - docker build . -t registry.20005005.net4all-dns.com/newstreets-front:$VERSION_TAG
+            - docker push registry.20005005.net4all-dns.com/newstreets-front:$VERSION_TAG
+            # Launch deployment here
+          services:
+            - docker

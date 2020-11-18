@@ -48,11 +48,11 @@
                 <mat-header-cell *matHeaderCellDef> </mat-header-cell>
                 <mat-cell *matCellDef="let row">
 
-                  <button mat-icon-button  (click)="openDialogTranslationEdit(row)">
+                  <button mat-icon-button aria-label="Example icon-button with a heart icon" (click)="openDialogTranslationEdit(row)">
                     <mat-icon>edit</mat-icon>
                   </button>
                   <!-- Remove entry -->
-                  <button mat-icon-button color="warn" (click)="removeEntry(row)" >
+                  <button mat-icon-button color="warn" (click)="removeEntry(row)" aria-label="Example icon-button with a heart icon">
                     <mat-icon>delete</mat-icon>
                   </button>
 
@@ -74,7 +74,7 @@
           <div class="lang-menu">
             <mat-form-field appearance="fill">
               <mat-label>
-                {{tl.translate('ST.SENTENCE.SELECTLANGUAGE')}}
+                {{tl.translate('ST.SENTENCE.SELECT_LANGUAGE')}}
               </mat-label>
               <mat-select (selectionChange)="onSelectionChanged($event)" [(ngModel)]="currentLanguage">
                 <mat-option *ngFor="let language of ((languages | async) || [])" [value]="language">
@@ -91,10 +91,10 @@
             </span>
             {{currentLanguage.label}}
             <div class="lang-icon">
-              <button mat-icon-button (click)="openDialogLanguageEdit(currentLanguage)" >
+              <button mat-icon-button (click)="openDialogLanguageEdit(currentLanguage)" aria-label="Example icon-button with a heart icon">
                 <mat-icon>edit</mat-icon>
               </button>
-              <button mat-icon-button color="warn" (click)="removeLanguage(currentLanguage.iso)" >
+              <button mat-icon-button color="warn" (click)="removeLanguage(currentLanguage.iso)" aria-label="Example icon-button with a heart icon">
                 <mat-icon>delete</mat-icon>
               </button>
             </div>
@@ -158,17 +158,17 @@
                     <div *ngIf="row.translation">
 
                       <!-- Edit translation -->
-                      <button mat-icon-button  (click)="openDialogTranslationToEntryEdit(row)">
+                      <button mat-icon-button aria-label="Example icon-button with a heart icon" (click)="openDialogTranslationToEntryEdit(row)">
                         <mat-icon>edit</mat-icon>
                       </button>
                       <!-- Remove translation -->
-                      <button mat-icon-button color="warn" (click)="removeTranslation(row)" >
+                      <button mat-icon-button color="warn" (click)="removeTranslation(row)" aria-label="Example icon-button with a heart icon">
                         <mat-icon>delete</mat-icon>
                       </button>
                     </div>
                     <div *ngIf="!row.translation">
                       <!-- Add translation -->
-                      <button mat-icon-button  (click)="openDialogTranslationToEntry(row)">
+                      <button mat-icon-button aria-label="Example icon-button with a heart icon" (click)="openDialogTranslationToEntry(row)">
                         <mat-icon>add_circle_outline</mat-icon>
                       </button>
                     </div>
