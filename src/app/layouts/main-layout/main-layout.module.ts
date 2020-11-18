@@ -1,6 +1,6 @@
-import { APP_INITIALIZER, NgModule } from '@angular/core';
+import {APP_INITIALIZER, NgModule, PLATFORM_INITIALIZER} from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 
 import { MainLayoutComponent } from './main-layout.component';
 import { SidenavComponent } from './sidenav/sidenav.component';
@@ -14,6 +14,8 @@ import { BrowserModule } from '@angular/platform-browser';
 import { SidemenuModule } from './sidemenu/sidemenu.module';
 import {UserService} from '../../core/services';
 import {FormsModule} from '@angular/forms';
+import {ItemsMenuService} from '../../service/items-menu.service';
+import {SettingsService} from '../../service/settings.service';
 
 
 // tslint:disable-next-line:typedef
@@ -21,21 +23,15 @@ function initializeKeycloak(keycloak: KeycloakService, userService: UserService)
   return () =>
     keycloak.init({
       config: {
-        // realm: 'New STREETS',
-        // url: 'https://openid.xtech.io/auth',
-        // clientId: 'iccube-dev-public' // Client pour récupérer les menus
         realm: 'New STREETS',
         url: 'https://openid.xtech.io/auth',
-        clientId: 'newstreets' //Client Streets
+        clientId: 'newstreets' // Client Streets
       },
       bearerExcludedUrls: ['/assets'],
       initOptions: {
         onLoad: 'login-required',
         checkLoginIframe: false,
         redirectUri: window.location.href
-        // onLoad: 'check-sso',
-        // silentCheckSsoRedirectUri:
-        //   window.location.origin + '/assets/silent-check-sso.html',
       },
       enableBearerInterceptor: true,
       bearerPrefix: 'Bearer'
@@ -44,7 +40,6 @@ function initializeKeycloak(keycloak: KeycloakService, userService: UserService)
         keycloak.loadUserProfile().then(profile => {
           userService.loginKeycloak(profile);
           localStorage.setItem('profile', JSON.stringify(profile));
-          console.log(profile) ;
         }).catch(() => {
           this.user = null ;
         });
@@ -60,15 +55,17 @@ function initializeKeycloak(keycloak: KeycloakService, userService: UserService)
 
 @NgModule({
   declarations: [MainLayoutComponent, SidenavComponent, HeaderComponent],
-  imports: [CommonModule, RouterModule, BrowserModule, KeycloakAngularModule, HttpClientModule, SidemenuModule, FormsModule],
+  imports: [CommonModule, RouterModule.forRoot([]), BrowserModule, KeycloakAngularModule, HttpClientModule, SidemenuModule, FormsModule],
   providers: [
+    SettingsService,
     {
       provide: APP_INITIALIZER,
       useFactory: initializeKeycloak,
       multi: true,
-      deps: [KeycloakService, UserService],
+      deps: [KeycloakService, UserService, ItemsMenuService, SettingsService],
     },
-  ]
+  ],
+  bootstrap: [MainLayoutComponent]
 })
 export class MainLayoutModule {
 }

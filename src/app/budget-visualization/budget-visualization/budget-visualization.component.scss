@@ -1,9 +1,13 @@
 
 .line {
   border-bottom: 1px solid #bbb;
-  padding: 10px 0;
   padding-right: 15px; // scrollbar width 15px;
   transition: background 100ms;
+  
+  &.header,
+  &.footer {
+    font-weight: bold;
+  }
 
   &.node {
     background: #f5f5f5;
@@ -26,17 +30,18 @@
 
 .item { 
   margin: 0 10px;
+  padding: 10px 0;
   flex: 1 0 10%;
   display: flex;
   justify-content: flex-end;
+  text-align: right;
 
-  &.comment {
-    flex-basis: 20%;
-    justify-content: flex-start;
-  }
-
-  > * {
-    width: 100%;
+  &.options {
+    margin: 0;
+    padding: 0;
+    flex: 0 0 80px;
+    justify-content: center;
+    button { transform: scale(0.7); }
   }
 }
 
@@ -47,3 +52,6 @@
     transform: rotate(90deg);
   }
 }
+
+.warning { color: orange; }
+.danger { color: red; }

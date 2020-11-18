@@ -9,6 +9,7 @@ export interface BudgetVersion {
   id: number;
   budgetId: number;
   number: number;
+  revision?: boolean;
   state: BudgetVersionState;
   stateDate: number;
   accountingPlan: AccountingPlan;

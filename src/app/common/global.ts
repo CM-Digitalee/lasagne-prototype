@@ -1,9 +1,11 @@
 // globals.ts
 import { Injectable } from '@angular/core';
+import {Observable} from 'rxjs';
 
 @Injectable()
 export class Globals {
-  role: string = 'test';
-  languageId: string = 'en';
+  languageId = 'en';
   sideMenus: Array<any>;
+  translationJson: object;
+  isAppInit: boolean;
 }

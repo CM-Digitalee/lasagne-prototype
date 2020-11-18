@@ -25,7 +25,7 @@ export class UserService {
 
   loginKeycloak(keycloak) {
     // @TODO : Add role from keycloak
-    const user = { id: 1, name: keycloak.username, role: 'AO' } as User;
+    const user = { id: 1, name: keycloak.username, role: 'PM' } as User;
     this._currentUser$.next(user);
   }
   logoutKeycloak() {

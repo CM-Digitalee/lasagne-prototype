@@ -1,0 +1,193 @@
+<div class="p-40">
+  <ng-container>
+    <div style="text-align:right">
+      <a class="btn btn-clear actionBtn" [title]="tl.translate('ST.BUTTON.EXPORT_JSON')" [href]="downloadJsonHref | async" download="STREETS_translations.json">
+        <button mat-raised-button color="link">
+          {{tl.translate('ST.BUTTON.EXPORT_JSON')}}
+        </button>
+      </a>
+      <a class="btn btn-clear actionBtn" [title]="tl.translate('ST.BUTTON.EXPORT_JSON')" (click)="refreshCache()" download="STREETS_translations.json">
+        <button mat-raised-button color="primary">
+          <mat-icon>sync</mat-icon>
+          {{tl.translate('ST.BUTTON.REFRESHCACHE')}}
+        </button>
+      </a>
+    </div>
+
+    <mat-tab-group (selectedTabChange)="onTabChanged($event)" id="tabGroup">
+      <mat-tab  [label]=" tl.translate('ST.WORD.ENTRIES', 'capitalize') " >
+        <div *ngIf="entrySelected"></div>
+        <ng-template matTabContent>
+          <div class="entry-menu">
+            <button type="submit" class="actionBtn" mat-raised-button color="primary" (click)="openDialogTranslation()"><mat-icon>add</mat-icon> {{tl.translate('ST.BUTTON.ADD')}} </button>
+          </div>
+          <div>
+            <mat-table [dataSource]="entries | async">
+
+              <ng-container matColumnDef="ui_id" >
+                <mat-header-cell *matHeaderCellDef class="small-column">UI_ID</mat-header-cell>
+                <mat-cell *matCellDef="let row"  class="small-column"> {{row.ui_id}} </mat-cell>
+              </ng-container>
+              <ng-container matColumnDef="state" >
+                <mat-header-cell *matHeaderCellDef class="small-column"> {{tl.translate('ST.WORD.STATE')}} </mat-header-cell>
+                <mat-cell *matCellDef="let row"  class="small-column">
+                  <mat-slide-toggle
+                    class="example-margin"
+                    [(ngModel)]="row.enabled" (click)="switchEntry(row)">
+                    <!--                  {{row.enabled ? 'enabled' : 'disabled'}}-->
+                  </mat-slide-toggle>
+                  <!--                <span *ngIf="!row.translation"><mat-icon>error_outline</mat-icon> </span>-->
+                </mat-cell>
+              </ng-container>
+              <ng-container matColumnDef="description">
+                <mat-header-cell *matHeaderCellDef> {{tl.translate('ST.WORD.DESCRIPTION')}} </mat-header-cell>
+                <mat-cell *matCellDef="let row"> {{row.description}} </mat-cell>
+              </ng-container>
+              <!-- Title Definition -->
+              <ng-container matColumnDef="action">
+                <mat-header-cell *matHeaderCellDef> </mat-header-cell>
+                <mat-cell *matCellDef="let row">
+
+                  <button mat-icon-button  (click)="openDialogTranslationEdit(row)">
+                    <mat-icon>edit</mat-icon>
+                  </button>
+                  <!-- Remove entry -->
+                  <button mat-icon-button color="warn" (click)="removeEntry(row)" >
+                    <mat-icon>delete</mat-icon>
+                  </button>
+
+                </mat-cell>
+              </ng-container>
+
+              <!-- Header and Row Declarations -->
+              <mat-header-row *matHeaderRowDef="['state', 'ui_id', 'description', 'action']"></mat-header-row>
+              <mat-row *matRowDef="let row; columns: ['state', 'ui_id', 'description', 'action']"></mat-row>
+            </mat-table>
+          </div>
+          <mat-paginator #paginator class="paginator" [pageSizeOptions]="[10, 20, 50, 100]"></mat-paginator>
+        </ng-template>
+      </mat-tab>
+
+      <!-- Language Panel -->
+      <mat-tab  [label]="'Translations' "  > <!-- A passer en dynamic selon traductions reçues -->
+        <ng-template matTabContent>
+          <div class="lang-menu">
+            <mat-form-field appearance="fill">
+              <mat-label>
+                {{tl.translate('ST.SENTENCE.SELECTLANGUAGE')}}
+              </mat-label>
+              <mat-select (selectionChange)="onSelectionChanged($event)" [(ngModel)]="currentLanguage">
+                <mat-option *ngFor="let language of ((languages | async) || [])" [value]="language">
+                  {{language.iso}} - {{language.label}}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+            <button type="submit" class="actionBtn" mat-raised-button color="primary" (click)="openDialogLanguage()"> <mat-icon>add</mat-icon> {{tl.translate("ST.BUTTON.ADD_LANGUAGE")}}</button>
+          </div>
+          <div>
+          <div class="lang-title">
+            <span class="lang-dot">
+              <mat-icon [ngClass]="{'green-color icon-dot': currentLanguage.enabled, 'red-color icon-dot': !currentLanguage.enabled}">fiber_manual_record</mat-icon>
+            </span>
+            {{currentLanguage.label}}
+            <div class="lang-icon">
+              <button mat-icon-button (click)="openDialogLanguageEdit(currentLanguage)" >
+                <mat-icon>edit</mat-icon>
+              </button>
+              <button mat-icon-button color="warn" (click)="removeLanguage(currentLanguage.iso)" >
+                <mat-icon>delete</mat-icon>
+              </button>
+            </div>
+
+          </div>
+            <div *ngIf="translationsSource | async">
+              <mat-table [dataSource]="translationsSource | async">
+                <ng-container matColumnDef="position" >
+                  <mat-header-cell *matHeaderCellDef class="small-column"> No. </mat-header-cell>
+                  <mat-cell *matCellDef="let row"  class="small-column"> {{row.position}} </mat-cell>
+                </ng-container>
+                <ng-container matColumnDef="state-entry" >
+                  <mat-header-cell *matHeaderCellDef class="small-column">
+                    {{tl.translate('ST.WORD.ENTRY')}}
+                  </mat-header-cell>
+                  <mat-cell *matCellDef="let row"  class="small-column">
+                <span *ngIf="row" (click)="switchEntry(row)">
+                  <mat-icon [ngClass]="{'green-color icon-dot': row.enabled, 'red-color icon-dot': !row.enabled}">fiber_manual_record</mat-icon>
+                </span>
+                  </mat-cell>
+                </ng-container>
+                <ng-container matColumnDef="state" >
+                  <mat-header-cell *matHeaderCellDef class="small-column">
+                    {{tl.translate('ST.WORD.ENABLED', 'capitalize')}}
+                  </mat-header-cell>
+                  <mat-cell *matCellDef="let row"  class="small-column">
+                    <mat-slide-toggle
+                      class="example-margin"
+                      *ngIf="row.translation"
+                      [(ngModel)]="row.translation.enabled" (click)="switchTranslation(row)">
+                      <!--                  {{row.enabled ? 'enabled' : 'disabled'}}-->
+                    </mat-slide-toggle>
+                  </mat-cell>
+                </ng-container>
+                <!-- User name Definition -->
+                <ng-container matColumnDef="id">
+                  <mat-header-cell *matHeaderCellDef> ID </mat-header-cell>
+                  <mat-cell *matCellDef="let row">
+                    {{row.ui_id}}
+                  </mat-cell>
+                </ng-container>
+                <ng-container matColumnDef="description">
+                  <mat-header-cell *matHeaderCellDef>
+                    {{tl.translate('ST.WORD.DESCRIPTION')}}
+                  </mat-header-cell>
+                  <mat-cell *matCellDef="let row"> {{row.description}} </mat-cell>
+                </ng-container>
+                <!-- translation Definition -->
+                <ng-container matColumnDef="translation">
+                  <mat-header-cell *matHeaderCellDef> {{tl.translate('ST.WORD.TRANSLATION', 'capitalize')}} </mat-header-cell>
+                  <mat-cell *matCellDef="let row">
+                    <div *ngIf="row.translation">
+                      {{row.translation.translated}}
+                    </div>
+                  </mat-cell>
+                </ng-container>
+                <!-- Title Definition -->
+                <ng-container matColumnDef="action">
+                  <mat-header-cell *matHeaderCellDef> </mat-header-cell>
+                  <mat-cell *matCellDef="let row">
+                    <div *ngIf="row.translation">
+
+                      <!-- Edit translation -->
+                      <button mat-icon-button  (click)="openDialogTranslationToEntryEdit(row)">
+                        <mat-icon>edit</mat-icon>
+                      </button>
+                      <!-- Remove translation -->
+                      <button mat-icon-button color="warn" (click)="removeTranslation(row)" >
+                        <mat-icon>delete</mat-icon>
+                      </button>
+                    </div>
+                    <div *ngIf="!row.translation">
+                      <!-- Add translation -->
+                      <button mat-icon-button  (click)="openDialogTranslationToEntry(row)">
+                        <mat-icon>add_circle_outline</mat-icon>
+                      </button>
+                    </div>
+                  </mat-cell>
+                </ng-container>
+
+                <!-- Header and Row Declarations -->
+                <mat-header-row *matHeaderRowDef="['position', 'state-entry', 'state', 'id', 'description', 'translation', 'action']"></mat-header-row>
+                <mat-row *matRowDef="let row; columns: ['position', 'state-entry', 'state', 'id', 'description','translation', 'action']"></mat-row>
+              </mat-table>
+              <mat-paginator #paginatorL class="paginator" [pageSizeOptions]="[10, 20, 50, 100]"></mat-paginator>
+            </div>
+
+          </div>
+        </ng-template>
+      </mat-tab>
+    </mat-tab-group>
+
+
+  </ng-container>
+</div>
+

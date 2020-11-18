@@ -1,0 +1,93 @@
+@font-face { font-family: overpass-semibold;
+  src: url('../../assets/font/Overpass/Overpass-SemiBold.ttf')
+}
+@font-face { font-family: lato-regular;
+  src: url('../../assets/font/Lato/Lato-Regular.ttf')
+}
+.actionBtn{
+  margin: 0 5px;
+}
+.lang-title{
+  text-align: center;
+  text-transform: uppercase;
+  font-family: lato-regular, sans-serif;
+  font-weight: 700;
+  font-size: 22px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 10px;
+
+  .lang-dot{
+    mat-icon{
+      font-size: 14px;
+    }
+  }
+
+}
+.lang-menu{
+  margin-top:20px;
+  margin-left:10px;
+  text-align: right;
+  button{
+    margin-left:20px;
+  }
+}
+.entry-menu{
+  margin-top:20px;
+  margin-left:10px;
+  text-align: right;
+  button{
+    margin-left:20px;
+    margin-bottom:20px;
+  }
+}
+.red-color{
+  color:red;
+}
+.green-color{
+  color:green;
+}
+.icon-dot{
+  margin-right:5px;
+}
+.small-column{
+  width:40px;
+}
+.mat-column-position {
+  flex: 0 0 3%;
+}
+.mat-column-ui_id {
+  flex: 0 0 26%;
+}
+.mat-column-state-entry  {
+  flex: 0 0 3%;
+}
+.mat-column-description {
+  overflow-x:auto;
+}
+.mat-column-action  {
+  flex: 0 0 10%;
+  div {
+    display: flex;
+  }
+}
+.mat-column-state {
+  flex: 0 0 7%;
+  span{
+    cursor: pointer;
+  }
+}
+
+.mat-table, .mat-paginator{
+  width: 90%;
+  margin:auto;
+}
+
+.mat-column-position{
+  flex: 0 0 4%;
+}
+mat-cell{
+  padding: 5px;
+}
+.mat-form-field{margin:10px;}

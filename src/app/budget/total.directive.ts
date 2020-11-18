@@ -7,6 +7,7 @@ import { AfterViewInit, Directive, Input, OnDestroy } from '@angular/core';
 export class TotalDirective implements AfterViewInit, OnDestroy {
   @Input() totalParent: TotalDirective;
   @Input() value: number;
+  @Input() revision: number;
   @Input() previousYear: number;
   @Input() currentYear: number;
   @Input() isRevenue: boolean;
@@ -18,6 +19,12 @@ export class TotalDirective implements AfterViewInit, OnDestroy {
     return this.children.length
       ? this.children.reduce((total, child) => total + child.total, 0)
       : this.value;
+  }
+
+  get totalRevision() {
+    return this.children.length
+      ? this.children.reduce((total, child) => total + child.totalRevision, 0)
+      : this.revision;
   }
 
   get totalRevenue() {

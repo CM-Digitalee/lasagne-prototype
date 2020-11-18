@@ -1,0 +1,39 @@
+<h2>{{tl.translate('ST.WORD.CODE')}}</h2>
+<mat-table [dataSource]="functionalities | async">
+  <ng-container matColumnDef="id" >
+    <mat-header-cell *matHeaderCellDef class="small-column">ID</mat-header-cell>
+    <mat-cell *matCellDef="let row"  class="small-column"> {{row.id}} </mat-cell>
+  </ng-container>
+  <ng-container matColumnDef="code">
+    <mat-header-cell *matHeaderCellDef> {{tl.translate('ST.WORD.CODE')}} </mat-header-cell>
+    <mat-cell *matCellDef="let row"> {{row.code}} </mat-cell>
+  </ng-container>
+  <ng-container matColumnDef="description">
+    <mat-header-cell *matHeaderCellDef> {{tl.translate('ST.WORD.DESCRIPTION')}} </mat-header-cell>
+    <mat-cell *matCellDef="let row"> {{row.description}} </mat-cell>
+  </ng-container>
+  <!-- Title Definition -->
+  <ng-container matColumnDef="action">
+    <mat-header-cell *matHeaderCellDef> </mat-header-cell>
+    <mat-cell *matCellDef="let row">
+      <mat-slide-toggle
+        class="example-margin"
+        [(ngModel)]="row.enabled" (click)="switchEnabled(row)">
+        <!--                  {{row.enabled ? 'enabled' : 'disabled'}}-->
+      </mat-slide-toggle>
+
+      <!--          <button mat-icon-button  (click)="openDialogTranslationEdit(row)">-->
+      <!--            <mat-icon>edit</mat-icon>-->
+      <!--          </button>-->
+      <!--          &lt;!&ndash; Remove entry &ndash;&gt;-->
+      <!--          <button mat-icon-button color="warn" (click)="removeEntry(row)" >-->
+      <!--            <mat-icon>delete</mat-icon>-->
+      <!--          </button>-->
+
+    </mat-cell>
+  </ng-container>
+
+  <!-- Header and Row Declarations -->
+  <mat-header-row *matHeaderRowDef="['id', 'code', 'description', 'action']"></mat-header-row>
+  <mat-row *matRowDef="let row; columns: ['id','code', 'description', 'action']"></mat-row>
+</mat-table>

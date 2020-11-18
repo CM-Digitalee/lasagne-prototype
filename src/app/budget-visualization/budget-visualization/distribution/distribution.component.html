@@ -1,0 +1,101 @@
+<div class="flex column align-center mb-30">
+  <div>{{ data.post.description }}</div>
+  <div>{{tl.translate('ST.SENTENCE.DISTRIBUTION_BY_MONTH')}}</div>
+</div>
+
+<div class="flex column mb-20">
+  <mat-radio-group color="primary" class="mb-10" [(ngModel)]="valueType">
+    <mat-radio-button [value]="ValueType.Currency" class="mr-15">CHF</mat-radio-button>
+    <mat-radio-button [value]="ValueType.Percent">%</mat-radio-button>
+  </mat-radio-group>
+  <mat-radio-group color="primary" [(ngModel)]="periodicity">
+    <mat-radio-button [value]="Periodicity.Quarter" class="mr-15">{{tl.translate('ST.WORD.QUARTER')}}</mat-radio-button>
+    <mat-radio-button [value]="Periodicity.Month">{{tl.translate('ST.WORD.MONTH')}}</mat-radio-button>
+  </mat-radio-group>
+</div>
+
+<div *ngIf="periodicity === Periodicity.Month" class="grid">
+  <div *ngFor="let item of distribution$ | async; trackBy: trackByFn; let i = index" [style.grid-column]="i + 4"
+    class="flex column align-center">
+    <span>{{ item.month }}</span>
+    <mat-slider vertical [ngModel]="realisedPercent[i]?.value || item.value | percentConverter"
+      (input)="adjust(item, $event.value)" min="0" [max]="100 | percentConverter" step="1"
+      [disabled]="item.month <= data.validatedMonth" color="primary">
+    </mat-slider>
+  </div>
+
+  <div style="grid-column: 1 / 4;">{{tl.translate('ST.WORD.CURRENT')}} : {{ data.post.budget }}</div>
+  <div *ngFor="let item of realisedPercent; let i = index" [style.grid-column]="i + 4">
+    <span>{{ item.value | percentConverter | round: 2 }}</span>
+    <span *ngIf="valueType === ValueType.Percent">%</span>
+  </div>
+
+  <div *ngFor="let item of distribution$ | async; trackBy: trackByFn; let i = index" [style.grid-column]="i + 4">
+    <mat-form-field style="width: 50px;">
+      <input matInput type="number" [ngModel]="item.value | percentConverter | round: 2"
+        (input)="isNumberValue($event.target.value) && adjust(item, +$event.target.value)"
+        [disabled]="item.month <= data.validatedMonth" style="text-align:center;">
+    </mat-form-field>
+    <span *ngIf="valueType === ValueType.Percent">%</span>
+  </div>
+
+  <ng-container *ngFor="let budget of data.post.oldBudgets; let i = index">
+    <div style="grid-column: 1 / 4;">
+      {{tl.translate('ST.WORD.BUDGET')}} {{ data.post.oldBudgets.length - i }} ({{ budget | amount: '': '': '1.0-0' }})
+    </div>
+    <div *ngFor="let item of realised; let i = index" [style.grid-column]="i + 4">
+      {{ item.value * 100 / budget | round: 2 }} %
+    </div>
+  </ng-container>
+</div>
+
+<div *ngIf="periodicity === Periodicity.Quarter" class="grid">
+  <ng-container *ngIf="quarters$ | async as quarters">
+    <div *ngFor="let item of quarters$ | async; trackBy: trackByFn; let i = index" [style.grid-column]="3 * i + 4"
+      class="flex column align-center">
+      <span>{{ i + 1 }}</span>
+      <mat-slider #slider vertical
+        [ngModel]="(realisedPercent[3*i] || item[0]).value + (realisedPercent[3*i+1] || item[1]).value + (realisedPercent[3*i+2] || item[2]).value | percentConverter"
+        (input)="adjustQuarter(quarters, item, $event.value, slider)" min="0" [max]="100 | percentConverter" step="1"
+        [disabled]="(i + 1) * 3 <= data.validatedMonth" color="primary">
+      </mat-slider>
+    </div>
+
+    <div style="grid-column: 1 / 4;">{{tl.translate('ST.WORD.CURRENT')}} : {{ data.post.budget }}</div>
+    <div *ngFor="let amount of quartersRealisedPercent; let i = index" [style.grid-column]="i + 4">
+      <span>{{ amount | percentConverter | round: 2 }}</span>
+      <span *ngIf="valueType === ValueType.Percent">%</span>
+    </div>
+
+    <div *ngFor="let item of quarters$ | async; trackBy: trackByFn; let i = index" [style.grid-column]="3 * i + 4">
+      <mat-form-field style="width: 50px;">
+        <input matInput type="number" [ngModel]="(i + 1) * 3 <= data.validatedMonth
+            ? item[0].value + item[1].value + item[2].value
+            : (realisedPercent[3*i] || item[0]).value + (realisedPercent[3*i+1] || item[1]).value + (realisedPercent[3*i+2] || item[2]).value
+            | percentConverter | round: 2"
+          (input)="isNumberValue($event.target.value) && adjustQuarter(quarters, item, +$event.target.value, slider)"
+          [disabled]="(i + 1) * 3 <= data.validatedMonth" style="text-align:center;">
+      </mat-form-field>
+      <span *ngIf="valueType === ValueType.Percent">%</span>
+    </div>
+
+    <ng-container *ngFor="let budget of data.post.oldBudgets; let i = index">
+      <div style="grid-column: 1 / 4;">
+        {{tl.translate('ST.WORD.BUDGET')}} {{ data.post.oldBudgets.length - i }} ({{ budget | amount: '': '': '1.0-0' }})
+      </div>
+      <div *ngFor="let amount of quartersRealised; let i = index" [style.grid-column]="i + 4">
+        {{ amount * 100 / budget | round: 2 }} %
+      </div>
+    </ng-container>
+  </ng-container>
+</div>
+
+<div class="flex align-center justify-end" style="margin-top: 50px;">
+  <span class="mr-10">
+    <button type="button" mat-raised-button color="primary" [disabled]="(total | round: 3) !== 100"
+      (click)="validate()">{{tl.translate('ST.BUTTON.VALIDATE')}}</button>
+  </span>
+  <span>
+    <button type="button" mat-raised-button (click)="dialogRef.close()">{{tl.translate('ST.BUTTON.CANCEL')}}</button>
+  </span>
+</div>

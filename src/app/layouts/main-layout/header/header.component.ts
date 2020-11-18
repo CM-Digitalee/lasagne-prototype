@@ -12,6 +12,5 @@ import {Globals} from '../../../common/global';
 })
 export class HeaderComponent {
   constructor(public userService: UserService, public appLanguages: AppLanguagesService, public globals: Globals) {
-    // appLanguages.resolveItems();
   }
 }

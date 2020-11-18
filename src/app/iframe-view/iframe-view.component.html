@@ -1,9 +1,11 @@
-<p>iframe-view works!</p>
+<!--<p>{{title}}</p>-->
 <iframe id="dashboardIframe"
         class="icubeIframe"
         title="Dashboard Icube Iframe"
+        width="94%"
+        height="94%"
         style="border:none;margin-left:5%;margin-top:3%;"
-        src='https://ns-iccube-dev.xtech.io/icCube/doc/ic3report?name=%2Fshared%2Fct%2F1)%20Donn%C3%A9es%20de%20r%C3%A9f%C3%A9rences'
+        [src]='sanitizer.bypassSecurityTrustResourceUrl(url)'
 >
-  Browser not compatible.
+  {{tl.translate('ST.SENTENCE.BROWSER_COMPATIBILITY')}}
 </iframe>

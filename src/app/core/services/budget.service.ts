@@ -26,6 +26,10 @@ export class BudgetService {
     return this.budgetFakeServerService.createVersion(budgetId);
   }
 
+  createRevision(budgetId: number) {
+    return this.budgetFakeServerService.createRevision(budgetId);
+  }
+
   saveVersion(versionId: number, formValue: AccountingPlan) {
     return this.budgetFakeServerService.patchVersion(versionId, formValue);
   }

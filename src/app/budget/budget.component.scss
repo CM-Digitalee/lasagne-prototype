@@ -1,9 +1,13 @@
 
 .line {
   border-bottom: 1px solid #bbb;
-  padding: 10px 0;
   padding-right: 15px; // scrollbar width 15px;
   transition: background 100ms;
+  
+  &.header,
+  &.footer {
+    font-weight: bold;
+  }
 
   &.node {
     background: #f5f5f5;
@@ -26,18 +30,11 @@
 
 .item { 
   margin: 0 10px;
+  padding: 10px 0;
   flex: 1 0 10%;
   display: flex;
   justify-content: flex-end;
-
-  &.comment {
-    flex-basis: 20%;
-    justify-content: flex-start;
-  }
-
-  > * {
-    width: 100%;
-  }
+  text-align: right;
 }
 
 .expand-icon {

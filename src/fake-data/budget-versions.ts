@@ -28,12 +28,35 @@ export default [
   {
     budgetId: 1600597556690,
     id: 3,
-    state: BudgetVersionState.Pending,
+    state: BudgetVersionState.Submitted,
     stateDate: 1600866390450,
     stateUserId: 1,
     number: 3,
     accountingPlan: {
       300000: { value: '30000', comment: 'comment 3' },
     }
-  }
+  },
+  {
+    budgetId: 1600597556690,
+    id: 4,
+    state: BudgetVersionState.Accepted,
+    stateDate: 1600866390450,
+    stateUserId: 1,
+    number: 4,
+    accountingPlan: {
+      300000: { value: '30000', comment: 'comment 3' },
+    }
+  },
+  // {
+  //   budgetId: 1600597556690,
+  //   id: 5,
+  //   revision: true,
+  //   state: BudgetVersionState.Pending,
+  //   stateDate: 1600866390450,
+  //   stateUserId: 1,
+  //   number: 5,
+  //   accountingPlan: {
+  //     300000: { value: '30000', revision: '10000', comment: 'comment 3' },
+  //   }
+  // }
 ];

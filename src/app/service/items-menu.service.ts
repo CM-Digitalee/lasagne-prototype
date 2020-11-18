@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
-import {BehaviorSubject, Observable} from 'rxjs';
+import {BehaviorSubject} from 'rxjs';
 import {Tools} from '../tools/function';
-import {User} from '../shared/models';
 import {Globals} from '../common/global';
+import {Router} from '@angular/router';
 
 @Injectable({
   providedIn: 'root'
@@ -17,19 +17,10 @@ export class ItemsMenuService {
     // return JSON.parse(localStorage.getItem('user'));
     return this._itemsMenu$.asObservable();
   }
-  constructor(private tools: Tools, public globals: Globals) { }
-  // create a method named: resolveItems()
-  // this method returns list-of-items in form of Observable
-  // every HTTTP call returns Observable object
+  constructor(private tools: Tools, public globals: Globals, public router: Router) { }
 
-  setLanguage(lg): void {
-    this.language = lg ;
-  }
-  resolveItems(): void {
-    console.log(this.globals.languageId);
-    this.tools.get(this.URL + '/' + this.globals.languageId).subscribe((data) => {
-      this._itemsMenu$.next(data.answer.sideMenus);
-      this.globals.sideMenus = data.answer.sideMenus ;
-    } );
+  public setItems(value): void{
+    this._itemsMenu$.next(value);
+    this.globals.sideMenus = value ;
   }
 }

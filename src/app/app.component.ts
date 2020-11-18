@@ -16,9 +16,6 @@ export class AppComponent {
     }else{
        localStorage.setItem('language', this.globals.languageId);
     }
-    console.log(this.globals.languageId )
-    itemsService.resolveItems();
-    appLanguageService.resolveItems();
   }
 
 }

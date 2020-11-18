@@ -1,9 +1,9 @@
-<div *ngIf="budget$ | async as budget" class="p-40">
-  <form #selectForm="ngForm">
+<mat-card *ngIf="budget$ | async as budget">
+  <form #selectForm="ngForm" class="mb-30">
     <mat-form-field class="mr-20">
-      <mat-label>Portfolio</mat-label>
-      <mat-select name="portfolio" #portfolioSelect="ngModel" [ngModel]="budget?.portfolioId"
-        (ngModelChange)="assetSelect.reset()">
+      <mat-label>{{tl.translate('ST.WORD.PORTFOLIO','capitalize')}}</mat-label>
+      <mat-select name="portfolio" #portfolioSelect="ngModel" [ngModel]="budget?.portfolioId || filters.portfolioId"
+        (ngModelChange)="assetSelect.reset(); filters.portfolioId = $event">
         <mat-option *ngFor="let portfolio of ((portfolioService.portfolios$ | async) || [])" [value]="portfolio.id">
           {{ portfolio.name }}
         </mat-option>
@@ -11,9 +11,10 @@
     </mat-form-field>
 
     <mat-form-field class="mr-20">
-      <mat-label>Asset</mat-label>
-      <mat-select name="asset" #assetSelect="ngModel" [ngModel]="budget.assetId"
-        (ngModelChange)="selectForm.form.get('budget')?.reset();" [disabled]="!portfolioSelect.value">
+      <mat-label>{{tl.translate('ST.WORD.ASSET','capitalize')}}</mat-label>
+      <mat-select name="asset" #assetSelect="ngModel" [ngModel]="budget.assetId || filters.assetId"
+        (ngModelChange)="selectForm.form.get('budget')?.reset(); filters.assetId = $event"
+        [disabled]="!portfolioSelect.value">
         <mat-option
           *ngFor="let asset of ((assetService.assets$ | async) || []) | filterBy: 'portfolioId': portfolioSelect.value"
           [value]="asset.id">
@@ -25,20 +26,21 @@
     <mat-form-field
       *ngIf="((budgets$ | async) || []) | filterBy: 'portfolioId': portfolioSelect.value | filterBy: 'assetId': assetSelect.value as budgets"
       class="mr-20">
-      <mat-label>Budget</mat-label>
-      <mat-select name="budget" [ngModel]="budget.id || assetSelect.value && !budgets.length && ''"
-        [disabled]="!assetSelect.value || !budgets.length" (ngModelChange)="goToBudget($event)">
+      <mat-label>{{tl.translate('ST.WORD.BUDGET','capitalize')}}</mat-label>
+      <mat-select name="budget" [ngModel]="budget.id || filters.budgetId || assetSelect.value && !budgets.length && ''"
+        [disabled]="!assetSelect.value || !budgets.length"
+        (ngModelChange)="goToBudget($event); filters.budgetId = $event">
         <ng-container *ngIf="budgets.length else noBudget">
           <mat-option *ngFor="let budget of budgets" [value]="budget.id">
             {{ budget.name }}
           </mat-option>
         </ng-container>
         <ng-template #noBudget>
-          <mat-option value="">Aucun budget</mat-option>
+          <mat-option value="">{{tl.translate('ST.BUDGET.SENTENCE.NO_BUDGET','capitalize')}}</mat-option>
         </ng-template>
       </mat-select>
     </mat-form-field>
   </form>
 
   <router-outlet></router-outlet>
-</div>
+</mat-card>

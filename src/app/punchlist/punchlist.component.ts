@@ -1,4 +1,6 @@
-import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
+import {Component, OnInit, ChangeDetectionStrategy, Input} from '@angular/core';
+import {CompComponent} from '../component-loader/comp.component';
+import {TranslationService} from '../service/translation.service';
 
 @Component({
   selector: 'app-punchlist',
@@ -6,11 +8,8 @@ import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
   styleUrls: ['./punchlist.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class PunchlistComponent implements OnInit {
-
-  constructor() { }
-
-  ngOnInit(): void {
-  }
+export class PunchlistComponent  implements CompComponent {
+  @Input() data: any;
+  constructor(public tl: TranslationService) { }
 
 }

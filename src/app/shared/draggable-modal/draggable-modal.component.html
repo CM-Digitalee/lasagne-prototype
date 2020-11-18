@@ -1,0 +1,8 @@
+<mat-card class="mat-elevation-z8">
+  <div class="container">
+    <ng-container *ngTemplateOutlet="tmpl"></ng-container>
+  </div>
+  <div (draggable)="onDrag($event)" class="drag">
+    <i class="material-icons">zoom_out_map</i>
+  </div>
+</mat-card>

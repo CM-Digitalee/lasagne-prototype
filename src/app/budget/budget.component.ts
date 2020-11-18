@@ -1,11 +1,12 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { asyncScheduler, iif, of } from 'rxjs';
+import { asyncScheduler, iif, noop, of } from 'rxjs';
 import { filter, map, pluck, shareReplay, switchMap, take, tap } from 'rxjs/operators';
 
 import { AccountingPlan, BudgetWithVersionsAndRealised, nodeToggle } from '../shared';
 import { AccountingPlanService, AssetService, BudgetService, PortfolioService } from '../core';
+import {TranslationService} from '../service/translation.service';
 
 const nodes = (entries: any, key: { id: string, name: string }) =>
   Object.values(
@@ -59,6 +60,11 @@ export class BudgetComponent {
     shareReplay({ refCount: true, bufferSize: 1 })
   );
 
+  revisionMode$ = of(noop).pipe(
+    switchMap(() => this.currentVersion$.pipe(pluck('revision'))),
+    shareReplay({ refCount: true, bufferSize: 1 })
+  );
+
   accountingPlan$ = this.budget$.pipe(
     switchMap(budget =>
       this.accountingPlanService.accountingPlan$.pipe(
@@ -94,7 +100,8 @@ export class BudgetComponent {
     public dialog: MatDialog,
     public route: ActivatedRoute,
     private router: Router,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    public tl: TranslationService
   ) { }
 
   create(portfolioId: number, assetId: number, name: string, dialogRef: MatDialogRef<any>) {
@@ -143,6 +150,12 @@ export class BudgetComponent {
     );
 
     this.cdr.detectChanges();
+  }
+
+  createBudgetRevision(budgetId: number) {
+    this.budgetService.createRevision(budgetId).subscribe(version =>
+      this.router.navigate(['./'], { relativeTo: this.route, queryParams: { version: version.number } })
+    );
   }
 
   trackByFn(index: number) { return index; }

@@ -1,5 +1,4 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import {UserService} from '../../core/services';
 
 @Component({
   selector: 'app-main-layout',
@@ -11,13 +10,13 @@ import {UserService} from '../../core/services';
 -->
       <app-sidemenu class="no-shrink"></app-sidemenu>
       <div class="fill ov-auto" style="height: calc(100vh - 60px); background-color:#E9EAFF">
-        <router-outlet></router-outlet>
+        <div class="p-40" style="height:100%">
+          <router-outlet></router-outlet>
+        </div>
       </div>
     </div>
     `,
   host: { 'class': 'flex column full-view ov-hidden' },
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class MainLayoutComponent {
-
-}
+export class MainLayoutComponent { }

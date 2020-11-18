@@ -102,6 +102,12 @@ $font-family-notif: lato-regular, serif;
   }
 
   ul.submenu{
-    margin-left:52px; //24px //To align with other items
+     //24px //To align with other items
+    > li{
+      div{
+        padding-left:52px;
+        // width: 198px;
+      }
+    }
   }
 }
