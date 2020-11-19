@@ -25,19 +25,28 @@ export class SettingsService {
       setTimeout(() => {
         const router = this.injector.get(Router);
         const promise1 = this._http
-          .get<any>({ url: 'https://ns-msrv-backend-dev.xtech.io/ui/menus/' + this.globals.languageId, cacheMins: 10080 }) //cache data for 7 days
+          .get<any>({ url: 'https://ns-msrv-backend-dev.xtech.io/ui/menus/' + this.globals.languageId, cacheMins: 10080 }) // cache data for 7 days
           .subscribe(
             response => {
-              this.currentSettings = response.answer.sideMenus.menus;
-              this.itemsMenu.setItems(this.currentSettings);
-              this.currentSettings.forEach(element => {
-                this.buildRoutes(router, element);
-                if (element.menus){
-                  element.menus.forEach(subMenu => {
-                    this.buildRoutes(router, subMenu);
+              const menus = [];
+              for (const property in response.answer){
+                if (property !== 'headerMenus' && response.answer.hasOwnProperty(property) && response.answer[property].hasOwnProperty('menus')){
+                  this.currentSettings = response.answer[property].menus;
+                  let menu = [...response.answer[property].menus]
+                  menus.push(menu);
+                  // this.itemsMenu.setItems(response.answer[property].menus);
+                  menu.forEach(element => {
+                    this.buildRoutes(router, element);
+                    if (element.menus){
+                      element.menus.forEach(subMenu => {
+                        this.buildRoutes(router, subMenu);
+                      });
+                    }
                   });
                 }
-              });
+              }
+              console.log(menus)
+              this.itemsMenu.setMenus(menus);
               resolve(true);
             },
             err => {
@@ -54,7 +63,7 @@ export class SettingsService {
           }
         );
         Promise.all([promise1, promise2]).then((values) => {
-          this.globals.isAppInit = true
+          this.globals.isAppInit = true;
           resolve();
         });
       });
@@ -64,7 +73,7 @@ export class SettingsService {
     if (element.resources && element.resources.resourcesUrl){
       for (const rs of element.resources.resourcesUrl){
         if (rs.type === 'IFRAME'){
-          let label = element.label && typeof element.label === 'object' ? Object.values(element.label)[0] : '';
+          const label = element.label && typeof element.label === 'object' ? Object.values(element.label)[0] : '';
           const rdata = {
             text : label, // rs.description.translated,
             url: rs.url
@@ -74,9 +83,9 @@ export class SettingsService {
       }
     }
     else if (element.applicationRoute && element.applicationComponent){
-      let label = element.label && typeof element.label === 'object' ? Object.values(element.label)[0] : '';
+      const label = element.label && typeof element.label === 'object' ? Object.values(element.label)[0] : '';
       const rdata = {
-        title : label, //element.label.translated,
+        title : label, // element.label.translated,
         component: element.applicationComponent
       };
       // Register app component
