@@ -14,6 +14,8 @@ import {MatSlideToggleChange} from '@angular/material/slide-toggle';
 import {TranslationService} from '../service/translation.service';
 import {HttpClientService} from '../service/http-client.service';
 import {CacheService} from '../service/cache.service';
+import {FormControl, FormGroup} from '@angular/forms';
+import {filter} from 'rxjs/operators';
 @Component({
   selector: 'app-translation',
   templateUrl: './translation.component.html',
@@ -30,13 +32,21 @@ export class TranslationComponent implements OnInit, AfterViewInit {
     label: 'English',
     enabled: true
   };
+  private jsonEntries = [];
+  private jsonTranslations = [];
   private _downloadJsonHref = new BehaviorSubject<any>(null);
   private _languages = new BehaviorSubject<any>(null);
   private _translations = new BehaviorSubject<any>(null);
   private _entries = new BehaviorSubject<any>(null);
   private _translationsSource = new BehaviorSubject<any>(null);
   private language = 'en';
-  public entrySelected = false
+  public entrySelected = false;
+  public dataSource;
+  public dataSourceL;
+  public searchForm: FormGroup;
+  public searchForm2: FormGroup;
+  public description = '';
+  public ui_id = '';
 
   get entries() {
     return this._entries.asObservable();
@@ -60,8 +70,11 @@ export class TranslationComponent implements OnInit, AfterViewInit {
         this._downloadJsonHref.next(uri);
       });
       this.refreshLanguagesList();
-      this.refreshTranslations(this.currentLanguage);
+      this.refreshEntries();
+      // this.refreshTranslations(this.currentLanguage);
   }
+
+
   @ViewChild('paginator') paginator: MatPaginator;
   @ViewChild('paginatorL') paginatorL: MatPaginator;
   @ViewChild('tabGroup') tabGroup;
@@ -74,11 +87,13 @@ export class TranslationComponent implements OnInit, AfterViewInit {
     //   this.currentLanguage = value[1] ;
     //   this.refreshTranslations(this.currentLanguage);
     // });
+    this.searchFormInit();
+    // this.dataSource.filterPredicate = this.getFilterPredicate();
   }
   onTabChanged(event: MatTabChangeEvent): void
   {
     if (event.index === 1){
-      this.entrySelected = false
+      this.entrySelected = false;
       this.languages.subscribe(value => {
         this.currentLanguage = value[1] ;
         this.refreshTranslations(this.currentLanguage);
@@ -97,17 +112,132 @@ export class TranslationComponent implements OnInit, AfterViewInit {
   refreshEntries(): void{
     this.getEntries().subscribe(x => {
       const list = x.answer.texts;
-      const dataSource = new MatTableDataSource<any>(list);
-      dataSource.paginator = this.paginator;
-      this._entries.next(dataSource);
+      this.dataSource = new MatTableDataSource<any>(list);
+      this.searchFormInit();
+      this.dataSource.filterPredicate = this.getFilterPredicate();
+      this.dataSource.paginator = this.paginator;
+      this.jsonEntries = x.answer.texts;
+      this._entries.next(this.dataSource);
+      this.cdr.detectChanges();
+    });
+  }
+  refreshTranslationOnDelete(id, lg ): void{
+    const idx = this.jsonTranslations.findIndex(x => x.ui_id === id);
+    if (idx !== -1){
+      this.jsonTranslations[idx].translation = null;
+      this.dataSourceL = new MatTableDataSource<any>(this.jsonTranslations);
+      this.searchFormInit();
+      this.dataSourceL.filterPredicate = this.getFilterPredicate();
+      this.dataSourceL.paginator = this.paginatorL;
+      this._translationsSource.next(this.dataSourceL);
+      this.cdr.detectChanges();
+    }
+  }
+  refreshEntryOnDelete(id ): void{
+      const idx = this.jsonEntries.findIndex(x => x.ui_id === id);
+      if (idx !== -1 ){
+        this.jsonEntries.splice(idx, 1);
+        this.dataSource = new MatTableDataSource<any>(this.jsonEntries);
+        this.searchFormInit();
+        this.dataSource.filterPredicate = this.getFilterPredicate();
+        this.dataSource.paginator = this.paginator;
+        this._entries.next(this.dataSource);
+        this.cdr.detectChanges();
+      }
+  }
+  addOneTranslationRefresh(value): void{
+      const idx = this.jsonTranslations.findIndex(x => x.ui_id === value.answer.translated_texts[0].ui_id);
+      if (idx !== -1){
+      this.jsonTranslations[idx].translation = value.answer.translated_texts[0];
+      this.dataSourceL = new MatTableDataSource<any>(this.jsonTranslations);
+      this.searchFormInit();
+      this.dataSourceL.filterPredicate = this.getFilterPredicate();
+      this.dataSourceL.paginator = this.paginatorL;
+      this._translationsSource.next(this.dataSourceL);
+      this.cdr.detectChanges();
+    }
+  }
+  addOneTranslation(id, lg ): void{
+    this.getTranslation(id, lg).subscribe(data => {
+      this.jsonTranslations.push(data.answer.translated_texts[0]);
+
+      this.dataSourceL = new MatTableDataSource<any>(this.jsonTranslations);
+      this.searchFormInit();
+      this.dataSourceL.filterPredicate = this.getFilterPredicate();
+      this.dataSourceL.paginator = this.paginatorL;
+      this._translationsSource.next(this.dataSourceL);
+      this.cdr.detectChanges();
+    });
+  }
+  addOneEntryRefresh(value): void{
+      this.jsonEntries.push(value);
+      this.sortArrayAlpha(this.jsonEntries);
+      this.dataSource = new MatTableDataSource<any>(this.jsonEntries);
+      this.searchFormInit();
+      this.dataSource.filterPredicate = this.getFilterPredicate();
+      this.dataSource.paginator = this.paginator;
+      this._entries.next(this.dataSource);
+      this.cdr.detectChanges();
+  }
+  addOneEntry(id ): void{
+    this.getEntry(id).subscribe(data => {
+      this.jsonEntries.push(data.answer.texts[0]);
+      this.dataSource = new MatTableDataSource<any>(this.jsonEntries);
+      this.searchFormInit();
+      this.dataSource.filterPredicate = this.getFilterPredicate();
+      this.dataSource.paginator = this.paginator;
+      this._entries.next(this.dataSource);
+      this.cdr.detectChanges();
+    });
+  }
+  refreshOneEntry(id ): void{
+    this.getEntry(id).subscribe(data => {
+      const idx = this.jsonEntries.findIndex(x => x.ui_id === data.answer.texts[0].ui_id);
+      if (idx !== -1 ){
+        this.jsonEntries[idx].description =  data.answer.texts[0].description;
+        this.jsonEntries[idx].enabled =  data.answer.texts[0].enabled;
+        this.dataSource = new MatTableDataSource<any>(this.jsonEntries);
+        this.searchFormInit();
+        this.dataSource.filterPredicate = this.getFilterPredicate();
+        this.dataSource.paginator = this.paginator;
+        this._entries.next(this.dataSource);
+        this.cdr.detectChanges();
+      }
+    });
+  }
+  sortArrayAlpha(array): void{
+    array.sort(function(a, b) {
+      if (a.ui_id < b.ui_id) {
+        return -1;
+      }
+      if (b.ui_id < a.ui_id) {
+        return 1;
+      }
+      return 0;
+    });
+  }
+  refreshOneElement(id, lg ): void{
+    this.getTranslation(id, lg).subscribe(data => {
+      const idx = this.jsonTranslations.findIndex(x => x.ui_id === data.answer.translated_texts[0].ui_id);
+      if (idx !== -1 ){
+        this.jsonTranslations[idx].translation = data.answer.translated_texts[0];
+        this.dataSourceL = new MatTableDataSource<any>(this.jsonTranslations);
+        this.dataSourceL.paginator = this.paginatorL;
+        this.searchFormInit();
+        this.dataSourceL.filterPredicate = this.getFilterPredicate();
+        this._translationsSource.next(this.dataSourceL);
+        this.cdr.detectChanges();
+      }
     });
   }
   refreshTranslations(lg): void{
     this.getTranslations().subscribe(data => {
       const list = data.answer.texts;
-      const dataSource = new MatTableDataSource<any>(list);
-      dataSource.paginator = this.paginator;
-      this._entries.next(dataSource);
+      this.dataSource = new MatTableDataSource<any>(list);
+      this.searchFormInit();
+      this.dataSource.filterPredicate = this.getFilterPredicate();
+      this.dataSource.paginator = this.paginator;
+      this._entries.next(this.dataSource);
 
       const anAsyncFunction = async (item, idx) => {
         // return functionWithPromise(item);
@@ -122,9 +252,12 @@ export class TranslationComponent implements OnInit, AfterViewInit {
         return Promise.all(list.map((item, idx) => anAsyncFunction(item, idx)));
       };
       getData().then(lista => {
-        const dataSourceL = new MatTableDataSource<any>(lista);
-        dataSourceL.paginator = this.paginatorL;
-        this._translationsSource.next(dataSourceL);
+        this.dataSourceL = new MatTableDataSource<any>(lista);
+        this.searchFormInit();
+        this.dataSourceL.filterPredicate = this.getFilterPredicate();
+        this.dataSourceL.paginator = this.paginatorL;
+        this.jsonTranslations = lista;
+        this._translationsSource.next(this.dataSourceL);
         this.cdr.detectChanges();
       }).catch(err => {
         console.log(err);
@@ -175,8 +308,9 @@ export class TranslationComponent implements OnInit, AfterViewInit {
     const tlUrl = 'https://ns-msrv-backend-dev.xtech.io/ui/translations/' + elmt.ui_id + '/' + this.currentLanguage.iso ;
 
     this.http.delete({ url: tlUrl}).subscribe(response => {
-      this.cache.remove(tlUrl)
-      this.refreshTranslations(this.currentLanguage);
+      this.cache.remove(tlUrl);
+      this.refreshTranslationOnDelete(elmt.ui_id, this.currentLanguage.iso);
+      // this.refreshTranslations(this.currentLanguage);
     });
   }
   addNewEntry(data: object): Observable<any> {
@@ -186,7 +320,7 @@ export class TranslationComponent implements OnInit, AfterViewInit {
     return this.http.post({ url: 'https://ns-msrv-backend-dev.xtech.io/ui/translations/' + entryId, body: data});
   }
   getTranslationPromise(uid, lg): Promise<any> {
-    return this.http.get({ url: 'https://ns-msrv-backend-dev.xtech.io/ui/translations/' + uid + '/' + lg }).toPromise()
+    return this.http.get({ url: 'https://ns-msrv-backend-dev.xtech.io/ui/translations/' + uid + '/' + lg, cacheMins: 10080 }).toPromise()
       .then(item => {
         if (item && item.answer){
           return Promise.resolve(item.answer.translated_texts[0]);
@@ -194,7 +328,7 @@ export class TranslationComponent implements OnInit, AfterViewInit {
           return Promise.resolve(null);
         }
 
-      } ).catch( error => {console.log(error); return Promise.resolve(null);});
+      } ).catch( error => {console.log(error); return Promise.resolve(null); });
   }
   getTranslation(uid, lg): Observable<any> {
     return this.http.get({ url: 'https://ns-msrv-backend-dev.xtech.io/ui/translations/' + uid + '/' + lg });
@@ -205,19 +339,35 @@ export class TranslationComponent implements OnInit, AfterViewInit {
   getEntries(): Observable<any> {
     return this.http.get({ url: 'https://ns-msrv-backend-dev.xtech.io/ui/translations/' });
   }
-  getEntry(translationId): Observable<any> {
-    return this.http.get({ url: 'https://ns-msrv-backend-dev.xtech.io/ui/translations/' + translationId });
+  getEntry(entryId): Observable<any> {
+    return this.http.get({ url: 'https://ns-msrv-backend-dev.xtech.io/ui/translations/' + entryId });
   }
   removeEntry(translation): void {
     this.http.delete({ url: 'https://ns-msrv-backend-dev.xtech.io/ui/translations/' + translation.ui_id }).subscribe(response => {
-      this.refreshEntries();
+      this.cache.cleanOneEntry(translation.ui_id);
+      this.refreshEntryOnDelete(translation.ui_id);
+      // this.refreshEntries();
     });
   }
   refreshCache(): void {
     this.cache.cleanLocalStorage(); location.reload();
   }
-  exportJson(): Observable<any> {
-    return this.http.get({ url: 'https://ns-msrv-backend-dev.xtech.io/ui/translations_for_translators', cacheMins: 10080 });
+  exportJson(lg?: string): Observable<any> {
+    // cacheMins: 10080
+    let url = 'https://ns-msrv-backend-dev.xtech.io/ui/translations_for_translators' ;
+    if (lg) { url += '/' + lg; }
+    return this.http.get({ url});
+  }
+  clickTranslationButton(lg, row): void {
+    this.currentLanguage = lg;
+    this.getTranslation(row.ui_id, lg.iso).subscribe(data => {
+      if (data && data.answer && data.answer.translated_texts) {
+        row.translation = data.answer.translated_texts[0];
+      }
+      this.openDialogTranslationToEntryEdit(row);
+    }, () => {
+      this.openDialogTranslationToEntry(row);
+    });
   }
   openDialogTranslationToEntry(row): void {
     const dialogRef = this.dialog.open(AddTranslationToEntryDialogComponent, {
@@ -234,8 +384,13 @@ export class TranslationComponent implements OnInit, AfterViewInit {
           enabled: result.enabled ? result.enabled : false
         };
         this.addTranslationToEntry(row.ui_id, data).subscribe(value => {
-          this.cache.cleanLocalStorage();
-          this.refreshTranslations(this.currentLanguage);
+          this.cache.cleanOneTranslation(row.ui_id, this.currentLanguage.iso);
+          this.cache.cleanOneEntry(row.ui_id);
+          // this.refreshTranslations(this.currentLanguage);
+          this.refreshOneEntry(row.ui_id);
+          this.addOneTranslationRefresh(value);
+          // this.refreshOneElement(row.ui_id, this.currentLanguage.iso);
+
         });
       }
     });
@@ -254,8 +409,10 @@ export class TranslationComponent implements OnInit, AfterViewInit {
         enabled: result.enabled ? result.enabled : false
       };
       this.editTranslation(row.ui_id, this.currentLanguage.iso, data).subscribe(value => {
-        this.cache.cleanLocalStorage();
-        this.refreshTranslations(this.currentLanguage);
+        this.cache.cleanOneEntry(row.ui_id);
+        this.cache.cleanOneTranslation(row.ui_id, this.currentLanguage.iso);
+        // this.refreshTranslations(this.currentLanguage);
+        this.refreshOneElement(row.ui_id, this.currentLanguage.iso);
       });
     });
   }
@@ -271,10 +428,11 @@ export class TranslationComponent implements OnInit, AfterViewInit {
         description: result.description,
         ui_id: this.tools.removeSpace(result.ui_id),
         enabled: result.enabled
-      }
+      };
       this.addNewEntry(pl).subscribe(value => {
-        this.cache.cleanLocalStorage();
-        this.refreshEntries();
+        this.cache.cleanOneEntry(result.ui_id);
+        // this.refreshEntries();
+        this.addOneEntryRefresh(result);
       });
     });
   }
@@ -282,17 +440,17 @@ export class TranslationComponent implements OnInit, AfterViewInit {
     const tl = elmt.translation;
     const pl = {enabled: !tl.enabled, translated: tl.translated};
     this.http.put({ url: 'https://ns-msrv-backend-dev.xtech.io/ui/translations/' + tl.ui_id + '/' + this.currentLanguage.iso, body : pl }).subscribe(value => {
-      // console.log(value);
-      this.cache.cleanLocalStorage();
-      this.refreshTranslations(this.currentLanguage);
+      this.cache.cleanOneEntry(tl.ui_id);
+      this.cache.cleanOneTranslation(tl.ui_id, this.currentLanguage.iso);
+      this.refreshOneElement(elmt.ui_id, this.currentLanguage.iso);
     });
-    // return this.tools.delete('https://ns-msrv-backend-dev.xtech.io/ui/translations/' + translationId);
   }
   switchEntry(elmt): void {
     const pl = {enabled: !elmt.enabled, description: elmt.description};
     this.http.put({ url: 'https://ns-msrv-backend-dev.xtech.io/ui/translations/' + elmt.ui_id, body: pl }).subscribe(value => {
-      this.cache.cleanLocalStorage();
-      this.refreshEntries();
+      this.cache.cleanOneEntry(elmt.ui_id);
+      this.refreshOneEntry(elmt.ui_id);
+      // this.refreshEntries();
     });
   }
   editEntry(elmt): Observable<any> {
@@ -312,8 +470,9 @@ export class TranslationComponent implements OnInit, AfterViewInit {
       // const payload = this.parseTranslation(result);
       if (result){
         this.editEntry(result).subscribe(value => {
-          this.cache.cleanLocalStorage();
-          this.refreshEntries();
+          this.cache.cleanOneEntry(lg.ui_id);
+          this.refreshOneEntry(lg.ui_id);
+         //  this.refreshEntries();
         });
       }
     });
@@ -360,5 +519,70 @@ export class TranslationComponent implements OnInit, AfterViewInit {
       enabled: data.enabled
     };
     return this.http.put({url: 'https://ns-msrv-backend-dev.xtech.io/ui/translations/' + translationId + '/' + languageId, body: payload });
+  }
+  searchFormInit() {
+    this.searchForm = new FormGroup({
+      description: new FormControl(''),
+      ui_id: new FormControl('')
+    });
+    this.searchForm2 = new FormGroup({
+      description: new FormControl(''),
+      ui_id: new FormControl('')
+    });
+  }
+
+  /* this method well be called for each row in table  */
+  getFilterPredicate() {
+    return (row, filters: string) => {
+      // split string per '$' to array
+      const filterArray = filters.split('$');
+      const description = filterArray[1];
+      const ui_id = filterArray[0];
+
+      const matchFilter = [];
+
+      // Fetch data from row
+      const columndescription = row.ui_id;
+      const columnui_id = row.description;
+
+      // verify fetching data by our searching values
+      const customFilterDS = columnui_id.toLowerCase().includes(ui_id);
+      const customFilterAS = columndescription.toLowerCase().includes(description);
+
+      // push boolean values into array
+      matchFilter.push(customFilterAS);
+      matchFilter.push(customFilterDS);
+
+      // return true if all values in array is true
+      // else return false
+      return matchFilter.every(Boolean);
+    };
+  }
+  applyFilter(type?: string) {
+    let as ;
+    let ds;
+    if (type && type === 'translations'){
+       as = this.searchForm2.get('ui_id').value;
+       ds = this.searchForm2.get('description').value;
+    }else {
+       as = this.searchForm.get('ui_id').value;
+       ds = this.searchForm.get('description').value;
+    }
+
+    this.description = as === null ? '' : as;
+    this.ui_id = ds === null ? '' : ds;
+
+    // create string of our searching values and split if by '$'
+    const filterValue = this.ui_id + '$' + this.description;
+    if (type && type === 'translations'){
+      this.dataSourceL.filter = filterValue.trim().toLowerCase();
+      this.dataSourceL.paginator = this.paginatorL;
+      this._translationsSource.next(this.dataSourceL);
+    }else{
+      this.dataSource.filter = filterValue.trim().toLowerCase();
+      this.dataSource.paginator = this.paginator;
+      this._entries.next(this.dataSource);
+    }
+
   }
 }

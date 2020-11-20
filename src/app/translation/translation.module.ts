@@ -9,7 +9,7 @@ import {MatTooltipModule} from '@angular/material/tooltip';
 import {TranslationRoutingModule} from './translation-routing.module';
 import {MatTableModule} from '@angular/material/table';
 import {AddTranslationDialogComponent} from './dialog/add-translation-dialog.component';
-import {FormsModule} from '@angular/forms';
+import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {MatIconModule} from '@angular/material/icon';
 import {MatTabsModule} from '@angular/material/tabs';
 import {AddNewLanguageDialogComponent} from './dialog/add-new-language-dialog.component';
@@ -32,7 +32,8 @@ import {AddTranslationToEntryDialogComponent} from './dialog/add-translation-to-
     FormsModule,
     MatIconModule,
     MatTabsModule,
-    MatPaginatorModule
+    MatPaginatorModule,
+    ReactiveFormsModule
   ]
 })
 

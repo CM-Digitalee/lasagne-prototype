@@ -22,6 +22,30 @@
             <button type="submit" class="actionBtn" mat-raised-button color="primary" (click)="openDialogTranslation()"><mat-icon>add</mat-icon> {{tl.translate('ST.BUTTON.ADD')}} </button>
           </div>
           <div>
+            <div class="search-header">
+              <form [formGroup]="searchForm" class="search__form">
+                <mat-form-field class="search__form_field" appearance="outline">
+                  <mat-label>Filter by ID</mat-label>
+                  <input type="text"
+                         aria-label="Filter by id"
+                         matInput
+                         formControlName="ui_id"
+                         (keyup)="applyFilter()"
+                  >
+                </mat-form-field>
+
+                <mat-form-field class="search__form_field" appearance="outline">
+                  <mat-label>Filter by description</mat-label>
+                  <input type="text"
+                         aria-label="Filter by description"
+                         matInput
+                         formControlName="description"
+                         (keyup)="applyFilter()"
+                  >
+                </mat-form-field>
+
+              </form>
+            </div>
             <mat-table [dataSource]="entries | async">
 
               <ng-container matColumnDef="ui_id" >
@@ -29,7 +53,7 @@
                 <mat-cell *matCellDef="let row"  class="small-column"> {{row.ui_id}} </mat-cell>
               </ng-container>
               <ng-container matColumnDef="state" >
-                <mat-header-cell *matHeaderCellDef class="small-column"> {{tl.translate('ST.WORD.STATE')}} </mat-header-cell>
+                <mat-header-cell *matHeaderCellDef class="small-column"> {{tl.translate('ST.WORD.STATE', 'capitalize')}} </mat-header-cell>
                 <mat-cell *matCellDef="let row"  class="small-column">
                   <mat-slide-toggle
                     class="example-margin"
@@ -40,7 +64,7 @@
                 </mat-cell>
               </ng-container>
               <ng-container matColumnDef="description">
-                <mat-header-cell *matHeaderCellDef> {{tl.translate('ST.WORD.DESCRIPTION')}} </mat-header-cell>
+                <mat-header-cell *matHeaderCellDef> {{tl.translate('ST.WORD.DESCRIPTION', 'capitalize')}} </mat-header-cell>
                 <mat-cell *matCellDef="let row"> {{row.description}} </mat-cell>
               </ng-container>
               <!-- Title Definition -->
@@ -58,10 +82,19 @@
 
                 </mat-cell>
               </ng-container>
+              <ng-container matColumnDef="lg-edition">
+                <mat-header-cell *matHeaderCellDef> Translate </mat-header-cell>
+                <mat-cell *matCellDef="let row">
+                  <button mat-stroked-button *ngFor="let language of (languages | async)" (click)="clickTranslationButton(language, row)" >
+                    {{language.iso}}
+                  </button>
+
+                </mat-cell>
+              </ng-container>
 
               <!-- Header and Row Declarations -->
-              <mat-header-row *matHeaderRowDef="['state', 'ui_id', 'description', 'action']"></mat-header-row>
-              <mat-row *matRowDef="let row; columns: ['state', 'ui_id', 'description', 'action']"></mat-row>
+              <mat-header-row *matHeaderRowDef="['state', 'ui_id', 'description', 'lg-edition', 'action']"></mat-header-row>
+              <mat-row *matRowDef="let row; columns: ['state', 'ui_id', 'description', 'lg-edition', 'action']"></mat-row>
             </mat-table>
           </div>
           <mat-paginator #paginator class="paginator" [pageSizeOptions]="[10, 20, 50, 100]"></mat-paginator>
@@ -100,6 +133,30 @@
             </div>
 
           </div>
+            <div class="search-header">
+              <form [formGroup]="searchForm2" class="search__form">
+                <mat-form-field class="search__form_field" appearance="outline">
+                  <mat-label>Filter by ID</mat-label>
+                  <input type="text"
+                         aria-label="Filter by id"
+                         matInput
+                         formControlName="ui_id"
+                         (keyup)="applyFilter('translations')"
+                  >
+                </mat-form-field>
+
+                <mat-form-field class="search__form_field" appearance="outline">
+                  <mat-label>Filter by description</mat-label>
+                  <input type="text"
+                         aria-label="Filter by description"
+                         matInput
+                         formControlName="description"
+                         (keyup)="applyFilter('translations')"
+                  >
+                </mat-form-field>
+
+              </form>
+            </div>
             <div *ngIf="translationsSource | async">
               <mat-table [dataSource]="translationsSource | async">
                 <ng-container matColumnDef="position" >

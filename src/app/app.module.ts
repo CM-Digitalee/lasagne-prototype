@@ -22,13 +22,14 @@ import { TranslationService } from './service/translation.service';
 // import {AddTranslationDialogComponent} from './translation/dialog/add-translation-dialog.component';
 import {MatFormFieldModule} from '@angular/material/form-field';
 import {MatDialogModule} from '@angular/material/dialog';
-import {FormsModule} from '@angular/forms';
+import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {MatInputModule} from '@angular/material/input';
 import {MatButtonModule} from '@angular/material/button';
 import {MatTabsModule} from '@angular/material/tabs';
 import {MatPaginator} from '@angular/material/paginator';
 import {HttpClientService} from './service/http-client.service';
 import {CacheService} from './service/cache.service';
+
 
 // tslint:disable-next-line:typedef
 export function initSettings(settings: SettingsService) {
@@ -47,7 +48,8 @@ export function initSettings(settings: SettingsService) {
     FormsModule,
     MatInputModule,
     MatButtonModule,
-    MatTabsModule
+    MatTabsModule,
+    ReactiveFormsModule
   ],
   providers: [
     HttpClientModule,
