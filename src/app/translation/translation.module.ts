@@ -16,6 +16,7 @@ import {AddNewLanguageDialogComponent} from './dialog/add-new-language-dialog.co
 import {MatSlideToggleModule} from '@angular/material/slide-toggle';
 import {MatPaginatorModule} from '@angular/material/paginator';
 import {AddTranslationToEntryDialogComponent} from './dialog/add-translation-to-entry-dialog.component';
+import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
 
 @NgModule({
   declarations: [TranslationComponent, AddTranslationDialogComponent, AddTranslationToEntryDialogComponent, AddNewLanguageDialogComponent],
@@ -33,7 +34,8 @@ import {AddTranslationToEntryDialogComponent} from './dialog/add-translation-to-
     MatIconModule,
     MatTabsModule,
     MatPaginatorModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    MatProgressSpinnerModule
   ]
 })
 

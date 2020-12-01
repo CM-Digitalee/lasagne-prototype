@@ -1,33 +1,19 @@
-<div class="p-40">
+<div class="main-panel min-height-100">
   <ng-container>
-    <div style="text-align:right">
-      <a class="btn btn-clear actionBtn" [title]="tl.translate('ST.BUTTON.EXPORT_JSON')" [href]="downloadJsonHref | async" download="STREETS_translations.json">
-        <button mat-raised-button color="link">
-          {{tl.translate('ST.BUTTON.EXPORT_JSON')}}
-        </button>
-      </a>
-      <a class="btn btn-clear actionBtn" [title]="tl.translate('ST.BUTTON.EXPORT_JSON')" (click)="refreshCache()" download="STREETS_translations.json">
-        <button mat-raised-button color="primary">
-          <mat-icon>sync</mat-icon>
-          {{tl.translate('ST.BUTTON.REFRESHCACHE')}}
-        </button>
-      </a>
-    </div>
-
     <mat-tab-group (selectedTabChange)="onTabChanged($event)" id="tabGroup">
       <mat-tab  [label]=" tl.translate('ST.WORD.ENTRIES', 'capitalize') " >
         <div *ngIf="entrySelected"></div>
         <ng-template matTabContent>
-          <div class="entry-menu">
-            <button type="submit" class="actionBtn" mat-raised-button color="primary" (click)="openDialogTranslation()"><mat-icon>add</mat-icon> {{tl.translate('ST.BUTTON.ADD')}} </button>
-          </div>
+<!--          <div class="entry-menu">-->
+<!--          </div>-->
           <div>
-            <div class="search-header">
-              <form [formGroup]="searchForm" class="search__form">
-                <mat-form-field class="search__form_field" appearance="outline">
-                  <mat-label>Filter by ID</mat-label>
+            <div style="height:65px;"></div>
+            <div class="search-header" *ngIf="(entries | async)">
+              <form [formGroup]="searchForm" class="search__form" >
+                <mat-form-field class="search__form_field"  appearance="outline">
+                  <mat-label>{{tl.translate('ST.ADMIN.FILTER.BY_ID')}}</mat-label>
                   <input type="text"
-                         aria-label="Filter by id"
+                         [attr.aria-label]="tl.translate('ST.ADMIN.FILTER.BY_ID')"
                          matInput
                          formControlName="ui_id"
                          (keyup)="applyFilter()"
@@ -35,9 +21,9 @@
                 </mat-form-field>
 
                 <mat-form-field class="search__form_field" appearance="outline">
-                  <mat-label>Filter by description</mat-label>
+                  <mat-label>{{tl.translate('ST.ADMIN.FILTER.BY_DESC')}}</mat-label>
                   <input type="text"
-                         aria-label="Filter by description"
+                         [attr.aria-label]="tl.translate('ST.ADMIN.FILTER.BY_DESC')"
                          matInput
                          formControlName="description"
                          (keyup)="applyFilter()"
@@ -45,59 +31,70 @@
                 </mat-form-field>
 
               </form>
+              <button type="submit" class="actionBtn btn-primary-color" mat-button (click)="openDialogTranslation()">{{tl.translate('ST.BUTTON.ADD')}} </button>
             </div>
-            <mat-table [dataSource]="entries | async">
+            <div *ngIf="!(entries | async)">
+              <div class="spinner-wrapper">
+                <mat-progress-spinner
+                  class="example-margin"
+                  mode="indeterminate">
+                </mat-progress-spinner>
+              </div>
+            </div>
+            <div *ngIf="(entries | async)">
+              <mat-table [dataSource]="entries | async">
 
-              <ng-container matColumnDef="ui_id" >
-                <mat-header-cell *matHeaderCellDef class="small-column">UI_ID</mat-header-cell>
-                <mat-cell *matCellDef="let row"  class="small-column"> {{row.ui_id}} </mat-cell>
-              </ng-container>
-              <ng-container matColumnDef="state" >
-                <mat-header-cell *matHeaderCellDef class="small-column"> {{tl.translate('ST.WORD.STATE', 'capitalize')}} </mat-header-cell>
-                <mat-cell *matCellDef="let row"  class="small-column">
-                  <mat-slide-toggle
-                    class="example-margin"
-                    [(ngModel)]="row.enabled" (click)="switchEntry(row)">
-                    <!--                  {{row.enabled ? 'enabled' : 'disabled'}}-->
-                  </mat-slide-toggle>
-                  <!--                <span *ngIf="!row.translation"><mat-icon>error_outline</mat-icon> </span>-->
-                </mat-cell>
-              </ng-container>
-              <ng-container matColumnDef="description">
-                <mat-header-cell *matHeaderCellDef> {{tl.translate('ST.WORD.DESCRIPTION', 'capitalize')}} </mat-header-cell>
-                <mat-cell *matCellDef="let row"> {{row.description}} </mat-cell>
-              </ng-container>
-              <!-- Title Definition -->
-              <ng-container matColumnDef="action">
-                <mat-header-cell *matHeaderCellDef> </mat-header-cell>
-                <mat-cell *matCellDef="let row">
+                <ng-container matColumnDef="ui_id" >
+                  <mat-header-cell *matHeaderCellDef class="small-column">UI_ID</mat-header-cell>
+                  <mat-cell *matCellDef="let row"  class="small-column"> {{row.ui_id}} </mat-cell>
+                </ng-container>
+                <ng-container matColumnDef="state" >
+                  <mat-header-cell *matHeaderCellDef class="small-column"> {{tl.translate('ST.WORD.STATE', 'capitalize')}} </mat-header-cell>
+                  <mat-cell *matCellDef="let row"  class="small-column">
+                    <mat-slide-toggle
+                      class="example-margin"
+                      [(ngModel)]="row.enabled" (click)="switchEntry(row)">
+                      <!--                  {{row.enabled ? 'enabled' : 'disabled'}}-->
+                    </mat-slide-toggle>
+                    <!--                <span *ngIf="!row.translation"><mat-icon>error_outline</mat-icon> </span>-->
+                  </mat-cell>
+                </ng-container>
+                <ng-container matColumnDef="description">
+                  <mat-header-cell *matHeaderCellDef> {{tl.translate('ST.WORD.DESCRIPTION', 'capitalize')}} </mat-header-cell>
+                  <mat-cell *matCellDef="let row"> {{row.description}} </mat-cell>
+                </ng-container>
+                <!-- Title Definition -->
+                <ng-container matColumnDef="action">
+                  <mat-header-cell *matHeaderCellDef> </mat-header-cell>
+                  <mat-cell *matCellDef="let row">
 
-                  <button mat-icon-button aria-label="Example icon-button with a heart icon" (click)="openDialogTranslationEdit(row)">
-                    <mat-icon>edit</mat-icon>
-                  </button>
-                  <!-- Remove entry -->
-                  <button mat-icon-button color="warn" (click)="removeEntry(row)" aria-label="Example icon-button with a heart icon">
-                    <mat-icon>delete</mat-icon>
-                  </button>
+                    <button mat-icon-button  (click)="openDialogTranslationEdit(row)">
+                      <mat-icon>edit</mat-icon>
+                    </button>
+                    <!-- Remove entry -->
+                    <button mat-icon-button color="warn" (click)="removeEntry(row)" >
+                      <mat-icon>delete</mat-icon>
+                    </button>
 
-                </mat-cell>
-              </ng-container>
-              <ng-container matColumnDef="lg-edition">
-                <mat-header-cell *matHeaderCellDef> Translate </mat-header-cell>
-                <mat-cell *matCellDef="let row">
-                  <button mat-stroked-button *ngFor="let language of (languages | async)" (click)="clickTranslationButton(language, row)" >
-                    {{language.iso}}
-                  </button>
+                  </mat-cell>
+                </ng-container>
+                <ng-container matColumnDef="lg-edition">
+                  <mat-header-cell *matHeaderCellDef> {{tl.translate('ST.WORD.TRANSLATE', 'capitalize')}}  </mat-header-cell>
+                  <mat-cell *matCellDef="let row">
+                    <button class="btn-light small-fixed" *ngFor="let language of (languages | async)" (click)="clickTranslationButton(language, row)" >
+                      {{language.iso}}
+                    </button>
 
-                </mat-cell>
-              </ng-container>
+                  </mat-cell>
+                </ng-container>
 
-              <!-- Header and Row Declarations -->
-              <mat-header-row *matHeaderRowDef="['state', 'ui_id', 'description', 'lg-edition', 'action']"></mat-header-row>
-              <mat-row *matRowDef="let row; columns: ['state', 'ui_id', 'description', 'lg-edition', 'action']"></mat-row>
-            </mat-table>
+                <!-- Header and Row Declarations -->
+                <mat-header-row *matHeaderRowDef="['state', 'ui_id', 'description', 'lg-edition', 'action']"></mat-header-row>
+                <mat-row *matRowDef="let row; columns: ['state', 'ui_id', 'description', 'lg-edition', 'action']"></mat-row>
+              </mat-table>
+              <mat-paginator #paginator class="paginator" [pageSizeOptions]="[10, 20, 50, 100]"></mat-paginator>
+            </div>
           </div>
-          <mat-paginator #paginator class="paginator" [pageSizeOptions]="[10, 20, 50, 100]"></mat-paginator>
         </ng-template>
       </mat-tab>
 
@@ -105,40 +102,40 @@
       <mat-tab  [label]="'Translations' "  > <!-- A passer en dynamic selon traductions reçues -->
         <ng-template matTabContent>
           <div class="lang-menu">
-            <mat-form-field appearance="fill">
-              <mat-label>
-                {{tl.translate('ST.SENTENCE.SELECT_LANGUAGE')}}
-              </mat-label>
-              <mat-select (selectionChange)="onSelectionChanged($event)" [(ngModel)]="currentLanguage">
-                <mat-option *ngFor="let language of ((languages | async) || [])" [value]="language">
-                  {{language.iso}} - {{language.label}}
-                </mat-option>
-              </mat-select>
-            </mat-form-field>
-            <button type="submit" class="actionBtn" mat-raised-button color="primary" (click)="openDialogLanguage()"> <mat-icon>add</mat-icon> {{tl.translate("ST.BUTTON.ADD_LANGUAGE")}}</button>
-          </div>
-          <div>
-          <div class="lang-title">
-            <span class="lang-dot">
-              <mat-icon [ngClass]="{'green-color icon-dot': currentLanguage.enabled, 'red-color icon-dot': !currentLanguage.enabled}">fiber_manual_record</mat-icon>
-            </span>
-            {{currentLanguage.label}}
-            <div class="lang-icon">
-              <button mat-icon-button (click)="openDialogLanguageEdit(currentLanguage)" aria-label="Example icon-button with a heart icon">
-                <mat-icon>edit</mat-icon>
-              </button>
-              <button mat-icon-button color="warn" (click)="removeLanguage(currentLanguage.iso)" aria-label="Example icon-button with a heart icon">
-                <mat-icon>delete</mat-icon>
-              </button>
+            <div class="select-lg-wrapper">
+              <span class="lang-dot">
+                <mat-icon [ngClass]="{'green-color icon-dot': currentLanguage.enabled, 'red-color icon-dot': !currentLanguage.enabled}">fiber_manual_record</mat-icon>
+              </span>
+              <mat-form-field>
+                <mat-label>
+                  {{tl.translate('ST.SENTENCE.SELECT_LANGUAGE')}}
+                </mat-label>
+                <mat-select (selectionChange)="onSelectionChanged($event)" [(ngModel)]="currentLanguage">
+                  <mat-option *ngFor="let language of ((languages | async) || [])" [value]="language">
+                    {{language.iso}} - {{language.label}}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+              <div class="lang-icon">
+                <button mat-icon-button (click)="openDialogLanguageEdit(currentLanguage)" >
+                  <mat-icon>edit</mat-icon>
+                </button>
+                <button mat-icon-button color="warn" (click)="removeLanguage(currentLanguage.iso)" >
+                  <mat-icon>delete</mat-icon>
+                </button>
+              </div>
             </div>
-
+<!--            <button mat-icon-button type="submit" (click)="openDialogLanguage()" class="main-color-btn">-->
+<!--              <mat-icon>add</mat-icon>-->
+<!--            </button>-->
           </div>
-            <div class="search-header">
+          <div class="table-wrapper">
+            <div class="search-header" *ngIf="(translationsSource | async)">
               <form [formGroup]="searchForm2" class="search__form">
                 <mat-form-field class="search__form_field" appearance="outline">
-                  <mat-label>Filter by ID</mat-label>
+                  <mat-label>{{tl.translate('ST.ADMIN.FILTER.BY_ID')}}</mat-label>
                   <input type="text"
-                         aria-label="Filter by id"
+                         [attr.aria-label]="tl.translate('ST.ADMIN.FILTER.BY_ID')"
                          matInput
                          formControlName="ui_id"
                          (keyup)="applyFilter('translations')"
@@ -146,9 +143,9 @@
                 </mat-form-field>
 
                 <mat-form-field class="search__form_field" appearance="outline">
-                  <mat-label>Filter by description</mat-label>
+                  <mat-label>{{tl.translate('ST.ADMIN.FILTER.BY_DESC')}}</mat-label>
                   <input type="text"
-                         aria-label="Filter by description"
+                         [attr.aria-label]="tl.translate('ST.ADMIN.FILTER.BY_DESC')"
                          matInput
                          formControlName="description"
                          (keyup)="applyFilter('translations')"
@@ -156,95 +153,113 @@
                 </mat-form-field>
 
               </form>
+              <button type="submit" class="actionBtn btn-primary-color" mat-button (click)="openDialogLanguage()"> {{tl.translate("ST.BUTTON.ADD_LANGUAGE")}}</button>
             </div>
-            <div *ngIf="translationsSource | async">
-              <mat-table [dataSource]="translationsSource | async">
-                <ng-container matColumnDef="position" >
-                  <mat-header-cell *matHeaderCellDef class="small-column"> No. </mat-header-cell>
-                  <mat-cell *matCellDef="let row"  class="small-column"> {{row.position}} </mat-cell>
-                </ng-container>
-                <ng-container matColumnDef="state-entry" >
-                  <mat-header-cell *matHeaderCellDef class="small-column">
-                    {{tl.translate('ST.WORD.ENTRY')}}
-                  </mat-header-cell>
-                  <mat-cell *matCellDef="let row"  class="small-column">
+              <div *ngIf="!(translationsSource | async)">
+                <div class="spinner-wrapper">
+                  <mat-progress-spinner
+                    class="example-margin"
+                    mode="indeterminate">
+                  </mat-progress-spinner>
+                </div>
+              </div>
+              <div *ngIf="(translationsSource | async)">
+                <mat-table [dataSource]="translationsSource | async">
+                  <!--                <ng-container matColumnDef="position" >-->
+                  <!--                  <mat-header-cell *matHeaderCellDef class="small-column"> {{tl.translate('ST.WORD.NUMBER_ACRONYM')}} </mat-header-cell>-->
+                  <!--                  <mat-cell *matCellDef="let row"  class="small-column"> {{row.position}} </mat-cell>-->
+                  <!--                </ng-container>-->
+                  <ng-container matColumnDef="state-entry" >
+                    <mat-header-cell *matHeaderCellDef class="small-column">
+<!--                      {{tl.translate('ST.WORD.ENTRY')}}-->
+                    </mat-header-cell>
+                    <mat-cell *matCellDef="let row"  class="small-column">
                 <span *ngIf="row" (click)="switchEntry(row)">
-                  <mat-icon [ngClass]="{'green-color icon-dot': row.enabled, 'red-color icon-dot': !row.enabled}">fiber_manual_record</mat-icon>
+                  <mat-icon [matTooltip]="row.enabled ? tl.translate('ST.ADMIN.TOOLTIPS.ENTRY_ENABLED') : tl.translate('ST.ADMIN.TOOLTIPS.ENTRY_DISABLED')"  [ngClass]="{'green-color icon-dot': row.enabled, 'red-color icon-dot': !row.enabled}" >fiber_manual_record</mat-icon>
                 </span>
-                  </mat-cell>
-                </ng-container>
-                <ng-container matColumnDef="state" >
-                  <mat-header-cell *matHeaderCellDef class="small-column">
-                    {{tl.translate('ST.WORD.ENABLED', 'capitalize')}}
-                  </mat-header-cell>
-                  <mat-cell *matCellDef="let row"  class="small-column">
-                    <mat-slide-toggle
-                      class="example-margin"
-                      *ngIf="row.translation"
-                      [(ngModel)]="row.translation.enabled" (click)="switchTranslation(row)">
-                      <!--                  {{row.enabled ? 'enabled' : 'disabled'}}-->
-                    </mat-slide-toggle>
-                  </mat-cell>
-                </ng-container>
-                <!-- User name Definition -->
-                <ng-container matColumnDef="id">
-                  <mat-header-cell *matHeaderCellDef> ID </mat-header-cell>
-                  <mat-cell *matCellDef="let row">
-                    {{row.ui_id}}
-                  </mat-cell>
-                </ng-container>
-                <ng-container matColumnDef="description">
-                  <mat-header-cell *matHeaderCellDef>
-                    {{tl.translate('ST.WORD.DESCRIPTION')}}
-                  </mat-header-cell>
-                  <mat-cell *matCellDef="let row"> {{row.description}} </mat-cell>
-                </ng-container>
-                <!-- translation Definition -->
-                <ng-container matColumnDef="translation">
-                  <mat-header-cell *matHeaderCellDef> {{tl.translate('ST.WORD.TRANSLATION', 'capitalize')}} </mat-header-cell>
-                  <mat-cell *matCellDef="let row">
-                    <div *ngIf="row.translation">
-                      {{row.translation.translated}}
-                    </div>
-                  </mat-cell>
-                </ng-container>
-                <!-- Title Definition -->
-                <ng-container matColumnDef="action">
-                  <mat-header-cell *matHeaderCellDef> </mat-header-cell>
-                  <mat-cell *matCellDef="let row">
-                    <div *ngIf="row.translation">
+                    </mat-cell>
+                  </ng-container>
+                  <ng-container matColumnDef="state" >
+                    <mat-header-cell *matHeaderCellDef class="small-column">
+                      {{tl.translate('ST.WORD.ENABLED', 'capitalize')}}
+                    </mat-header-cell>
+                    <mat-cell *matCellDef="let row"  class="small-column">
+                      <mat-slide-toggle
+                        class="example-margin"
+                        *ngIf="row.translation"
+                        [(ngModel)]="row.translation.enabled" (click)="switchTranslation(row)">
+                        <!--                  {{row.enabled ? 'enabled' : 'disabled'}}-->
+                      </mat-slide-toggle>
+                    </mat-cell>
+                  </ng-container>
+                  <!-- User name Definition -->
+                  <ng-container matColumnDef="id">
+                    <mat-header-cell *matHeaderCellDef> ID </mat-header-cell>
+                    <mat-cell *matCellDef="let row">
+                      {{row.ui_id}}
+                    </mat-cell>
+                  </ng-container>
+                  <ng-container matColumnDef="description">
+                    <mat-header-cell *matHeaderCellDef>
+                      {{tl.translate('ST.WORD.DESCRIPTION')}}
+                    </mat-header-cell>
+                    <mat-cell *matCellDef="let row"> {{row.description}} </mat-cell>
+                  </ng-container>
+                  <!-- translation Definition -->
+                  <ng-container matColumnDef="translation">
+                    <mat-header-cell *matHeaderCellDef> {{tl.translate('ST.WORD.TRANSLATION', 'capitalize')}} </mat-header-cell>
+                    <mat-cell *matCellDef="let row">
+                      <div *ngIf="row.translation">
+                        {{row.translation.translated}}
+                      </div>
+                    </mat-cell>
+                  </ng-container>
+                  <!-- Title Definition -->
+                  <ng-container matColumnDef="action">
+                    <mat-header-cell *matHeaderCellDef> </mat-header-cell>
+                    <mat-cell *matCellDef="let row">
+                      <div *ngIf="row.translation">
 
-                      <!-- Edit translation -->
-                      <button mat-icon-button aria-label="Example icon-button with a heart icon" (click)="openDialogTranslationToEntryEdit(row)">
-                        <mat-icon>edit</mat-icon>
-                      </button>
-                      <!-- Remove translation -->
-                      <button mat-icon-button color="warn" (click)="removeTranslation(row)" aria-label="Example icon-button with a heart icon">
-                        <mat-icon>delete</mat-icon>
-                      </button>
-                    </div>
-                    <div *ngIf="!row.translation">
-                      <!-- Add translation -->
-                      <button mat-icon-button aria-label="Example icon-button with a heart icon" (click)="openDialogTranslationToEntry(row)">
-                        <mat-icon>add_circle_outline</mat-icon>
-                      </button>
-                    </div>
-                  </mat-cell>
-                </ng-container>
+                        <!-- Edit translation -->
+                        <button mat-icon-button  (click)="openDialogTranslationToEntryEdit(row)">
+                          <mat-icon>edit</mat-icon>
+                        </button>
+                        <!-- Remove translation -->
+                        <button mat-icon-button color="warn" (click)="removeTranslation(row)" >
+                          <mat-icon>delete</mat-icon>
+                        </button>
+                      </div>
+                      <div *ngIf="!row.translation">
+                        <!-- Add translation -->
+                        <button mat-icon-button  (click)="openDialogTranslationToEntry(row)">
+                          <mat-icon>add_circle_outline</mat-icon>
+                        </button>
+                      </div>
+                    </mat-cell>
+                  </ng-container>
 
-                <!-- Header and Row Declarations -->
-                <mat-header-row *matHeaderRowDef="['position', 'state-entry', 'state', 'id', 'description', 'translation', 'action']"></mat-header-row>
-                <mat-row *matRowDef="let row; columns: ['position', 'state-entry', 'state', 'id', 'description','translation', 'action']"></mat-row>
-              </mat-table>
-              <mat-paginator #paginatorL class="paginator" [pageSizeOptions]="[10, 20, 50, 100]"></mat-paginator>
-            </div>
-
+                  <!-- Header and Row Declarations -->
+                  <mat-header-row *matHeaderRowDef="['state-entry', 'state', 'id', 'description', 'translation', 'action']"></mat-header-row>
+                  <mat-row *matRowDef="let row; columns: ['state-entry', 'state', 'id', 'description','translation', 'action']"></mat-row>
+                </mat-table>
+                <mat-paginator #paginatorL class="paginator" [pageSizeOptions]="[10, 20, 50, 100]"></mat-paginator>
+              </div>
           </div>
         </ng-template>
       </mat-tab>
     </mat-tab-group>
-
-
   </ng-container>
+  <div style="text-align:right">
+    <a class="btn btn-clear actionBtn" [title]="tl.translate('ST.BUTTON.EXPORT_JSON')" [href]="downloadJsonHref | async" download="STREETS_translations.json">
+      <button class="btn-light">
+        {{tl.translate('ST.BUTTON.EXPORT_JSON')}}
+      </button>
+    </a>
+    <a class="btn btn-clear actionBtn" [title]="tl.translate('ST.BUTTON.REFRESHCACHE')" (click)="refreshCache()">
+      <button class="btn-primary-color">
+        {{tl.translate('ST.BUTTON.REFRESHCACHE')}}
+      </button>
+    </a>
+  </div>
 </div>
 

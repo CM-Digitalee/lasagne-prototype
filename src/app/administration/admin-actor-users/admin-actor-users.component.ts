@@ -7,6 +7,7 @@ import {BehaviorSubject} from 'rxjs';
 import {ActivatedRoute} from '@angular/router';
 import {ActorsUserDialogComponent} from './dialog/actors-dialog.component';
 import {MatDialog} from '@angular/material/dialog';
+import {Tools} from '../../tools/function';
 
 @Component({
   selector: 'app-admin-actor-users',
@@ -15,27 +16,29 @@ import {MatDialog} from '@angular/material/dialog';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class AdminActorUsersComponent implements OnInit {
-  private actorId ;
-  private actor ;
+  public actorId ;
+  public actor ;
+  public isLoading$: BehaviorSubject<boolean> = new BehaviorSubject(false);
   private _actorsUser = new BehaviorSubject<any>(null);
 
   constructor(private  http: HttpClientService,
               private administrationService: AdministrationService,
               public tl: TranslationService,
               private route: ActivatedRoute,
-              public dialog: MatDialog) { }
+              public dialog: MatDialog, private tools: Tools) { }
   get actorsUser() {
     return this._actorsUser.asObservable();
   }
   ngOnInit(): void {
+    this.isLoading$.next(true);
     this.actorId = this.route.snapshot.paramMap.get('id');
     // this.getActor();
     this.refreshActorUsers();
   }
   refreshActorUsers(): void {
-    console.log(this.actorId);
+    this.isLoading$.next(true);
     this.administrationService.getUserActors(this.actorId).subscribe(x => {
-      if(x && x.answer && x.answer.users){
+      if (x && x.answer && x.answer.users){
         const list = x.answer.users;
         const dataSource = new MatTableDataSource<any>(list);
         // dataSource.paginator = this.paginator;
@@ -44,18 +47,24 @@ export class AdminActorUsersComponent implements OnInit {
       }else{
         this._actorsUser.next([]);
       }
+        this.isLoading$.next(false);
 
-    });
+    }, err => {//this.tools.redirectNotFound();
+        this.isLoading$.next(false);
+       },
+      () => {
+
+        this.isLoading$.next(false);
+        console.log(this.isLoading$);
+      });
+    this.administrationService.getActor(this.actorId).subscribe(x => {
+      this.actor = x.answer.actor;
+    }, err => {this.tools.redirectNotFound(); });
   }
   showAllowedUsers(userid): void {
-    console.log(this.actorId);
     this.administrationService.getActorsUser(userid).subscribe(x => {
-      if(x && x.answer && x.answer.actors){
+      if (x && x.answer && x.answer.actors){
         const list = x.answer.actors;
-        const dataSource = new MatTableDataSource<any>(list);
-        // dataSource.paginator = this.paginator;
-        // this.jsonActorFunctionalities = x.answer.functionalities
-        // this._actorsUser.next(dataSource);
         this.openDialogActor(userid, list);
       }else{
         // this._actorsUser.next([]);
@@ -70,7 +79,7 @@ export class AdminActorUsersComponent implements OnInit {
     });
 
     dialogRef.afterClosed().subscribe(result => {
-      console.log(result);
+
     });
   }
 

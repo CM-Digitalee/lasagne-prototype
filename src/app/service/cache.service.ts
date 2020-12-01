@@ -4,8 +4,7 @@ import { Injectable } from '@angular/core';
 export class CacheService {
   constructor() { }
 
-  // tslint:disable-next-line:typedef
-  save(options: LocalStorageSaveOptions) {
+  save(options: LocalStorageSaveOptions): void {
     // Set default values for optionals
     options.expirationMins = options.expirationMins || 0;
 
@@ -20,27 +19,27 @@ export class CacheService {
     localStorage.setItem(options.key, JSON.stringify(record));
   }
 
+
   // tslint:disable-next-line:typedef
-  load(key: string) {
-    // Get cached data from localstorage
-    console.log(key);
+  load(key) {
+
     const item = localStorage.getItem(key);
     if (item !== null) {
       const record = JSON.parse(item);
       const now = new Date().getTime();
-      // Expired data will return null
       if (!record || (record.hasExpiration && record.expiration <= now)) {
         return null;
       } else {
-        console.log(record);
-        console.log(JSON.parse(record.value));
-        return JSON.parse(record.value);
+        if (key === 'STREETS-version') {
+        return record.value;
+        }
+        return JSON.parse(record.value) ;
       }
     }
     return null;
   }
 
-  updateTranslation(id, value, options){
+  updateTranslation(id, value, options): void{
     const url = 'https://ns-msrv-backend-dev.xtech.io/ui/translations_for_translators';
     const item = localStorage.getItem(url);
     if (item !== null) {
@@ -60,30 +59,35 @@ export class CacheService {
       }
     }
   }
-  cleanOneEntry(uid){
+  cleanOneEntry(uid): void{
     localStorage.removeItem('https://ns-msrv-backend-dev.xtech.io/ui/translations/' + uid);
   }
-  cleanOneTranslation(uid, lg){
+  cleanOneTranslation(uid, lg): void{
     localStorage.removeItem('https://ns-msrv-backend-dev.xtech.io/ui/translations/' + uid + '/' + lg);
   }
 
-  cleanTranslations(){
+  cleanTranslations(): void{
     localStorage.removeItem('https://ns-msrv-backend-dev.xtech.io/ui/translations_for_translators');
   }
 
-  // tslint:disable-next-line:typedef
-  remove(key: string) {
+  remove(key: string): void {
     localStorage.removeItem(key);
   }
 
-  // tslint:disable-next-line:typedef
-  updateCache(key: string) {
+  updateCache(key: string): void {
     localStorage.removeItem(key);
   }
 
-  // tslint:disable-next-line:typedef
-  cleanLocalStorage() {
+  cleanLocalStorage(): void  {
     localStorage.clear();
+  }
+  cleanCachedQueries(queries: object): void {
+    queries = Object.values(queries);
+
+    // @ts-ignore
+    for (const query of queries) {
+      localStorage.removeItem(query);
+    }
   }
 }
 

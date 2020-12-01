@@ -1,4 +1,13 @@
-import {Component, OnInit, ChangeDetectionStrategy, AfterViewInit, ViewChild, SimpleChanges, ChangeDetectorRef} from '@angular/core';
+import {
+  Component,
+  OnInit,
+  ChangeDetectionStrategy,
+  AfterViewInit,
+  ViewChild,
+  SimpleChanges,
+  ChangeDetectorRef,
+  ViewEncapsulation
+} from '@angular/core';
 import {AddTranslationDialogComponent} from './dialog/add-translation-dialog.component';
 import {AddNewLanguageDialogComponent} from './dialog/add-new-language-dialog.component';
 import {MatDialog, MatDialogRef, MAT_DIALOG_DATA} from '@angular/material/dialog';
@@ -16,11 +25,13 @@ import {HttpClientService} from '../service/http-client.service';
 import {CacheService} from '../service/cache.service';
 import {FormControl, FormGroup} from '@angular/forms';
 import {filter} from 'rxjs/operators';
+import {ActivatedRoute} from '@angular/router';
 @Component({
   selector: 'app-translation',
   templateUrl: './translation.component.html',
   styleUrls: ['./translation.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  encapsulation : ViewEncapsulation.None,
 })
 
 
@@ -47,6 +58,8 @@ export class TranslationComponent implements OnInit, AfterViewInit {
   public searchForm2: FormGroup;
   public description = '';
   public ui_id = '';
+  public title = '';
+  public overline = '';
 
   get entries() {
     return this._entries.asObservable();
@@ -63,13 +76,14 @@ export class TranslationComponent implements OnInit, AfterViewInit {
   get translationsSource() {
     return this._translationsSource.asObservable();
   }
-  constructor(public dialog: MatDialog, public tools: Tools, private sanitizer: DomSanitizer, private cdr: ChangeDetectorRef, public tl: TranslationService, private http: HttpClientService, private cache: CacheService) {
+  constructor(public dialog: MatDialog, public tools: Tools, private sanitizer: DomSanitizer, private cdr: ChangeDetectorRef, public tl: TranslationService, private http: HttpClientService, private cache: CacheService, private route: ActivatedRoute) {
       this.exportJson().subscribe(data => {
         const theJSON = JSON.stringify(data.answer);
         const uri = this.sanitizer.bypassSecurityTrustUrl('data:text/json;charset=UTF-8,' + encodeURIComponent(theJSON));
         this._downloadJsonHref.next(uri);
       });
       this.refreshLanguagesList();
+      this.refreshEntries();
       this.refreshEntries();
       // this.refreshTranslations(this.currentLanguage);
   }
@@ -83,12 +97,7 @@ export class TranslationComponent implements OnInit, AfterViewInit {
     // this.dataSource.paginator = this.paginator;
   }
   ngOnInit(): void {
-    // this.languages.subscribe(value => {
-    //   this.currentLanguage = value[1] ;
-    //   this.refreshTranslations(this.currentLanguage);
-    // });
     this.searchFormInit();
-    // this.dataSource.filterPredicate = this.getFilterPredicate();
   }
   onTabChanged(event: MatTabChangeEvent): void
   {
@@ -105,17 +114,21 @@ export class TranslationComponent implements OnInit, AfterViewInit {
   }
   onSelectionChanged(value: MatSelectChange): void
   {
+    this.dataSource = undefined;
+    this._entries.next(this.dataSource);
       // this.currentLanguage = value.value ;
-      this.refreshTranslations(this.currentLanguage);
+    this.refreshTranslations(this.currentLanguage);
 
   }
   refreshEntries(): void{
+    this.dataSource = undefined;
+    this._entries.next(this.dataSource);
     this.getEntries().subscribe(x => {
       const list = x.answer.texts;
       this.dataSource = new MatTableDataSource<any>(list);
       this.searchFormInit();
       this.dataSource.filterPredicate = this.getFilterPredicate();
-      this.dataSource.paginator = this.paginator;
+      setTimeout(() => this.dataSource.paginator = this.paginator);
       this.jsonEntries = x.answer.texts;
       this._entries.next(this.dataSource);
       this.cdr.detectChanges();
@@ -128,7 +141,7 @@ export class TranslationComponent implements OnInit, AfterViewInit {
       this.dataSourceL = new MatTableDataSource<any>(this.jsonTranslations);
       this.searchFormInit();
       this.dataSourceL.filterPredicate = this.getFilterPredicate();
-      this.dataSourceL.paginator = this.paginatorL;
+      setTimeout(() => this.dataSourceL.paginator = this.paginatorL);
       this._translationsSource.next(this.dataSourceL);
       this.cdr.detectChanges();
     }
@@ -156,18 +169,6 @@ export class TranslationComponent implements OnInit, AfterViewInit {
       this._translationsSource.next(this.dataSourceL);
       this.cdr.detectChanges();
     }
-  }
-  addOneTranslation(id, lg ): void{
-    this.getTranslation(id, lg).subscribe(data => {
-      this.jsonTranslations.push(data.answer.translated_texts[0]);
-
-      this.dataSourceL = new MatTableDataSource<any>(this.jsonTranslations);
-      this.searchFormInit();
-      this.dataSourceL.filterPredicate = this.getFilterPredicate();
-      this.dataSourceL.paginator = this.paginatorL;
-      this._translationsSource.next(this.dataSourceL);
-      this.cdr.detectChanges();
-    });
   }
   addOneEntryRefresh(value): void{
       this.jsonEntries.push(value);
@@ -231,12 +232,15 @@ export class TranslationComponent implements OnInit, AfterViewInit {
     });
   }
   refreshTranslations(lg): void{
+    this.dataSourceL = undefined;
+    this._translationsSource.next(this.dataSourceL);
     this.getTranslations().subscribe(data => {
       const list = data.answer.texts;
       this.dataSource = new MatTableDataSource<any>(list);
       this.searchFormInit();
       this.dataSource.filterPredicate = this.getFilterPredicate();
-      this.dataSource.paginator = this.paginator;
+      // this.dataSource.paginator = this.paginator;
+      setTimeout(() => this.dataSource.paginator = this.paginator);
       this._entries.next(this.dataSource);
 
       const anAsyncFunction = async (item, idx) => {
@@ -255,7 +259,8 @@ export class TranslationComponent implements OnInit, AfterViewInit {
         this.dataSourceL = new MatTableDataSource<any>(lista);
         this.searchFormInit();
         this.dataSourceL.filterPredicate = this.getFilterPredicate();
-        this.dataSourceL.paginator = this.paginatorL;
+       //  this.dataSourceL.paginator = this.paginatorL;
+        setTimeout(() => this.dataSourceL.paginator = this.paginatorL);
         this.jsonTranslations = lista;
         this._translationsSource.next(this.dataSourceL);
         this.cdr.detectChanges();
@@ -292,25 +297,33 @@ export class TranslationComponent implements OnInit, AfterViewInit {
     return this.http.put({ url: 'https://ns-msrv-backend-dev.xtech.io/ui/languages/' + languageId, body: data });
   }
   removeLanguage(languageId: string): void{
-    if (!languageId){
-      console.log('languageId must be specified');
-      return;
-    }
-    this.http.delete({ url: 'https://ns-msrv-backend-dev.xtech.io/ui/languages/' + languageId }).subscribe(response => {
-      this.refreshLanguagesList();
+    this.tools.displayDeleteConfirmBox( (result) => {
+      if (result) {
+        if (!languageId) {
+          console.log('languageId must be specified');
+          return;
+        }
+        this.http.delete({url: 'https://ns-msrv-backend-dev.xtech.io/ui/languages/' + languageId}).subscribe(response => {
+          this.refreshLanguagesList();
+        });
+      }
     });
   }
   removeTranslation(elmt): void{
-    if (!elmt){
-      console.log('languageId must be specified');
-      return;
-    }
-    const tlUrl = 'https://ns-msrv-backend-dev.xtech.io/ui/translations/' + elmt.ui_id + '/' + this.currentLanguage.iso ;
+    this.tools.displayDeleteConfirmBox( (result) => {
+      if (result){
+        if (!elmt){
+          console.log('languageId must be specified');
+          return;
+        }
+        const tlUrl = 'https://ns-msrv-backend-dev.xtech.io/ui/translations/' + elmt.ui_id + '/' + this.currentLanguage.iso ;
 
-    this.http.delete({ url: tlUrl}).subscribe(response => {
-      this.cache.remove(tlUrl);
-      this.refreshTranslationOnDelete(elmt.ui_id, this.currentLanguage.iso);
-      // this.refreshTranslations(this.currentLanguage);
+        this.http.delete({ url: tlUrl}).subscribe(response => {
+          this.cache.remove(tlUrl);
+          this.refreshTranslationOnDelete(elmt.ui_id, this.currentLanguage.iso);
+          // this.refreshTranslations(this.currentLanguage);
+        });
+      }
     });
   }
   addNewEntry(data: object): Observable<any> {
@@ -320,7 +333,7 @@ export class TranslationComponent implements OnInit, AfterViewInit {
     return this.http.post({ url: 'https://ns-msrv-backend-dev.xtech.io/ui/translations/' + entryId, body: data});
   }
   getTranslationPromise(uid, lg): Promise<any> {
-    return this.http.get({ url: 'https://ns-msrv-backend-dev.xtech.io/ui/translations/' + uid + '/' + lg, cacheMins: 10080 }).toPromise()
+    return this.http.get({ url: 'https://ns-msrv-backend-dev.xtech.io/ui/translations/' + uid + '/' + lg, cacheMins: 1440 }).toPromise()
       .then(item => {
         if (item && item.answer){
           return Promise.resolve(item.answer.translated_texts[0]);
@@ -343,10 +356,14 @@ export class TranslationComponent implements OnInit, AfterViewInit {
     return this.http.get({ url: 'https://ns-msrv-backend-dev.xtech.io/ui/translations/' + entryId });
   }
   removeEntry(translation): void {
-    this.http.delete({ url: 'https://ns-msrv-backend-dev.xtech.io/ui/translations/' + translation.ui_id }).subscribe(response => {
-      this.cache.cleanOneEntry(translation.ui_id);
-      this.refreshEntryOnDelete(translation.ui_id);
-      // this.refreshEntries();
+    this.tools.displayDeleteConfirmBox((result) => {
+      if (result) {
+        this.http.delete({url: 'https://ns-msrv-backend-dev.xtech.io/ui/translations/' + translation.ui_id}).subscribe(response => {
+          this.cache.cleanOneEntry(translation.ui_id);
+          this.refreshEntryOnDelete(translation.ui_id);
+          // this.refreshEntries();
+        });
+      }
     });
   }
   refreshCache(): void {
@@ -371,7 +388,7 @@ export class TranslationComponent implements OnInit, AfterViewInit {
   }
   openDialogTranslationToEntry(row): void {
     const dialogRef = this.dialog.open(AddTranslationToEntryDialogComponent, {
-      width: '60%',
+      width: '50%',
       data:  {title: 'Add ' + this.currentLanguage.label + ' translation to ' + row.ui_id, ui_id: '', translated: '', description: '', enabled: true}
     });
 
@@ -397,7 +414,7 @@ export class TranslationComponent implements OnInit, AfterViewInit {
   }
   openDialogTranslationToEntryEdit(row): void {
     const dialogRef = this.dialog.open(AddTranslationToEntryDialogComponent, {
-      width: '60%',
+      width: '50%',
       data:  {title: 'Edit ' + this.currentLanguage.label + ' translation to ' + row.ui_id, ui_id: row.ui_id, translated: row.translation.translated, description: row.description, enabled: row.translation.enabled}
     });
 
@@ -418,7 +435,7 @@ export class TranslationComponent implements OnInit, AfterViewInit {
   }
   openDialogTranslation(): void {
     const dialogRef = this.dialog.open(AddTranslationDialogComponent, {
-      width: '60%',
+      width: '50%',
       data:  {title: 'Add new entry', enabled: true, description: ''}
     });
 
@@ -462,7 +479,7 @@ export class TranslationComponent implements OnInit, AfterViewInit {
   }
   openDialogTranslationEdit(lg): void {
     const dialogRef = this.dialog.open(AddTranslationDialogComponent, {
-      width: '60%',
+      width: '50%',
       data:  {title: 'Edit entry : ' + lg.ui_id, ui_id: lg.ui_id, enabled: lg.enabled, description: lg.description}
     });
 
@@ -479,7 +496,7 @@ export class TranslationComponent implements OnInit, AfterViewInit {
   }
   openDialogLanguage(): void {
     const dialogRefLg = this.dialog.open(AddNewLanguageDialogComponent, {
-      width: '60%',
+      width: '50%',
       data:  {title: 'Add new Language', iso: '', label: '', enabled: false}
     });
 
@@ -495,7 +512,7 @@ export class TranslationComponent implements OnInit, AfterViewInit {
   }
   openDialogLanguageEdit(lg): void {
     const dialogRefLg = this.dialog.open(AddNewLanguageDialogComponent, {
-      width: '60%',
+      width: '50%',
       data:  {title: 'Edit Language', iso: lg.iso, label: lg.label, enabled: lg.enabled, isEdition: true}
     });
 

@@ -1,0 +1,123 @@
+
+//
+
+@mixin blur($value) {
+  -webkit-filter: blur($value);
+  -moz-filter: blur($value);
+  -o-filter: blur($value);
+  -ms-filter: blur($value);
+  filter: blur($value);
+}
+@mixin box-shadow($top, $left, $blur, $color, $inset: false) {
+  @if $inset {
+    -webkit-box-shadow:inset $top $left $blur $color;
+    -moz-box-shadow:inset $top $left $blur $color;
+    box-shadow:inset $top $left $blur $color;
+  } @else {
+    -webkit-box-shadow: $top $left $blur $color;
+    -moz-box-shadow: $top $left $blur $color;
+    box-shadow: $top $left $blur $color;
+  }
+}
+
+
+
+@mixin linear-gradient($from, $to, $pos1: 0%, $pos2:100%) {
+  background: $to;
+	background: -moz-linear-gradient(top, $from $pos1, $to $pos2);
+	background: -webkit-gradient(linear, left top, left bottom, color-stop($pos1,$from), color-stop($pos2,$to));
+	background: -webkit-linear-gradient(top, $from $pos1,$to $pos2);
+	background: -o-linear-gradient(top, $from $pos1,$to $pos2);
+	background: linear-gradient(to bottom, $from $pos1,$to $pos2);
+	filter: progid:DXImageTransform.Microsoft.gradient(GradientType=0, startColorstr=#{$from}, endColorstr=#{$to})
+}
+
+@mixin border-radius($radius...) {
+	-moz-border-radius:    $radius;
+	-webkit-border-radius: $radius;
+	border-radius:         $radius;
+}
+
+
+// generic transform
+@mixin transform($transforms) {
+	   -moz-transform: $transforms;
+	     -o-transform: $transforms;
+	    -ms-transform: $transforms;
+	-webkit-transform: $transforms;
+          transform: $transforms;
+}
+// rotate
+@mixin rotate ($deg) {
+  @include transform(rotate(#{$deg}deg));
+}
+
+// scale
+@mixin scale($scale) {
+	 @include transform(scale($scale));
+}
+// translate
+@mixin translate ($x, $y) {
+   @include transform(translate($x, $y));
+}
+// skew
+@mixin skew ($x, $y) {
+   @include transform(skew(#{$x}deg, #{$y}deg));
+}
+//transform origin
+@mixin transform-origin ($origin) {
+    moz-transform-origin: $origin;
+	     -o-transform-origin: $origin;
+	    -ms-transform-origin: $origin;
+	-webkit-transform-origin: $origin;
+          transform-origin: $origin;
+}
+
+
+@mixin rotate3d($x, $y, $z) {
+  -webkit-transform: rotateX(#{$x}deg) rotateY(#{$y}deg) rotateZ(#{$z}deg);
+  -moz-transform: rotateX(#{$x}deg) rotateY(#{$y}deg) rotateZ(#{$z}deg);
+  -o-transform: rotateX(#{$x}deg) rotateY(#{$y}deg) rotateZ(#{$z}deg);
+  -ms-transform: rotateX(#{$x}deg) rotateY(#{$y}deg) rotateZ(#{$z}deg);
+  transform: rotateX(#{$x}deg) rotateY(#{$y}deg) rotateZ(#{$z}deg);
+}
+
+
+// custom scroll-bar
+@mixin custom-scroll-bar($color-track,$color-knob) {
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: $color-knob;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: $color-track;
+  }
+}
+
+// no scroll bar
+@mixin no-scroll-bar() {
+  &::-webkit-scrollbar {
+    height: 0;
+    width: 0;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    height: 0;
+    width: 0;
+  }
+
+  &::-webkit-scrollbar-track {
+    height: 0;
+    width: 0;
+  }
+}
+
+.blank-separator {
+  // height:$padding-main;
+}
+
+

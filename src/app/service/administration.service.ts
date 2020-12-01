@@ -9,7 +9,7 @@ export class AdministrationService {
 
   constructor(private http: HttpClientService) { }
   getActors(type?: string, id?: string): Observable<any>{
-    console.log(id);
+
     let url = 'https://ns-msrv-backend-dev.xtech.io/data/actors/';
     if (type && type === 'foundation') {
       url += 'foundation/';
@@ -17,6 +17,13 @@ export class AdministrationService {
     else if (type && type === 'functionality') {
       url += 'with_functionality/';
     }
+    if (id && id !== '') {
+      url += id;
+    }
+    return this.http.get({url});
+  }
+  getActor(id): Observable<any>{
+    let url = 'https://ns-msrv-backend-dev.xtech.io/data/actors/';
     if (id && id !== '') {
       url += id;
     }
@@ -62,15 +69,16 @@ export class AdministrationService {
     return this.http.post({url, body: payload});
   }
   deleteFunctionalitiesActor(actorId: string, code: string): Observable<any>{
-    console.log(actorId, code);
+
     if ((!actorId || actorId === '') || (!code || code === '')) {
       return ;
     }
     const url = 'https://ns-msrv-backend-dev.xtech.io/data/functionalities/actors/' + actorId + '/' + code;
     return this.http.delete({url});
   }
-  deleteFoundationsActor(actorId: string): Observable<any>{
-    if ((!actorId || actorId !== '')) {
+  deleteFoundationsActor(actorId: any): Observable<any>{
+    if ((!actorId || actorId === '')) {
+      console.log('actor id must be specified');
       return ;
     }
     const url = 'https://ns-msrv-backend-dev.xtech.io/data/actors/foundation/' + actorId ;

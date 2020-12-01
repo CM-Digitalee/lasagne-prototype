@@ -15,6 +15,7 @@
               <i class="material-icons pointer">{{item.value.iconMaterialDesign}}</i>
               {{getLabel(item.value)}}
             </a>
+            <div class="counter" *ngIf="item.value.counter"><div class="number">{{item.value.counter}}</div></div>
           </div>
           <ul class="submenu" *ngIf="item.value.menus && item.value.menus.length > 0 && item.value.show == true">
             <li *ngFor="let submenu of item.value.menus">
@@ -24,6 +25,7 @@
                   <i class="material-icons pointer">{{submenu.iconMaterialDesign}}</i>
                   {{getLabel(submenu)}}
                 </a>
+                <div class="counter" *ngIf="submenu.counter"><div class="number">{{submenu.counter}}</div></div>
               </div>
             </li>
           </ul>

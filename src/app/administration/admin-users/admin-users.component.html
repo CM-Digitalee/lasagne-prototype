@@ -1,26 +1,16 @@
-<h2>Users</h2>
-<div *ngIf="(users | async)">
+<div *ngIf="(users | async)" class="main-panel min-height-85">
+  <h2>Users list</h2>
+  <div *ngIf="isLoading$ | async" class="spinner-wrapper">
+    <mat-progress-spinner
+      class="example-margin"
+      mode="indeterminate">
+    </mat-progress-spinner>
+  </div>
+  <div *ngIf="(users | async) && !(isLoading$ | async)" class="table-wrapper">
   <mat-table [dataSource]="users | async">
-    <ng-container matColumnDef="id" >
-      <mat-header-cell *matHeaderCellDef class="small-column">ID</mat-header-cell>
-      <mat-cell *matCellDef="let row"  class="small-column"> {{row.id}} </mat-cell>
-    </ng-container>
-    <ng-container matColumnDef="referenceDate">
-      <mat-header-cell *matHeaderCellDef> {{tl.translate('ST.WORD.DATE')}} </mat-header-cell>
-      <mat-cell *matCellDef="let row"> {{row.referenceDate}} </mat-cell>
-    </ng-container>
     <ng-container matColumnDef="email">
       <mat-header-cell *matHeaderCellDef> {{tl.translate('ST.WORD.EMAIL')}} </mat-header-cell>
       <mat-cell *matCellDef="let row"> {{row.email}} </mat-cell>
-    </ng-container>
-    <!-- Title Definition -->
-    <ng-container matColumnDef="action">
-      <mat-header-cell *matHeaderCellDef> </mat-header-cell>
-      <mat-cell *matCellDef="let row">
-        <button mat-icon-button >
-          <mat-icon>visibility</mat-icon>
-        </button>
-      </mat-cell>
     </ng-container>
     <ng-container matColumnDef="actors">
       <mat-header-cell *matHeaderCellDef> {{tl.translate('ST.ADMIN.HEADER.GRANTED_ACTORS')}} </mat-header-cell>
@@ -28,7 +18,10 @@
         <div *ngIf="row.actors">
           <ul>
             <li *ngFor="let actor of row.actors" class="actor-details">
-              <span>{{actor.id}} : </span> <span>{{actor.corporateName}} </span> <span> {{actor.actor}}</span>
+              <span> {{actor.actor}}</span>, <span>{{actor.corporateName}} </span>
+<!--              <button mat-button (click)="">-->
+<!--                <mat-icon>launch</mat-icon>-->
+<!--              </button>-->
             </li>
           </ul>
         </div>
@@ -36,10 +29,14 @@
     </ng-container>
 
     <!-- Header and Row Declarations -->
-    <mat-header-row *matHeaderRowDef="['id', 'referenceDate', 'email', 'action', 'actors']"></mat-header-row>
-    <mat-row *matRowDef="let row; columns: ['id','referenceDate', 'email', 'action', 'actors']"></mat-row>
+    <mat-header-row *matHeaderRowDef="['email', 'actors']"></mat-header-row>
+    <mat-row *matRowDef="let row; columns: ['email', 'actors']"></mat-row>
   </mat-table>
+  <mat-paginator #paginator class="paginator" [pageSizeOptions]="[10, 20, 50, 100]"></mat-paginator>
 </div>
-<div *ngIf="!(users | async) || (users | async)?.length==0">
-  No users found
+</div>
+<div *ngIf="(!(users | async) || (users | async)?.length==0) && !(isLoading$ | async)" class="not-found">
+  <div>
+    {{tl.translate('ST.ADMIN.NOT_FOUND.USERS_ACTORS')}}
+  </div>
 </div>

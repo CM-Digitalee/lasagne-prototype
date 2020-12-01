@@ -1,4 +1,4 @@
-<mat-card *ngIf="budget$ | async as budget">
+<div class="main-panel min-height-85" *ngIf="budget$ | async as budget">
   <form #selectForm="ngForm">
     <mat-form-field class="mr-20">
       <mat-label>{{tl.translate('ST.WORD.PORTFOLIO','capitalize')}}</mat-label>
@@ -42,7 +42,7 @@
     </mat-form-field>
 
     <ng-container *ngIf="portfolioSelect.value && assetSelect.value">
-      <button *permissions="{roles: ['PM']}" type="button" mat-raised-button color="primary"
+      <button *permissions="{roles: ['PM']}" type="button" mat-button color="primary"
         (click)="dialog.open(createBudget)">{{tl.translate('ST.BUTTON.CREATE')}}</button>
     </ng-container>
   </form>
@@ -67,10 +67,10 @@
       </mat-form-field>
       <div class="flex justify-end">
         <span class="mr-10">
-          <button type="submit" mat-raised-button color="primary" [disabled]="createForm.invalid">{{tl.translate('ST.BUTTON.CREATE')}}</button>
+          <button type="submit" mat-button color="primary" [disabled]="createForm.invalid">{{tl.translate('ST.BUTTON.CREATE')}}</button>
         </span>
         <span>
-          <button type="button" mat-raised-button (click)="dialogRef.close()">{{tl.translate('ST.BUTTON.CANCEL')}}</button>
+          <button type="button" mat-button (click)="dialogRef.close()">{{tl.translate('ST.BUTTON.CANCEL')}}</button>
         </span>
       </div>
     </form>
@@ -81,7 +81,7 @@
       <ng-container *ngIf="currentVersion$ | async as currentVersion">
         <ng-container *ngIf="lastVersion$ | async as lastVersion">
           <span *ngFor="let version of budget.versions | orderBy: 'number'" class="mr-5">
-            <a mat-raised-button routerLink="./" [queryParams]="{version: version.number}"
+            <a mat-button routerLink="./" [queryParams]="{version: version.number}"
               (click)="currentVersion === lastVersion && updateCurrentVersion(currentVersion.accountingPlan, budgetForm.value)"
               [color]="currentVersion.number === version.number ? 'primary' : ''">
               {{ version.number }}
@@ -91,21 +91,21 @@
             <button *permissions="[
                 {roles: ['PM'], condition: lastVersion.state === budgetService.budgetVersionState.Rejected},
                 {roles: ['AM', 'AO'], condition: lastVersion.state === budgetService.budgetVersionState.Submitted}
-              ]" type="button" mat-raised-button (click)="createBudgetVersion(budget.id)">
+              ]" type="button" mat-button (click)="createBudgetVersion(budget.id)">
               <i class="material-icons">add</i>
             </button>
           </span>
           <span *ngIf="isNotStarted(budget.startDate)" class="mr-5">
             <button *permissions="[
                 {roles: ['PM'], condition: lastVersion.state === budgetService.budgetVersionState.Accepted}
-              ]" type="button" mat-raised-button (click)="createBudgetVersion(budget.id)">
+              ]" type="button" mat-button (click)="createBudgetVersion(budget.id)">
               <span>Faire une révision</span>
             </button>
           </span>
           <span *ngIf="isCurrentPeriod(budget.startDate)" class="mr-5">
             <button *permissions="[
                 {roles: ['PM'], condition: lastVersion.state === budgetService.budgetVersionState.Accepted}
-              ]" type="button" mat-raised-button (click)="createBudgetExtension(budget.id)">
+              ]" type="button" mat-button (click)="createBudgetExtension(budget.id)">
               <span>Obtenir une rallonge</span>
             </button>
           </span>
@@ -256,13 +256,13 @@
               </mat-form-field>
               <ng-container *ngIf="currentVersion.state === budgetService.budgetVersionState.Pending">
                 <div class="mr-5">
-                  <button type="button" mat-raised-button (click)="save(currentVersion.id, budgetForm.value)">
+                  <button type="button" mat-button (click)="save(currentVersion.id, budgetForm.value)">
                     {{tl.translate('ST.BUTTON.SAVE_DRAFT')}}
                   </button>
                 </div>
                 <ng-container *permissions="{roles: ['PM']}">
                   <div>
-                    <button type="button" mat-raised-button color="primary"
+                    <button type="button" mat-button color="primary"
                       (click)="submit(currentVersion.id, budgetForm.value)">
                       {{tl.translate('ST.BUTTON.SUBMIT')}}
                     </button>
@@ -270,13 +270,13 @@
                 </ng-container>
                 <ng-container *permissions="{roles: ['AM', 'AO']}">
                   <div class="mr-5">
-                    <button type="button" mat-raised-button color="primary"
+                    <button type="button" mat-button color="primary"
                       (click)="accept(currentVersion.id, budgetForm.value)">
                       {{tl.translate('ST.BUTTON.ACCEPT')}}
                     </button>
                   </div>
                   <div>
-                    <button type="button" mat-raised-button color="warn"
+                    <button type="button" mat-button color="warn"
                       (click)="reject(currentVersion.id, budgetForm.value)">
                       {{tl.translate('ST.BUTTON.REJECT')}}
                     </button>
@@ -289,4 +289,4 @@
       </ng-container>
     </ng-container>
   </ng-container>
-</mat-card>
+</div>

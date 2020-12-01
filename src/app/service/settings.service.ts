@@ -25,27 +25,34 @@ export class SettingsService {
       setTimeout(() => {
         const router = this.injector.get(Router);
         const promise1 = this._http
-          .get<any>({ url: 'https://ns-msrv-backend-dev.xtech.io/ui/menus/' + this.globals.languageId, cacheMins: 10080 }) // cache data for 7 days
+          .get<any>({ url: 'https://ns-msrv-backend-dev.xtech.io/ui/menus/' + this.globals.languageId, cacheMins: 1440 }) // cache data for 7 days
           .subscribe(
             response => {
               const menus = [];
+              const headerMenus = [];
               for (const property in response.answer){
-                if (property !== 'headerMenus' && response.answer.hasOwnProperty(property) && response.answer[property].hasOwnProperty('menus')){
+                if (response.answer.hasOwnProperty(property) && response.answer[property].hasOwnProperty('menus')){
                   this.currentSettings = response.answer[property].menus;
-                  let menu = [...response.answer[property].menus]
-                  menus.push(menu);
+                  let menu ;
+                  if(property === 'headerMenus'){
+                    menu = [...response.answer[property].menus]
+                    headerMenus.push(menu);
+                  }else{
+                    menu = [...response.answer[property].menus]
+                    menus.push(menu);
+                  }
+
                   // this.itemsMenu.setItems(response.answer[property].menus);
                   menu.forEach(element => {
                     this.buildRoutes(router, element);
                     if (element.menus){
                       element.menus.forEach(subMenu => {
-                        this.buildRoutes(router, subMenu);
+                        this.buildRoutes(router, subMenu, element);
                       });
                     }
                   });
                 }
               }
-              console.log(menus)
               this.itemsMenu.setMenus(menus);
               resolve(true);
             },
@@ -53,7 +60,7 @@ export class SettingsService {
               reject(false);
             }
           );
-        const promise2 = this._http.get<any>({ url: 'https://ns-msrv-backend-dev.xtech.io/ui/translationsui/' + this.globals.languageId, cacheMins: 10080 }).subscribe(
+        const promise2 = this._http.get<any>({ url: 'https://ns-msrv-backend-dev.xtech.io/ui/translationsui/' + this.globals.languageId, cacheMins: 1440 }).subscribe(
           response => {
             this.globals.translationJson = response.answer;
             resolve(true);
@@ -69,15 +76,21 @@ export class SettingsService {
       });
     });
   }
-  buildRoutes(router, element): void{
+  buildRoutes(router, element, parent?): void{
     if (element.resources && element.resources.resourcesUrl){
       for (const rs of element.resources.resourcesUrl){
         if (rs.type === 'IFRAME'){
           const label = element.label && typeof element.label === 'object' ? Object.values(element.label)[0] : '';
           const rdata = {
             text : label, // rs.description.translated,
-            url: rs.url
+            title: label,
+            url: rs.url,
+            overline: undefined
           };
+          if(parent && parent.label){
+            const lb = parent.label && typeof parent.label === 'object' ? Object.values(parent.label)[0] : '';
+            rdata.overline = lb ;
+          }
           router.config[0].children.push({ path: `${element.applicationRoute.charAt(0) === '/' ? element.applicationRoute.substring(1) : element.applicationRoute}`, component: IframeViewComponent, data: Object.assign({}, rdata) });
         }
       }
@@ -86,8 +99,13 @@ export class SettingsService {
       const label = element.label && typeof element.label === 'object' ? Object.values(element.label)[0] : '';
       const rdata = {
         title : label, // element.label.translated,
-        component: element.applicationComponent
+        component: element.applicationComponent,
+        overline: undefined
       };
+      if(parent && parent.label){
+        const lb = parent.label && typeof parent.label === 'object' ? Object.values(parent.label)[0] : '';
+        rdata.overline = lb ;
+      }
       // Register app component
       router.config[0].children.push({ path: `${element.applicationRoute.charAt(0) === '/' ? element.applicationRoute.substring(1) : element.applicationRoute}`, component: ComponentLoaderComponent, data: Object.assign({}, rdata) });
     }

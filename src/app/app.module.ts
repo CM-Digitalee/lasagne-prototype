@@ -7,10 +7,7 @@ import { AppComponent } from './app.component';
 import { LocaleService } from './core';
 import { HttpClientModule, HttpClient } from '@angular/common/http';
 import { DashboardComponent } from './dashboard/dashboard.component';
-import { UploadDataComponent } from './upload-data/upload-data.component';
 import { PunchlistComponent } from './punchlist/punchlist.component';
-import { DocumentValidationComponent } from './document-validation/document-validation.component';
-import { AnalyticsComponent } from './analytics/analytics.component';
 import { Globals } from './common/global';
 import { IframeViewComponent } from './iframe-view/iframe-view.component';
 
@@ -29,7 +26,11 @@ import {MatTabsModule} from '@angular/material/tabs';
 import {MatPaginator} from '@angular/material/paginator';
 import {HttpClientService} from './service/http-client.service';
 import {CacheService} from './service/cache.service';
-
+import { NotFoundComponent } from './not-found/not-found.component';
+import { ConfirmboxComponent } from './layouts/confirmbox/confirmbox.component';
+import {MatIconModule} from '@angular/material/icon';
+import {SystemService} from './service/system.service';
+import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
 
 // tslint:disable-next-line:typedef
 export function initSettings(settings: SettingsService) {
@@ -37,7 +38,7 @@ export function initSettings(settings: SettingsService) {
 }
 
 @NgModule({
-  declarations: [AppComponent, DashboardComponent, UploadDataComponent, PunchlistComponent, DocumentValidationComponent, AnalyticsComponent, IframeViewComponent, ComponentLoaderComponent, ComponentLoaderDirective],
+  declarations: [AppComponent, DashboardComponent, PunchlistComponent, IframeViewComponent, ComponentLoaderComponent, ComponentLoaderDirective, NotFoundComponent, ConfirmboxComponent],
   imports: [
     BrowserModule,
     AppRoutingModule,
@@ -49,7 +50,9 @@ export function initSettings(settings: SettingsService) {
     MatInputModule,
     MatButtonModule,
     MatTabsModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    MatIconModule,
+    MatProgressSpinnerModule
   ],
   providers: [
     HttpClientModule,
@@ -57,6 +60,7 @@ export function initSettings(settings: SettingsService) {
     TranslationService,
     SettingsService,
     CacheService,
+    SystemService,
     HttpClientService,
     ComponentLoaderService,
     {

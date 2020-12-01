@@ -1,0 +1,106 @@
+.dialog{
+  padding:26px;
+  min-height: 50vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  position: relative;
+  font-family: lato-regular,serif;
+  color: $blue-main-title;
+  &.confirmbox{
+    min-height: 30vh;
+    p{
+      margin-top:60px;
+    }
+  }
+
+  .dialog-title{
+    position: absolute;
+    width: calc(100% - 52px);
+
+    h2{
+      text-align: center;
+    }
+  }
+  p{
+    font-family: lato-regular,serif;
+    font-size: 14px;
+  }
+  h2, p{
+    text-align:center;
+  }
+
+  h2{
+    font-family: gudea-bold,serif;
+    color: $blue-main-title;
+    text-align: center;
+    letter-spacing: normal;
+    line-height: 24px;
+    font-size: 20px;
+    padding-bottom: 28px;
+    padding-top:24px;
+  }
+  .mat-dialog-content{
+    @include flexbox();
+    @include justify-content(center);
+    @include align-items(center);
+    padding-top:12px;
+    padding-bottom: 12px;
+    mat-form-field.large-width{
+      width:65%;
+    }
+    .mat-form-field-type-mat-input{
+      margin-right: 50px;
+      @include flex-grow(1);
+      @include flex-shrink(1);
+    }
+
+  }
+  .close-btn{
+    font-family: lato-regular,serif;
+    color: $blue-main-title;
+    text-align: left;
+    line-height: 20px;
+    font-size: 14px;
+    letter-spacing: 0.25px;
+    @include flexbox();
+    @include justify-content(flex-end);
+    @include align-items(center);
+    cursor:pointer;
+    z-index:100;
+    mat-icon{
+      color: $button-color;
+      margin-right: 3px;
+      &:hover{
+        font-weight: 700;
+      }
+
+    }
+  }
+
+  .mat-dialog-actions{
+    padding-top:36px;
+  }
+
+  .btn-primary-color{
+    height: 40px;
+    color: #FFFFFF;
+    border-radius: 4.24px;
+    background-color: #5A3BDD;
+    font-family: lato-bold, sans-serif;
+    font-size: 14px;
+    letter-spacing: 0.25px;
+    line-height: 17px;
+    text-align: center;
+    border: none;
+    padding: 12px 16px;
+    min-width:80px;
+    &.fixed{
+      width:120px;
+    }
+    &:hover{
+      cursor: pointer;
+      font-weight: 700;
+    }
+  }
+}

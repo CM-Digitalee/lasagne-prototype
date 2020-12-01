@@ -1,11 +1,13 @@
 <!--<p>{{title}}</p>-->
-<iframe id="dashboardIframe"
-        class="icubeIframe"
-        title="Dashboard Icube Iframe"
-        width="94%"
-        height="94%"
-        style="border:none;margin-left:5%;margin-top:3%;"
-        [src]='sanitizer.bypassSecurityTrustResourceUrl(url)'
->
-  {{tl.translate('ST.SENTENCE.BROWSER_COMPATIBILITY')}}
-</iframe>
+<div class="main-panel noPadding" style="height:93%;">
+  <iframe id="dashboardIframe"
+          class="icubeIframe"
+          title="Dashboard Icube Iframe"
+          width="100%"
+          height="100%"
+          style="border:none;"
+          [src]='sanitizer.bypassSecurityTrustResourceUrl(url)'
+  >
+    {{tl.translate('ST.SENTENCE.BROWSER_COMPATIBILITY')}}
+  </iframe>
+</div>

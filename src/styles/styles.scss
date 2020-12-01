@@ -1,8 +1,30 @@
+//defines
+@import "./partials/defines/config";
+@import "./partials/defines/colors";
+
+//helpers
+@import "./partials/helpers/fonts";
+@import "./partials/helpers/flexbox";
+@import "./partials/helpers/transitions";
+@import "./partials/helpers/helpers";
+@import "./partials/helpers/animations";
+@import "./partials/helpers/display";
+
+@import "./partials/contents/dialogs";
+@import "./partials/contents/buttons";
+@import "./partials/contents/panels";
+
+@import "./partials/overlays/mat";
+
+
+
 @import './reset.scss';
 @import './common.scss';
 @import './layouts.scss';
 @import './typography.scss';
 @import './forms.scss';
 
+
+
 html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+body { margin: 0; font-family: lato-regular, "Helvetica Neue", sans-serif; }

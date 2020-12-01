@@ -1,71 +1,49 @@
-<h2>Actor functionalities</h2>
-<mat-table [dataSource]="actorFunctionalities | async">
-  <ng-container matColumnDef="id" >
-    <mat-header-cell *matHeaderCellDef class="small-column">ID</mat-header-cell>
-    <mat-cell *matCellDef="let row"  class="small-column"> {{row.id}} </mat-cell>
-  </ng-container>
-  <ng-container matColumnDef="code">
-    <mat-header-cell *matHeaderCellDef> {{tl.translate('ST.WORD.CODE')}} </mat-header-cell>
-    <mat-cell *matCellDef="let row"> {{row.code}} </mat-cell>
-  </ng-container>
-  <ng-container matColumnDef="description">
-    <mat-header-cell *matHeaderCellDef> {{tl.translate('ST.WORD.DESCRIPTION')}} </mat-header-cell>
-    <mat-cell *matCellDef="let row"> {{row.description}} </mat-cell>
-  </ng-container>
-  <!-- Title Definition -->
-  <ng-container matColumnDef="action">
-    <mat-header-cell *matHeaderCellDef> </mat-header-cell>
-    <mat-cell *matCellDef="let row">
-      <button mat-icon-button  (click)="removeActorFunctionality(row)" *ngIf="isOnGlobal(row.code)">
-        <mat-icon>remove</mat-icon>
-      </button>
-      <!--          &lt;!&ndash; Remove entry &ndash;&gt;-->
-      <!--          <button mat-icon-button color="warn" (click)="removeEntry(row)" >-->
-      <!--            <mat-icon>delete</mat-icon>-->
-      <!--          </button>-->
+<div class="goBack">
+  <a href="/administration/manage-actors">
+    <i class="material-icons">arrow_back</i>
+  </a>
+</div>
+<!--<h1 class="txt-center">{{tl.translate('ST.ADMIN.TITLE.MANAGE_FUNC')}} {{actor ? actor.actor : ''}} </h1>-->
+<div class="main-panel" style="height:85%;">
+  <h2 class="txt-center">{{tl.translate('ST.ADMIN.TITLE.MANAGE_FUNC')}}  {{actor ? actor.actor : ''}} </h2>
+  <div class="splited-view-wrapper">
+    <div class="splited-view">
+      <div>
+        <h2 class="txt-center">{{tl.translate('ST.WORD.FUNCTIONALITIES','capitalize')}}</h2>
+        <div *ngIf="functionalities  | async">
+          <mat-selection-list #jFunctionalities [(ngModel)]="selectedFunctionalities">
+            <mat-list-option *ngFor="let jFunctionality of functionalities  | async; index as i" [value]="jFunctionality" >
+              {{jFunctionality.code}} - {{jFunctionality.description}}
+            </mat-list-option>
+          </mat-selection-list>
+        </div>
+      </div>
+    </div>
+    <div class="btn-splitted">
+        <mat-icon (click)="addFunctionalities()" [ngClass]="!selectedFunctionalities.length ? 'disabled' : ''"  [matTooltip]="tl.translate('ST.ADMIN.TOOLTIPS.ADD_FUNCT')">chevron_right</mat-icon>
 
-    </mat-cell>
-  </ng-container>
-
-  <!-- Header and Row Declarations -->
-  <mat-header-row *matHeaderRowDef="['id', 'code', 'description', 'action']"></mat-header-row>
-  <mat-row *matRowDef="let row; columns: ['id','code', 'description', 'action']"></mat-row>
-</mat-table>
-
-<br>
-<h2>Global functionalities</h2>
-<mat-table [dataSource]="functionalities | async">
-  <ng-container matColumnDef="id" >
-    <mat-header-cell *matHeaderCellDef class="small-column">ID</mat-header-cell>
-    <mat-cell *matCellDef="let row"  class="small-column"> {{row.id}} </mat-cell>
-  </ng-container>
-  <ng-container matColumnDef="code">
-    <mat-header-cell *matHeaderCellDef> {{tl.translate('ST.WORD.CODE')}} </mat-header-cell>
-    <mat-cell *matCellDef="let row"> {{row.code}} </mat-cell>
-  </ng-container>
-  <ng-container matColumnDef="description">
-    <mat-header-cell *matHeaderCellDef> {{tl.translate('ST.WORD.DESCRIPTION')}} </mat-header-cell>
-    <mat-cell *matCellDef="let row"> {{row.description}} </mat-cell>
-  </ng-container>
-  <!-- Title Definition -->
-  <ng-container matColumnDef="action">
-    <mat-header-cell *matHeaderCellDef> </mat-header-cell>
-    <mat-cell *matCellDef="let row">
-      <button mat-icon-button  (click)="addToActor(row)" *ngIf="!isOnActor(row.code)">
-        <mat-icon>add</mat-icon>
-      </button>
-      <span *ngIf="isOnActor(row.code)">
-        Already on actor
-      </span>
-      <!--          &lt;!&ndash; Remove entry &ndash;&gt;-->
-      <!--          <button mat-icon-button color="warn" (click)="removeEntry(row)" >-->
-      <!--            <mat-icon>delete</mat-icon>-->
-      <!--          </button>-->
-
-    </mat-cell>
-  </ng-container>
-
-  <!-- Header and Row Declarations -->
-  <mat-header-row *matHeaderRowDef="['id', 'code', 'description', 'action']"></mat-header-row>
-  <mat-row *matRowDef="let row; columns: ['id','code', 'description', 'action']"></mat-row>
-</mat-table>
+        <mat-icon (click)="removeFunctionalities()" [ngClass]="!selectedActorFunctionalities.length ? 'disabled' : ''" [matTooltip]="tl.translate('ST.ADMIN.TOOLTIPS.REMOVE_FUNCT')" >chevron_left</mat-icon>
+<!--      <button mat-icon-button [disabled]="!selectedFunctionalities.length" [matTooltip]="tl.translate('ST.ADMIN.TOOLTIPS.ADD_FUNCT')">-->
+<!--        <mat-icon (click)="addFunctionalities()" >chevron_right</mat-icon>-->
+<!--      </button>-->
+<!--      <button mat-icon-button [disabled]="!selectedActorFunctionalities.length" [matTooltip]="tl.translate('ST.ADMIN.TOOLTIPS.REMOVE_FUNCT')">-->
+<!--        <mat-icon (click)="removeFunctionalities()" >chevron_left</mat-icon>-->
+<!--      </button>-->
+    </div>
+    <div class="splited-view">
+      <div>
+        <h2 class="txt-center">{{tl.translate('ST.ADMIN.TITLE.ACTOR_FUNCTIONALITIES')}}</h2>
+        <div *ngIf="actorFunctionalities  | async">
+          <mat-selection-list #aFunctionalities [(ngModel)]="selectedActorFunctionalities">
+            <mat-list-option *ngFor="let aFunctionality of actorFunctionalities  | async; index as i"  [value]="aFunctionality">
+              {{aFunctionality.code}} - {{aFunctionality.description}}
+            </mat-list-option>
+          </mat-selection-list>
+          <!--        <p *ngIf="jsonActorFunctionalities.length > 0">-->
+          <!--          Functionalities selected: {{aFunctionalities.selectedOptions.selected.length}}-->
+          <!--        </p>-->
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

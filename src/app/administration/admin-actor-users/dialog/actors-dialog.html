@@ -1,5 +1,6 @@
 <h1 mat-dialog-title>{{data.title}}</h1>
 <div mat-dialog-content>
+  <div class="table-wrapper">
   <mat-table [dataSource]="data.actors">
 
     <ng-container matColumnDef="id" >
@@ -22,19 +23,19 @@
       <mat-header-cell *matHeaderCellDef> {{tl.translate('ST.WORD.DESCRIPTION')}} </mat-header-cell>
       <mat-cell *matCellDef="let row"> {{row.description}} </mat-cell>
     </ng-container>
-    <!-- Title Definition -->
-    <ng-container matColumnDef="action">
-      <mat-header-cell *matHeaderCellDef> </mat-header-cell>
-      <mat-cell *matCellDef="let row">
+<!--    &lt;!&ndash; Title Definition &ndash;&gt;-->
+<!--    <ng-container matColumnDef="action">-->
+<!--      <mat-header-cell *matHeaderCellDef> </mat-header-cell>-->
+<!--      <mat-cell *matCellDef="let row">-->
 
-      </mat-cell>
-    </ng-container>
+<!--      </mat-cell>-->
+<!--    </ng-container>-->
 
     <!-- Header and Row Declarations -->
-    <mat-header-row *matHeaderRowDef="['id', 'referenceDate', 'actor', 'corporateName', 'description', 'action']"></mat-header-row>
-    <mat-row *matRowDef="let row; columns: ['id', 'referenceDate', 'actor', 'corporateName', 'description', 'action']"></mat-row>
+    <mat-header-row *matHeaderRowDef="['id', 'referenceDate', 'actor', 'corporateName', 'description']"></mat-header-row>
+    <mat-row *matRowDef="let row; columns: ['id', 'referenceDate', 'actor', 'corporateName', 'description']"></mat-row>
   </mat-table>
-
+  </div>
 </div>
 <div mat-dialog-actions>
   <button mat-button [mat-dialog-close]="data" cdkFocusInitial>{{tl.translate('ST.WORD.OK')}}</button>

@@ -24,7 +24,7 @@ export class UserService {
   }
 
   loginKeycloak(keycloak) {
-    // @TODO : Add role from keycloak
+    // @TODO : Add role from keycloak or other service (remove old login component 01.12)
     const user = { id: 1, name: keycloak.username, role: 'PM' } as User;
     this._currentUser$.next(user);
   }

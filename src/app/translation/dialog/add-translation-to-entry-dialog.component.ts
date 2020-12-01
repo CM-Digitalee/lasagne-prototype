@@ -10,7 +10,7 @@ export interface DialogData {
 @Component({
   selector: 'add-translation-to-entry-dialog',
   templateUrl: 'add-translation-to-entry-dialog.html',
-  styleUrls: ['../translation.component.scss'],
+  styleUrls: ['../translation.component.scss', '../../layouts/confirmbox/confirmbox.component.scss'],
 })
 export class AddTranslationToEntryDialogComponent {
 

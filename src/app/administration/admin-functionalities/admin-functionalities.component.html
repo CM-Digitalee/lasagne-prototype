@@ -1,41 +1,56 @@
-<h2>{{tl.translate('ST.WORD.FUNCTIONALITIES')}}</h2>
-<mat-table [dataSource]="functionalities | async">
-  <ng-container matColumnDef="id" >
-    <mat-header-cell *matHeaderCellDef class="small-column">ID</mat-header-cell>
-    <mat-cell *matCellDef="let row"  class="small-column"> {{row.id}} </mat-cell>
-  </ng-container>
-  <ng-container matColumnDef="action">
-    <mat-header-cell *matHeaderCellDef> </mat-header-cell>
-    <mat-cell *matCellDef="let row">
-      <mat-slide-toggle
+<div class="main-panel min-height-85" >
+  <h2>{{tl.translate('ST.ADMIN.TITLE.FUNCTIONALITIES_LIST','capitalize')}}</h2>
+  <div *ngIf="!(functionalities | async)">
+    <div class="spinner-wrapper">
+      <mat-progress-spinner
         class="example-margin"
-        [(ngModel)]="row.enabled" (click)="switchEnabled(row)">
-        <!--                  {{row.enabled ? 'enabled' : 'disabled'}}-->
-      </mat-slide-toggle>
-    </mat-cell>
-  </ng-container>
-  <ng-container matColumnDef="code">
-    <mat-header-cell *matHeaderCellDef> {{tl.translate('ST.WORD.CODE')}} </mat-header-cell>
-    <mat-cell *matCellDef="let row"> {{row.code}} </mat-cell>
-  </ng-container>
-  <ng-container matColumnDef="description">
-    <mat-header-cell *matHeaderCellDef> {{tl.translate('ST.WORD.DESCRIPTION')}} </mat-header-cell>
-    <mat-cell *matCellDef="let row"> {{row.description}} </mat-cell>
-  </ng-container>
-  <ng-container matColumnDef="actors">
-    <mat-header-cell *matHeaderCellDef> {{tl.translate('ST.ADMIN.HEADER.GRANTED_ACTORS')}} </mat-header-cell>
-    <mat-cell *matCellDef="let row">
-      <div *ngIf="row.actors">
-        <ul>
-          <li *ngFor="let actor of row.actors" class="actor-details">
-            <span>{{actor.id}}</span>  <mat-icon>launch</mat-icon>
-          </li>
-        </ul>
-      </div>
-    </mat-cell>
-  </ng-container>
+        mode="indeterminate">
+      </mat-progress-spinner>
+    </div>
+  </div>
+  <div  *ngIf="(functionalities | async) && !(isLoading$ | async)" class="table-wrapper">
+  <mat-table [dataSource]="functionalities | async">
+    <!--  <ng-container matColumnDef="id" >-->
+    <!--    <mat-header-cell *matHeaderCellDef class="small-column">ID</mat-header-cell>-->
+    <!--    <mat-cell *matCellDef="let row"  class="small-column"> {{row.id}} </mat-cell>-->
+    <!--  </ng-container>-->
+    <ng-container matColumnDef="action">
+      <mat-header-cell *matHeaderCellDef> </mat-header-cell>
+      <mat-cell *matCellDef="let row">
+        <mat-slide-toggle
+          class="example-margin"
+          [(ngModel)]="row.enabled" (click)="switchEnabled(row)">
+          <!--                  {{row.enabled ? 'enabled' : 'disabled'}}-->
+        </mat-slide-toggle>
+      </mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="code">
+      <mat-header-cell *matHeaderCellDef> {{tl.translate('ST.WORD.CODE')}} </mat-header-cell>
+      <mat-cell *matCellDef="let row"> {{row.code}} </mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="description">
+      <mat-header-cell *matHeaderCellDef> {{tl.translate('ST.WORD.DESCRIPTION')}} </mat-header-cell>
+      <mat-cell *matCellDef="let row"> {{row.description}} </mat-cell>
+    </ng-container>
+    <ng-container matColumnDef="actors">
+      <mat-header-cell *matHeaderCellDef> {{tl.translate('ST.ADMIN.HEADER.GRANTED_ACTORS')}} </mat-header-cell>
+      <mat-cell *matCellDef="let row">
+        <div *ngIf="row.actors">
+          <ul>
+            <li *ngFor="let actor of row.actors" class="actor-details">
+              <span>{{actor.actor}} - {{actor.corporateName}} </span>
+            </li>
+          </ul>
+        </div>
+      </mat-cell>
+    </ng-container>
 
-  <!-- Header and Row Declarations -->
-  <mat-header-row *matHeaderRowDef="['id', 'action','code', 'description', 'actors' ]"></mat-header-row>
-  <mat-row *matRowDef="let row; columns: ['id', 'action', 'code', 'description', 'actors']"></mat-row>
-</mat-table>
+    <!-- Header and Row Declarations -->
+    <mat-header-row *matHeaderRowDef="['action','code', 'description', 'actors' ]"></mat-header-row>
+    <mat-row *matRowDef="let row; columns: ['action', 'code', 'description', 'actors']"></mat-row>
+  </mat-table>
+    <mat-paginator #paginator class="paginator" [pageSizeOptions]="[10, 20, 50, 100]"></mat-paginator>
+  </div>
+
+</div>
+

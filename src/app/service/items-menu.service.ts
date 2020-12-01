@@ -13,6 +13,7 @@ export class ItemsMenuService {
   private readonly URL = 'https://ns-msrv-backend-dev.xtech.io/ui/menus';
   private _itemsMenu$ = new BehaviorSubject<any>(null);
   private _itemsMenus$ = new BehaviorSubject<any>(null);
+  private _itemsHeaderMenus$ = new BehaviorSubject<any>(null);
   private language = 'en';
   get itemsMenu$() {
     // return JSON.parse(localStorage.getItem('user'));
@@ -22,6 +23,10 @@ export class ItemsMenuService {
     // return JSON.parse(localStorage.getItem('user'));
     return this._itemsMenus$.asObservable();
   }
+  get itemsHeaderMenus$() {
+    // return JSON.parse(localStorage.getItem('user'));
+    return this._itemsHeaderMenus$.asObservable();
+  }
   constructor(private tools: Tools, public globals: Globals, public router: Router) { }
 
   public setItems(value): void{
@@ -29,6 +34,10 @@ export class ItemsMenuService {
     this.globals.sideMenus = value ;
   }
   public setMenus(value): void{
+    this._itemsMenus$.next(value);
+    this.globals.sideMenus = value ;
+  }
+  public setHeaderMenus(value): void{
     this._itemsMenus$.next(value);
     this.globals.sideMenus = value ;
   }

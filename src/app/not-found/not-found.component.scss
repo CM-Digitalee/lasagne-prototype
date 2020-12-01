@@ -1,0 +1,13 @@
+@import 'src/styles/styles.scss';
+div{
+  @include flexbox();
+  @include justify-content(center);
+  @include align-items(center);
+  align-content: center;
+}
+p {
+  text-align: center ;
+  text-transform: uppercase;
+  color: $blue-title;
+  font-size: 48px;
+}

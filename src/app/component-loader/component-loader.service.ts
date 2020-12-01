@@ -14,10 +14,11 @@ export class ComponentLoaderService {
     return [
       new ComponentLoaderItem(PunchlistComponent, {name: 'punchlist'}),
 
-      new ComponentLoaderItem(DashboardComponent, {name: 'automatic_control_etat_locatifs'}),
-      new ComponentLoaderItem(DashboardComponent, {name: 'automatic_control_bilan'}),
+      new ComponentLoaderItem(DashboardComponent, {name: 'automatic_control_rental_status'}),
+      new ComponentLoaderItem(DashboardComponent, {name: 'automatic_control_balance_sheet'}),
       new ComponentLoaderItem(DashboardComponent, {name: 'automatic_control_profit_and_loss'}),
       new ComponentLoaderItem(DashboardComponent, {name: 'automatic_control_aging'}),
+      // new ComponentLoaderItem(DashboardComponent, {name: 'not_found'}), //Page not found in case of no component
     ];
   }
   // tslint:disable-next-line:typedef

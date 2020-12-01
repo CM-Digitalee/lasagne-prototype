@@ -1,17 +1,23 @@
+@import 'src/styles/styles.scss';
+
 .mat-column-id {
   flex: 0 0 5%;
 }
-.actor-details{
-  display: flex;
+.mat-column-action  {
+  flex: 0 0 4%;
   justify-content: center;
-  align-items: center;
-  font-size: 18px;
-  line-height: 18px;
-  mat-icon{
-    cursor: pointer;
-    margin-left:5px;
-  }
-  ul{
-    padding:3px;
-  }
+}
+.actor-details{
+  //@include flexbox();
+  //justify-content: center;
+  //@include align-items(center);
+  //font-size: 18px;
+  //line-height: 18px;
+  //mat-icon{
+  //  cursor: pointer;
+  //  margin-left:5px;
+  //}
+  //ul{
+  //  padding:3px;
+  //}
 }

@@ -24,15 +24,19 @@ export class SidemenuComponent implements OnInit {
   }
   toggleMenu(list, key): void{
     if (this.activeMenu !== key) {
+      for (let i = 0; i < list.length; i++){
+        list[i].show = false;
+      }
       list[key].show = true;
       this.activeMenu = key;
     }else{
       list[key].show = false;
       this.activeMenu = null ;
     }
+
   }
   getLabel(element): any{
-    let label = element.label && typeof element.label === 'object' ? Object.values(element.label)[0] : '';
+    const label = element.label && typeof element.label === 'object' ? Object.values(element.label)[0] : '';
     return label;
   }
 

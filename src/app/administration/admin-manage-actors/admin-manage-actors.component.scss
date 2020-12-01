@@ -1,6 +1,37 @@
+@import 'src/styles/styles.scss';
+
 .mat-column-id {
   flex: 0 0 5%;
 }
+.mat-column-action {
+  flex: 0 0 10%;
+  @include justify-content(center);
+}
+
 .mat-column-referenceDate {
   flex: 0 0 12%;
+}
+.mat-column-actor {
+  flex: 0 0 20%;
+}
+.mat-column-description {
+  flex: 0 0 45%;
+}
+mat-radio-button{
+  margin-right:10px;
+}
+div.add-actor{
+  @include flexbox();
+  @include justify-content(flex-end);
+  @include align-items(baseline);
+  // width: 500px;
+  > *{
+    margin-right: 10px;
+  }
+  mat-form-field {
+    width : 92px;
+  }
+  button{
+
+  }
 }

@@ -1,4 +1,4 @@
-<mat-card *ngIf="budget$ | async as budget">
+<div class="main-panel min-height-85" *ngIf="budget$ | async as budget">
   <form #selectForm="ngForm" class="mb-30">
     <mat-form-field class="mr-20">
       <mat-label>Portfolio</mat-label>
@@ -24,4 +24,4 @@
   </form>
 
   <router-outlet></router-outlet>
-</mat-card>
+</div>

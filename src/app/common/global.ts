@@ -1,6 +1,5 @@
 // globals.ts
 import { Injectable } from '@angular/core';
-import {Observable} from 'rxjs';
 
 @Injectable()
 export class Globals {
@@ -8,4 +7,5 @@ export class Globals {
   sideMenus: Array<any>;
   translationJson: object;
   isAppInit: boolean;
+  defaultCacheMins: 1440;
 }

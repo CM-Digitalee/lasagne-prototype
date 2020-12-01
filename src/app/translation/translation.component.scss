@@ -1,26 +1,41 @@
+@import 'src/styles/styles.scss';
+
 @font-face { font-family: overpass-semibold;
   src: url('../../assets/font/Overpass/Overpass-SemiBold.ttf')
 }
 @font-face { font-family: lato-regular;
   src: url('../../assets/font/Lato/Lato-Regular.ttf')
 }
+
+
+.select-lg-wrapper{
+  @include flexbox();
+  @include align-items(center);
+  .lang-dot{
+    mat-icon{
+      font-size: 14px;
+      line-height:24px;
+    }
+  }
+}
 .actionBtn{
   margin: 0 5px;
 }
 .lang-title{
-  text-align: center;
-  text-transform: uppercase;
+  //text-align: center;
+  //text-transform: uppercase;
   font-family: lato-regular, sans-serif;
   font-weight: 700;
   font-size: 22px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  @include flexbox();
+  @include justify-content(center);
+  @include align-items(center);
   margin-bottom: 10px;
 
   .lang-dot{
     mat-icon{
       font-size: 14px;
+      line-height:24px;
     }
   }
 
@@ -29,9 +44,9 @@
   margin-top:20px;
   margin-left:10px;
   text-align: right;
-  button{
-    margin-left:20px;
-  }
+  @include flexbox();
+  @include justify-content(center);
+  @include align-items(center);
 }
 .entry-menu{
   margin-top:20px;
@@ -69,20 +84,21 @@
 .mat-column-action  {
   flex: 0 0 10%;
   div {
-    display: flex;
+    @include flexbox();
   }
 }
 .mat-column-state {
-  flex: 0 0 7%;
+  flex: 0 0 4%;
+  justify-content: center;
   span{
     cursor: pointer;
   }
 }
 
-.mat-table, .mat-paginator{
-  width: 90%;
-  margin:auto;
-}
+//.mat-table, .mat-paginator{
+//  width: 90%;
+//  margin:auto;
+//}
 
 .mat-column-position{
   flex: 0 0 4%;
@@ -90,14 +106,24 @@
 mat-cell{
   padding: 5px;
 }
-.mat-form-field{margin:10px;}
 
 .mat-column-lg-edition button{
   margin-right: 15px;
 }
 
 .search-header{
-  width: 90%;
-  margin:auto;
-  text-align: end;
+  margin-top: 15px;
+  @include flexbox();
+  @include justify-content(space-between);
+  @include justify-content(baseline);
 }
+
+.mat-form-field{
+  margin-right: 10px;
+}
+//
+//.search-header{
+//  width: 90%;
+//  margin:auto;
+//  text-align: end;
+//}

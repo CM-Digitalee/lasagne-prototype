@@ -12,7 +12,7 @@ export interface DialogDataLanguage {
 @Component({
   selector: 'add-new-language-dialog',
   templateUrl: 'add-new-language-dialog.html',
-  styleUrls: ['../translation.component.scss']
+  styleUrls: ['../translation.component.scss', '../../layouts/confirmbox/confirmbox.component.scss']
 })
 export class AddNewLanguageDialogComponent {
 

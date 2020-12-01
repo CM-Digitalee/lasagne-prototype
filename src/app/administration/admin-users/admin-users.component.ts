@@ -1,4 +1,4 @@
-import {Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef} from '@angular/core';
+import {Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, ViewChild} from '@angular/core';
 import {HttpClientService} from '../../service/http-client.service';
 import {AdministrationService} from '../../service/administration.service';
 import {TranslationService} from '../../service/translation.service';
@@ -6,6 +6,7 @@ import {ActivatedRoute} from '@angular/router';
 import {MatDialog} from '@angular/material/dialog';
 import {BehaviorSubject, Observable} from 'rxjs';
 import {MatTableDataSource} from '@angular/material/table';
+import {MatPaginator} from '@angular/material/paginator';
 
 @Component({
   selector: 'app-admin-users',
@@ -16,6 +17,8 @@ import {MatTableDataSource} from '@angular/material/table';
 export class AdminUsersComponent implements OnInit {
 
   private _users = new BehaviorSubject<any>(null);
+  public isLoading$: BehaviorSubject<boolean> = new BehaviorSubject(false);
+  @ViewChild('paginator') paginator: MatPaginator;
 
   constructor(private  http: HttpClientService,
               private administrationService: AdministrationService,
@@ -27,20 +30,21 @@ export class AdminUsersComponent implements OnInit {
     return this._users.asObservable();
   }
   ngOnInit(): void {
+    this.isLoading$.next(true);
     this.refreshUsers();
   }
 
   refreshUsers(): void {
+    this.isLoading$.next(true);
     this.administrationService.getFoundationUsers().subscribe(elmt => {
       if(elmt && elmt.answer && elmt.answer.users){
         const list = elmt.answer.users;
         const dataSource = new MatTableDataSource<any>(list);
-        // dataSource.paginator = this.paginator;
-        // this.jsonActorFunctionalities = x.answer.functionalities
+        dataSource.paginator = this.paginator;
+
         this._users.next(dataSource);
         const anAsyncFunction = async (item, idx) => {
-          // return functionWithPromise(item);
-          console.log(item);
+
           return this.getActorPromise(item.id).then(x => {
             item.actors = x;
             return item;
@@ -54,7 +58,9 @@ export class AdminUsersComponent implements OnInit {
           const dataSourceL = new MatTableDataSource<any>(lista);
           // dataSourceL.paginator = this.paginatorL;
           this._users.next(dataSourceL);
+          setTimeout(() => dataSourceL.paginator = this.paginator);
           this.cdr.detectChanges();
+          this.isLoading$.next(false);
         }).catch(err => {
           console.log(err);
         });
@@ -62,6 +68,7 @@ export class AdminUsersComponent implements OnInit {
 
       }else{
         this._users.next([]);
+        this.isLoading$.next(false);
       }
 
     });

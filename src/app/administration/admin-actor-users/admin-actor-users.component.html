@@ -1,33 +1,55 @@
-<h2>Actor users</h2>
-<div *ngIf="(actorsUser | async)">
-  <mat-table [dataSource]="actorsUser | async">
-    <ng-container matColumnDef="id" >
-      <mat-header-cell *matHeaderCellDef class="small-column">ID</mat-header-cell>
-      <mat-cell *matCellDef="let row"  class="small-column"> {{row.id}} </mat-cell>
-    </ng-container>
-    <ng-container matColumnDef="referenceDate">
-      <mat-header-cell *matHeaderCellDef> {{tl.translate('ST.WORD.DATE')}} </mat-header-cell>
-      <mat-cell *matCellDef="let row"> {{row.referenceDate}} </mat-cell>
-    </ng-container>
-    <ng-container matColumnDef="email">
-      <mat-header-cell *matHeaderCellDef> {{tl.translate('ST.WORD.EMAIL')}} </mat-header-cell>
-      <mat-cell *matCellDef="let row"> {{row.email}} </mat-cell>
-    </ng-container>
-    <!-- Title Definition -->
-    <ng-container matColumnDef="action">
-      <mat-header-cell *matHeaderCellDef> </mat-header-cell>
-      <mat-cell *matCellDef="let row">
-        <button mat-icon-button  (click)="showAllowedUsers(row.id)" >
-          <mat-icon>visibility</mat-icon>
-        </button>
-      </mat-cell>
-    </ng-container>
-
-    <!-- Header and Row Declarations -->
-    <mat-header-row *matHeaderRowDef="['id', 'referenceDate', 'email', 'action']"></mat-header-row>
-    <mat-row *matRowDef="let row; columns: ['id','referenceDate', 'email', 'action']"></mat-row>
-  </mat-table>
+<div class="goBack">
+  <a href="/administration/manage-actors">
+    <i class="material-icons">arrow_back</i>
+  </a>
 </div>
-<div *ngIf="!(actorsUser | async) || (actorsUser | async)?.length==0">
-  No users found on actor
+
+<div class="main-panel min-height-85">
+  <div *ngIf="isLoading$ | async">
+    <div class="spinner-wrapper">
+      <mat-progress-spinner
+        class="example-margin"
+        mode="indeterminate">
+      </mat-progress-spinner>
+    </div>
+  </div>
+  <div *ngIf="(actorsUser | async) && !isLoading$">
+    <h2 class="txt-center">{{tl.translate('ST.ADMIN.TITLE.USERS_ACTORS')}}{{actor.actor}} - {{actor.corporateName}}</h2>
+    <p>{{actor.description}}</p>
+    <div class="table-wrapper">
+      <mat-table [dataSource]="actorsUser | async">
+        <ng-container matColumnDef="id" >
+          <mat-header-cell *matHeaderCellDef class="small-column">ID</mat-header-cell>
+          <mat-cell *matCellDef="let row"  class="small-column"> {{row.id}} </mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="referenceDate">
+          <mat-header-cell *matHeaderCellDef> {{tl.translate('ST.WORD.DATE')}} </mat-header-cell>
+          <mat-cell *matCellDef="let row"> {{row.referenceDate}} </mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="email">
+          <mat-header-cell *matHeaderCellDef> {{tl.translate('ST.WORD.EMAIL')}} </mat-header-cell>
+          <mat-cell *matCellDef="let row"> {{row.email}} </mat-cell>
+        </ng-container>
+        <!-- Title Definition -->
+        <ng-container matColumnDef="action">
+          <mat-header-cell *matHeaderCellDef> </mat-header-cell>
+          <mat-cell *matCellDef="let row">
+            <button mat-icon-button  (click)="showAllowedUsers(row.id)" >
+              <mat-icon>visibility</mat-icon>
+            </button>
+          </mat-cell>
+        </ng-container>
+
+        <!-- Header and Row Declarations -->
+        <mat-header-row *matHeaderRowDef="['id', 'referenceDate', 'email', 'action']"></mat-header-row>
+        <mat-row *matRowDef="let row; columns: ['id','referenceDate', 'email', 'action']"></mat-row>
+      </mat-table>
+    </div>
+  </div>
+  <div *ngIf="!(actorsUser | async) || (actorsUser | async)?.length==0" class="not-found">
+    <div>
+      {{tl.translate('ST.ADMIN.NOT_FOUND.USERS_ACTORS')}}
+    </div>
+  </div>
+
 </div>

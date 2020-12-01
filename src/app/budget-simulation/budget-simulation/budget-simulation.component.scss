@@ -1,9 +1,10 @@
+@import 'src/styles/styles.scss';
 
 .line {
   border-bottom: 1px solid #bbb;
   padding-right: 15px; // scrollbar width 15px;
   transition: background 100ms;
-  
+
   &.header,
   &.footer {
     font-weight: bold;
@@ -12,14 +13,14 @@
   &.node {
     background: #f5f5f5;
   }
-  
+
   &:not(.header):not(.footer):not(.node):hover {
     background: #eee;
   }
 }
 
-.label { 
-  flex-basis: 30%; 
+.label {
+  flex-basis: 30%;
 }
 
 .truncate {
@@ -28,7 +29,7 @@
   text-overflow: ellipsis;
 }
 
-.item { 
+.item {
   margin: 0 10px;
   padding: 10px 0;
   flex: 1 0 10%;
@@ -47,7 +48,7 @@
 
 .expand-icon {
   transition: transform 250ms ease-in-out;
-  
+
   &.expanded {
     transform: rotate(90deg);
   }

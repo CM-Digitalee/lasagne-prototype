@@ -36,10 +36,16 @@ export class ComponentLoaderComponent implements OnInit, OnDestroy {
     this.sub = this.route
       .data
       .subscribe(v => {
-        this.componentName = v.component;
         this.title = v.text;
-        this.activeComponent = this.componentLoaderService.getComponent(this.componentName);
-        this.loadComponent(); });
+        if (v && v.component){
+          this.componentName = v.component;
+          this.activeComponent = this.componentLoaderService.getComponent(this.componentName);
+          if(!this.activeComponent){
+            this.activeComponent = this.componentLoaderService.getComponent('not_found');
+          }
+          this.loadComponent();
+        }
+});
 
   }
 

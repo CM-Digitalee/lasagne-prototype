@@ -4,7 +4,7 @@ import { Routes, RouterModule } from '@angular/router';
 import { TranslationComponent } from './translation.component';
 
 const routes: Routes = [
-  { path: '', component: TranslationComponent },
+  { path: '', data: {title: 'Internationalisation', overline: 'Administration'}, component: TranslationComponent },
   { path: ':id', component: TranslationComponent }
 ];
 

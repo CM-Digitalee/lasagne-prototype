@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
+import {Component, OnInit, ChangeDetectionStrategy, ViewChild} from '@angular/core';
 import {BehaviorSubject, Observable} from 'rxjs';
 import {HttpClientService} from '../../service/http-client.service';
 import {AdministrationService} from '../../service/administration.service';
@@ -7,6 +7,8 @@ import {TranslationService} from '../../service/translation.service';
 import {ActorsDialogComponent} from './dialog/actors-dialog.component';
 import {MatDialog} from '@angular/material/dialog';
 import {Router} from '@angular/router';
+import {MatPaginator} from '@angular/material/paginator';
+import {Tools} from '../../tools/function';
 
 @Component({
   selector: 'app-admin-manage-actors',
@@ -17,26 +19,23 @@ import {Router} from '@angular/router';
 export class AdminManageActorsComponent implements OnInit {
   private _actors = new BehaviorSubject<any>(null);
   private _foundations = new BehaviorSubject<any>(null);
-  private _foundationActors = new BehaviorSubject<any>(null);
-  private jsonFoundationsActors = [];
-  public comboActor ;
-  public newActorId ;
+  public isLoadingBack$: BehaviorSubject<boolean> = new BehaviorSubject(false);
+  public isLoadingStreets$: BehaviorSubject<boolean> = new BehaviorSubject(false);
+  private jsonActors = [];
+  public comboActor = "nadi";
+
+
+  @ViewChild('paginator') paginator: MatPaginator;
+  @ViewChild('paginatorL') paginatorL: MatPaginator;
+
   constructor(private  http: HttpClientService,
               private administrationService: AdministrationService,
               private router: Router,
               public tl: TranslationService,
-              public dialog: MatDialog) { }
-
+              public dialog: MatDialog, private tools: Tools) { }
   ngOnInit(): void {
-    this.administrationService.getActors('foundation').subscribe(x => {
-      const list = x.answer.actors;
-      const dataSource = new MatTableDataSource<any>(list);
-      // dataSource.paginator = this.paginator;
-      this.jsonFoundationsActors = list ;
-      this._foundationActors.next(dataSource);
-      this.refreshActors();
-    });
-   // this.refreshActors();
+    this.refreshFoundation();
+    this.refreshActors();
   }
   get actors() {
     return this._actors.asObservable();
@@ -44,9 +43,7 @@ export class AdminManageActorsComponent implements OnInit {
   get foundations() {
     return this._foundations.asObservable();
   }
-  get foundationActors() {
-    return this._foundationActors.asObservable();
-  }
+
   switchType(event): void{
     if (event.value === 'nadi'){
       this.refreshFoundation();
@@ -54,77 +51,60 @@ export class AdminManageActorsComponent implements OnInit {
 
     }
   }
+
   openActorFunctionalities(id): void {
     this.router.navigate(['/administration/manage-actors/' + id + '/functionalities']);
   }
   openActorUser(id): void {
-    this.router.navigate(['/administration/manage-actors/' + id + '/actors']);
+    this.router.navigate(['/administration/manage-actors/' + id + '/users']);
   }
-  refreshFoundationActors(): void{
-    this.administrationService.getActors('foundation').subscribe(x => {
-      const list = x.answer.actors;
-      const dataSource = new MatTableDataSource<any>(list);
-      // dataSource.paginator = this.paginator;
-      this.jsonFoundationsActors = list ;
-      this._foundationActors.next(dataSource);
-    });
+  actorIsCreated(actor, corporateName): boolean {
+    // return this.jsonActors.length !== 0 && this.jsonActors.findIndex(x => x.details.actor === actor && x.details.corporateName === corporateName) !== -1;
+    return this.jsonActors.length !== 0 && this.jsonActors.findIndex(x => x.actor === actor && x.corporateName === corporateName) !== -1;
   }
   refreshActors(): void{
+    this.isLoadingBack$.next(true);
+    this.isLoadingStreets$.next(true);
     this.administrationService.getActors().subscribe(x => {
       const list = x.answer.actors;
       const dataSource = new MatTableDataSource<any>(list);
-       // dataSource.paginator = this.paginator;
-      const updatedList = list.map(elmt => {
-        const idx = this.jsonFoundationsActors.findIndex(k => k.id === elmt.id);
-        if (idx !== -1){
-          elmt.details = this.jsonFoundationsActors[idx];
-          elmt.foundation = true;
-        }
-        return elmt ;
-      }) ;
-      console.log(updatedList)
-      this._actors.next(updatedList);
+      dataSource.paginator = this.paginatorL;
+      setTimeout(() => dataSource.paginator = this.paginatorL);
+      this.jsonActors = list ;
+      this._actors.next(list);
+      this.isLoadingBack$.next(false);
+      this.isLoadingStreets$.next(false);
     });
   }
   refreshFoundation(): void{
+    this.isLoadingBack$.next(true);
     this.administrationService.getFoundations('actors').subscribe(x => {
       const list = x.answer.actors;
       const dataSource = new MatTableDataSource<any>(list);
-      // dataSource.paginator = this.paginator;
+      setTimeout(() => dataSource.paginator = this.paginator);
       this._foundations.next(dataSource);
+      this.isLoadingBack$.next(false);
     });
   }
-  addFoundationActor(): void{
-    if (!this.newActorId || this.newActorId === ''){
-      console.log('actor id must be specified');
-      return;
-    }
-    const payload = {foundationActorId : parseInt(this.newActorId, 10)};
+  clickAddFoundationActor(actorId): void{
+    const payload = {foundationActorId : parseInt(actorId, 10)};
     this.administrationService.addActors('foundation', null, payload).subscribe(x => {
-      console.log(x);
-      this.refreshFoundationActors();
-      // this._foundations.next(dataSource);
+      this.refreshFoundation();
+      this.refreshActors();
     });
   }
   deleteFoundationActor(id): void{
-    if (!id || id === ''){
-      console.log('actor id must be specified');
-      return;
-    }
-    this.administrationService.deleteFoundationsActor(id).subscribe(x => {
-      console.log(x);
-      this.refreshFoundationActors();
-      // this._foundations.next(dataSource);
-    });
-  }
-  openDialogActor(): void {
-    const dialogRef = this.dialog.open(ActorsDialogComponent, {
-      width: '60%',
-      data:  {title: 'Add new entry', enabled: true, description: ''}
-    });
-
-    dialogRef.afterClosed().subscribe(result => {
-        console.log(result);
+    this.tools.displayDeleteConfirmBox((result) => {
+      if (result) {
+        if (!id || id === '') {
+          console.log('actor id must be specified');
+          return;
+        }
+        this.administrationService.deleteFoundationsActor(id).subscribe(x => {
+          this.refreshFoundation();
+          this.refreshActors();
+        });
+      }
     });
   }
   switchEnabled(elmt): void {

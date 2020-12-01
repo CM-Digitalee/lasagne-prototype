@@ -1,15 +1,15 @@
 /* flex layout */
-.flex { 
-  display: flex; 
+.flex {
+  display:flex;
 
   &.column { flex-direction: column; }
 
-  &.align-center { align-items: center; }
+  &.align-center { @include align-items(center); }
 
-  &.justify-center { justify-content: center; }
-  &.justify-end { justify-content: flex-end; }
-  &.space-between { justify-content: space-between; }
-  &.space-around { justify-content: space-around; }
+  &.justify-center { @include justify-content(center); }
+  &.justify-end { @include justify-content(flex-end); }
+  &.space-between { @include justify-content(space-between); }
+  &.space-around { @include justify-content(space-around); }
 
   .fill { flex: 1; }
   .no-shrink { flex-shrink: 0; }
@@ -62,4 +62,8 @@ $sizes: 0, 5, 10, 15, 20, 25, 30, 40;
   .mr-#{$size}, .mx-#{$size} { margin-right: #{$size}px; }
   .mt-#{$size}, .my-#{$size} { margin-top: #{$size}px; }
   .mb-#{$size}, .my-#{$size} { margin-bottom: #{$size}px; }
+}
+
+.txt-center{
+  text-align: center;
 }

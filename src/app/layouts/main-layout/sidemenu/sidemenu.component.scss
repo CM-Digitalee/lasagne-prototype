@@ -1,3 +1,5 @@
+@import 'src/styles/styles.scss';
+
 @font-face { font-family: overpass-semibold;
   src: url('../../../../assets/font/Overpass/Overpass-SemiBold.ttf')
 }
@@ -9,8 +11,8 @@
 $txt-menu-color: #6F7588;
 $txt-menu-color-active : #5A3BDD;
 $txt-menu-color-active-back : #E9EAFF;
-$back-notif: "#F4F6F9";
-$txt-menu-notif: "#16194C";
+$back-notif: #F4F6F9;
+$txt-menu-notif: #16194C;
 $font-family-menu: overpass-semibold, serif;
 $font-family-notif: lato-regular, serif;
 
@@ -34,9 +36,9 @@ $font-family-notif: lato-regular, serif;
       margin-bottom:4px;
 
       > div {
-        display: flex;
+        @include flexbox();
         vertical-align: middle;
-        align-items: center;
+        @include align-items(center);
         padding-top:14px;
         padding-bottom:14px;
         margin-bottom:8px;
@@ -44,36 +46,20 @@ $font-family-notif: lato-regular, serif;
         height: 46px;
         width: 254px;
         border-radius: 0 23px 23px 0;
+        position: relative;
+        outline: none;
         span.pointer{
           width: 24px;
         }
-        .notif{
-          height: 32px;
-          width: 32px;
-          background-color: $back-notif;
-          font-family: lato-regular, serif;
-          line-height:15px;
-          font-size:12px;
-          color:$txt-menu-notif;
-          letter-spacing: 0.34px;
-          border-radius: 25px;
-          .number {
-            height: 16px;
-            width: 16px;
-            color: #16194C;
-            line-height: 16px;
-            margin-top:8px;
-            margin-bottom: 8px;
-          }
-        }
+
         &.active{
           background-color:$txt-menu-color-active-back;
           color: $txt-menu-color-active;
         }
 
         >a {
-          display: flex;
-          align-items: center;
+          @include flexbox();
+          @include align-items(center);
           > i {
             margin-right:8px;
             font-size: 24px;
@@ -104,10 +90,34 @@ $font-family-notif: lato-regular, serif;
   ul.submenu{
      //24px //To align with other items
     > li{
-      div{
+      > div{
         padding-left:52px;
-        // width: 198px;
+        position: relative;
       }
     }
+  }
+}
+
+.counter{
+  height: 32px;
+  width: 32px;
+  background-color: $back-notif;
+  font-family: lato-regular, serif;
+  line-height:15px;
+  font-size:12px;
+  color:$txt-menu-notif;
+  letter-spacing: 0.34px;
+  border-radius: 25px;
+  position: absolute;
+  right: 8px;
+  .number {
+    height: 16px;
+    width: 16px;
+    color: #16194C;
+    line-height: 16px;
+    margin-top:10px;
+    text-align: center;
+    margin-right: auto;
+    margin-left: auto;
   }
 }

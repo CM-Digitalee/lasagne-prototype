@@ -1,3 +1,32 @@
 .pointer { cursor: pointer; }
 
 i, .unselectable { user-select: none; }
+
+
+.separator{
+  height:1px;
+  width: 238px;
+  background-color: #E4E7EB;
+  margin-left:16px;
+}
+
+.not-found{
+  @include flexbox();
+  @include justify-content(center);
+  @include align-items(center);
+  text-align: center;
+  color:#251963;
+  font-family: gudea-bold, serif;
+  font-size: 20px;
+  line-height: 24px;
+  margin-top:60px;
+}
+
+.spinner-wrapper{
+  @include flexbox();
+  @include flex-direction(row);
+  @include justify-content(center);
+  @include align-items(center);
+  height:300px;
+  width: 100%;
+}

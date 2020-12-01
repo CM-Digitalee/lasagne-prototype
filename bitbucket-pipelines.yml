@@ -5,8 +5,12 @@ pipelines:
           script:
             - export VERSION_TAG=$(git log -n1 --format="%h")
             - docker login -u $DOCKER_USER -p $DOCKER_PWD registry.20005005.net4all-dns.com
-            - docker build . -t registry.20005005.net4all-dns.com/newstreets-front:$VERSION_TAG
-            - docker push registry.20005005.net4all-dns.com/newstreets-front:$VERSION_TAG
-            # Launch deployment here
+            - docker build --memory=1536m . -t registry.20005005.net4all-dns.com/newstreets-front:uat-$VERSION_TAG
+            - docker push registry.20005005.net4all-dns.com/newstreets-front:uat-$VERSION_TAG
+            - curl -k -X POST -H "St2-Api-Key:$ST2_API_KEY" -H 'Content-Type:application/json' -d "{\"action\":\"net4all.20005005_update\",\"parameters\":{\"environment\":\"uat\",\"deployment\":\"newstreets-front\",\"VERSION\":\"$VERSION_TAG\",\"version_tag\":\"uat-$VERSION_TAG\"}}" https://ops.net4all.ch/api/v1/executions
           services:
             - docker
+definitions:
+  services:
+    docker:
+      memory: 2048

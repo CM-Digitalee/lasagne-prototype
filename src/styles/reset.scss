@@ -44,3 +44,13 @@ a {
 h1, h2 {
   font-weight: normal;
 }
+
+input.middle:focus {
+  outline-width: 0;
+}
+input:focus,
+select:focus,
+textarea:focus,
+button:focus {
+  outline: none;
+}

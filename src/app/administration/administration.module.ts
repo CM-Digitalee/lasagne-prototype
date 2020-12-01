@@ -19,13 +19,14 @@ import {MatRadioModule} from '@angular/material/radio';
 import {AdminFunctionalitiesComponent} from './admin-functionalities/admin-functionalities.component';
 import {AdminActorDetailsComponent} from './admin-actor-details/admin-actor-details.component';
 import {AdminActorUsersComponent} from './admin-actor-users/admin-actor-users.component';
-import {AdminFunctionalitiesGrantedComponent} from './admin-functionalities-granted/admin-functionalities-granted.component';
 import {AdminUsersComponent} from './admin-users/admin-users.component';
+import {MatListModule} from '@angular/material/list';
+import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
 
 
 
 @NgModule({
-  declarations: [AdminManageActorsComponent, ActorsDialogComponent, AdminFunctionalitiesComponent, AdminActorDetailsComponent, AdminActorUsersComponent, ActorsUserDialogComponent, AdminFunctionalitiesGrantedComponent, AdminUsersComponent],
+  declarations: [AdminManageActorsComponent, ActorsDialogComponent, AdminFunctionalitiesComponent, AdminActorDetailsComponent, AdminActorUsersComponent, ActorsUserDialogComponent, AdminUsersComponent],
   imports: [
     CommonModule,
     MatSelectModule,
@@ -40,7 +41,9 @@ import {AdminUsersComponent} from './admin-users/admin-users.component';
     MatIconModule,
     MatTabsModule,
     MatPaginatorModule,
-    MatRadioModule
+    MatRadioModule,
+    MatListModule,
+    MatProgressSpinnerModule
   ]
 })
 export class AdministrationModule { }

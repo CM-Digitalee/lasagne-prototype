@@ -1,113 +1,97 @@
-<p>admin-manage-actors works!</p>
-<div class="entry-menu">
-  <button type="submit" class="actionBtn" mat-raised-button color="primary" (click)="openDialogActor()"><mat-icon>add</mat-icon> {{tl.translate('ST.BUTTON.ADD')}} </button>
-</div>
-<h2>Actors list:</h2>
-<mat-radio-group aria-label="Select an actor" [(ngModel)]="comboActor">
-  <mat-radio-button value="nadi" (change)="switchType($event)">Foundation actor</mat-radio-button>
-  <mat-radio-button value="new" (change)="switchType($event)">Independant actor</mat-radio-button>
-</mat-radio-group>
+<div class="main-panel"><h2 class="txt-center">{{tl.translate('ST.ADMIN.TITLE.BACK_OFFICE_ACTORS')}}</h2>
+
+<!--<mat-radio-group aria-label="Select an actor" [(ngModel)]="comboActor">-->
+<!--  <mat-radio-button value="nadi" (change)="switchType($event)">Foundation actor</mat-radio-button>-->
+<!--  <mat-radio-button value="new" (change)="switchType($event)">Independant actor</mat-radio-button>-->
+<!--</mat-radio-group>-->
 <div *ngIf="comboActor == 'nadi'">
-  <mat-table [dataSource]="foundations | async">
+  <div *ngIf="isLoadingBack$ | async" class="spinner-wrapper">
+    <mat-progress-spinner
+      class="example-margin"
+      mode="indeterminate">
+    </mat-progress-spinner>
+  </div>
+  <div class="table-wrapper" *ngIf="!(isLoadingBack$ | async)">
+    <mat-table [dataSource]="foundations | async">
+      <ng-container matColumnDef="actor">
+        <mat-header-cell *matHeaderCellDef> {{tl.translate('ST.WORD.ACTOR')}} </mat-header-cell>
+        <mat-cell *matCellDef="let row"> {{row.actor}} </mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="corporateName">
+        <mat-header-cell *matHeaderCellDef> {{tl.translate('ST.WORD.CORPORATENAME')}} </mat-header-cell>
+        <mat-cell *matCellDef="let row"> {{row.corporateName}} </mat-cell>
+      </ng-container>
+      <ng-container matColumnDef="description">
+        <mat-header-cell *matHeaderCellDef> {{tl.translate('ST.WORD.DESCRIPTION')}} </mat-header-cell>
+        <mat-cell *matCellDef="let row"> {{row.description}} </mat-cell>
+      </ng-container>
+      <!-- Title Definition -->
+      <ng-container matColumnDef="action">
+        <mat-header-cell *matHeaderCellDef> </mat-header-cell>
+        <mat-cell *matCellDef="let row" class="alternate-theme">
+          <button type="submit" class="actionBtn btn-primary-color" mat-raised-button color="primary" [disabled]="actorIsCreated(row.actor, row.corporateName)" [matTooltip]="actorIsCreated(row.actor, row.corporateName) ? 'Actor already created' : 'Create new actor from fondation actor ' + row.id" (click)="clickAddFoundationActor(row.id)">{{tl.translate('ST.BUTTON.CREATE')}} </button>
+        </mat-cell>
+      </ng-container>
 
-    <ng-container matColumnDef="id" >
-      <mat-header-cell *matHeaderCellDef class="small-column">ID</mat-header-cell>
-      <mat-cell *matCellDef="let row"  class="small-column"> {{row.id}} </mat-cell>
-    </ng-container>
-    <ng-container matColumnDef="referenceDate">
-      <mat-header-cell *matHeaderCellDef> {{tl.translate('ST.WORD.REFERENCEDATE')}} </mat-header-cell>
-      <mat-cell *matCellDef="let row"> {{row.referenceDate}} </mat-cell>
-    </ng-container>
-    <ng-container matColumnDef="actor">
-      <mat-header-cell *matHeaderCellDef> {{tl.translate('ST.WORD.ACTOR')}} </mat-header-cell>
-      <mat-cell *matCellDef="let row"> {{row.actor}} </mat-cell>
-    </ng-container>
-    <ng-container matColumnDef="corporateName">
-      <mat-header-cell *matHeaderCellDef> {{tl.translate('ST.WORD.CORPORATENAME')}} </mat-header-cell>
-      <mat-cell *matCellDef="let row"> {{row.corporateName}} </mat-cell>
-    </ng-container>
-    <ng-container matColumnDef="description">
-      <mat-header-cell *matHeaderCellDef> {{tl.translate('ST.WORD.DESCRIPTION')}} </mat-header-cell>
-      <mat-cell *matCellDef="let row"> {{row.description}} </mat-cell>
-    </ng-container>
-    <!-- Title Definition -->
-    <ng-container matColumnDef="action">
-      <mat-header-cell *matHeaderCellDef> </mat-header-cell>
-      <mat-cell *matCellDef="let row">
-
-        <!--          <button mat-icon-button  (click)="openDialogTranslationEdit(row)">-->
-        <!--            <mat-icon>edit</mat-icon>-->
-        <!--          </button>-->
-        <!--          &lt;!&ndash; Remove entry &ndash;&gt;-->
-        <!--          <button mat-icon-button color="warn" (click)="removeEntry(row)" >-->
-        <!--            <mat-icon>delete</mat-icon>-->
-        <!--          </button>-->
-
-      </mat-cell>
-    </ng-container>
-
-    <!-- Header and Row Declarations -->
-    <mat-header-row *matHeaderRowDef="['id', 'referenceDate', 'actor', 'corporateName', 'description', 'action']"></mat-header-row>
-    <mat-row *matRowDef="let row; columns: ['id', 'referenceDate', 'actor', 'corporateName', 'description', 'action']"></mat-row>
-  </mat-table>
-  <div>
-    <mat-form-field  appearance="fill">
-      <mat-label>Actor Id </mat-label>
-      <input matInput [(ngModel)]="newActorId" required>
-      <mat-hint align="end"> Number only</mat-hint>
-
-    </mat-form-field>
-    <button type="submit" class="actionBtn" mat-raised-button color="primary" (click)="addFoundationActor()"><mat-icon>add</mat-icon> {{tl.translate('ST.BUTTON.ADD')}} </button>
+      <!-- Header and Row Declarations -->
+      <mat-header-row *matHeaderRowDef="['actor', 'corporateName', 'description', 'action']"></mat-header-row>
+      <mat-row *matRowDef="let row; columns: ['actor', 'corporateName', 'description', 'action']"></mat-row>
+    </mat-table>
+    <mat-paginator #paginator class="paginator" [pageSizeOptions]="[5, 10, 20, 50]"></mat-paginator>
+  </div>
   </div>
 </div>
-<div>
-    <div>
+<div class="main-panel">
+  <h2 class="txt-center">{{tl.translate('ST.ADMIN.TITLE.STREETS_ACTORS')}}</h2>
+    <div *ngIf="isLoadingBack$ | async" class="spinner-wrapper">
+      <mat-progress-spinner
+        class="example-margin"
+        mode="indeterminate">
+      </mat-progress-spinner>
+    </div>
+    <div class="table-wrapper" *ngIf="!(isLoadingBack$ | async)">
       <mat-table [dataSource]="actors | async">
-
-        <ng-container matColumnDef="id" >
-          <mat-header-cell *matHeaderCellDef class="small-column">ID</mat-header-cell>
-          <mat-cell *matCellDef="let row"  class="small-column"> {{row.id}} </mat-cell>
-        </ng-container>
         <ng-container matColumnDef="enabled">
-          <mat-header-cell *matHeaderCellDef> {{tl.translate('ST.WORD.DESCRIPTION')}} </mat-header-cell>
+          <mat-header-cell *matHeaderCellDef> {{tl.translate('ST.WORD.ENABLED')}} </mat-header-cell>
           <mat-cell *matCellDef="let row"  class="small-column">
             <mat-slide-toggle
               class="example-margin"
               [(ngModel)]="row.enabled" (click)="switchEnabled(row)">
-              <!--                  {{row.enabled ? 'enabled' : 'disabled'}}-->
             </mat-slide-toggle>
-            <!--                <span *ngIf="!row.translation"><mat-icon>error_outline</mat-icon> </span>-->
           </mat-cell>
         </ng-container>
-        <!-- Title Definition -->
+        <ng-container matColumnDef="actor">
+          <mat-header-cell *matHeaderCellDef> {{tl.translate('ST.WORD.ACTOR')}} </mat-header-cell>
+          <mat-cell *matCellDef="let row"> {{row.actor}} </mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="corporateName">
+          <mat-header-cell *matHeaderCellDef> {{tl.translate('ST.WORD.CORPORATENAME')}} </mat-header-cell>
+          <mat-cell *matCellDef="let row"> {{row.corporateName}} </mat-cell>
+        </ng-container>
+        <ng-container matColumnDef="description">
+          <mat-header-cell *matHeaderCellDef> {{tl.translate('ST.WORD.DESCRIPTION')}} </mat-header-cell>
+          <mat-cell *matCellDef="let row"> {{row.description}} </mat-cell>
+        </ng-container>
         <ng-container matColumnDef="action">
           <mat-header-cell *matHeaderCellDef> </mat-header-cell>
           <mat-cell *matCellDef="let row">
-            <button mat-icon-button color="warn" (click)="deleteFoundationActor(row.id)" >
+            <button mat-icon-button color="warn" [matTooltip]="tl.translate('ST.ADMIN.TOOLTIPS.DELETE_ACTOR')" (click)="deleteFoundationActor(row.id)" >
               <mat-icon>delete</mat-icon>
             </button>
-            <button mat-icon-button (click)="openActorFunctionalities(row.id)" >
+            <button mat-icon-button  [matTooltip]="tl.translate('ST.ADMIN.TOOLTIPS.MANAGE_ACTOR_FUNCT')"  (click)="openActorFunctionalities(row.id)" >
               <mat-icon>wysiwyg</mat-icon>
             </button>
-            <button mat-icon-button (click)="openActorUser(row.id)" >
+            <button mat-icon-button [matTooltip]="tl.translate('ST.ADMIN.TOOLTIPS.MANAGE_ACTORS_USERS')" (click)="openActorUser(row.id)" >
               <mat-icon>supervisor_account</mat-icon>
             </button>
-
-            <!--          <button mat-icon-button  (click)="openDialogTranslationEdit(row)">-->
-            <!--            <mat-icon>edit</mat-icon>-->
-            <!--          </button>-->
-            <!--          &lt;!&ndash; Remove entry &ndash;&gt;-->
-            <!--          <button mat-icon-button color="warn" (click)="removeEntry(row)" >-->
-            <!--            <mat-icon>delete</mat-icon>-->
-            <!--          </button>-->
-
           </mat-cell>
         </ng-container>
 
         <!-- Header and Row Declarations -->
-        <mat-header-row *matHeaderRowDef="['id', 'enabled', 'action']"></mat-header-row>
-        <mat-row *matRowDef="let row; columns: ['id', 'enabled', 'action']"></mat-row>
+        <mat-header-row *matHeaderRowDef="['enabled', 'actor', 'corporateName', 'description', 'action']"></mat-header-row>
+        <mat-row *matRowDef="let row; columns: ['enabled', 'actor', 'corporateName', 'description', 'action']"></mat-row>
       </mat-table>
+      <mat-paginator #paginatorL class="paginator" [pageSizeOptions]="[5, 10, 20, 50]"></mat-paginator>
     </div>
-    <mat-paginator #paginator class="paginator" [pageSizeOptions]="[10, 20, 50, 100]"></mat-paginator>
+
 </div>

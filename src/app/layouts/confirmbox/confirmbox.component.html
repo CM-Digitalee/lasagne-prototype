@@ -1,0 +1,14 @@
+<div class="dialog confirmbox" >
+  <span class="close-btn" (click)="onNoClick()">
+    <mat-icon>clear</mat-icon> {{tl.translate('ST.BUTTON.CANCEL')}}
+  </span>
+  <div class="dialog-title">
+    <h2>{{data.title}}</h2>
+  </div>
+  <mat-dialog-content class="mat-typography">
+    <p>{{data.message}}</p>
+  </mat-dialog-content>
+  <mat-dialog-actions align="center">
+    <button mat-button [mat-dialog-close]="true" cdkFocusInitial class="btn-primary-color"> {{tl.translate('ST.BUTTON.CONFIRM')}} </button>
+  </mat-dialog-actions>
+</div>

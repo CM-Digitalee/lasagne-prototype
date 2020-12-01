@@ -3,7 +3,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "lasagne-prototype": {
+    "STREETS-Frontend": {
       "projectType": "application",
       "schematics": {
         "@schematics/angular:component": {
@@ -18,7 +18,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
-            "outputPath": "dist/lasagne-prototype",
+            "outputPath": "dist/STREETS-Frontend",
             "index": "src/index.html",
             "main": "src/main.ts",
             "polyfills": "src/polyfills.ts",
@@ -54,13 +54,13 @@
               "budgets": [
                 {
                   "type": "initial",
-                  "maximumWarning": "2mb",
-                  "maximumError": "5mb"
+                  "maximumWarning": "700kb",
+                  "maximumError": "3mb"
                 },
                 {
                   "type": "anyComponentStyle",
-                  "maximumWarning": "6kb",
-                  "maximumError": "10kb"
+                  "maximumWarning": "700kb",
+                  "maximumError": "3mb"
                 }
               ]
             }
@@ -69,18 +69,18 @@
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
-            "browserTarget": "lasagne-prototype:build"
+            "browserTarget": "STREETS-Frontend:build"
           },
           "configurations": {
             "production": {
-              "browserTarget": "lasagne-prototype:build:production"
+              "browserTarget": "STREETS-Frontend:build:production"
             }
           }
         },
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "lasagne-prototype:build"
+            "browserTarget": "STREETS-Frontend:build"
           }
         },
         "test": {
@@ -119,16 +119,16 @@
           "builder": "@angular-devkit/build-angular:protractor",
           "options": {
             "protractorConfig": "e2e/protractor.conf.js",
-            "devServerTarget": "lasagne-prototype:serve"
+            "devServerTarget": "STREETS-Frontend:serve"
           },
           "configurations": {
             "production": {
-              "devServerTarget": "lasagne-prototype:serve:production"
+              "devServerTarget": "STREETS-Frontend:serve:production"
             }
           }
         }
       }
     }
   },
-  "defaultProject": "lasagne-prototype"
+  "defaultProject": "STREETS-Frontend"
 }

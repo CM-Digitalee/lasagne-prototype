@@ -16,13 +16,13 @@
 
   <div class="flex align-center justify-end">
     <span class="mr-10">
-      <button type="submit" mat-raised-button color="primary"
+      <button type="submit" mat-button color="primary"
         [disabled]="(!min.value && min.value !== 0) || (!max.value && max.value !== 0)" (click)="validate()">
         {{tl.translate('ST.BUTTON.SUBMIT')}}
       </button>
     </span>
     <span>
-      <button type="button" mat-raised-button (click)="dialogRef.close()">{{tl.translate('ST.BUTTON.CANCEL')}}</button>
+      <button type="button" mat-button (click)="dialogRef.close()">{{tl.translate('ST.BUTTON.CANCEL')}}</button>
     </span>
   </div>
 </form>

@@ -1,0 +1,87 @@
+@import 'src/styles/styles.scss';
+
+h1{
+  font-family: gudea-bold, serif;
+  color: #16194C;
+  text-align: left;
+  letter-spacing: normal;
+  font-size:26px;
+  line-height:32px;
+  //line-height: 29px;
+  //font-size: 24px;
+  margin-bottom:45px;
+}
+
+.splited-view-wrapper{
+  display:flex;
+  margin-top:24px;
+  height:100%;
+  margin-right: auto;
+  margin-left: auto;
+  @include justify-content(center);
+}
+.splited-view{
+  width: max-content;
+  flex: 0 0 48%;
+  background: white;
+  padding:20px;
+  padding-bottom:50px;
+  overflow-y:auto;
+  // border-radius: 4px;
+  //box-shadow: 0.1px 0.1px 20px 0px rgba(63,63,68,0.15);
+  border: 0.5px solid #F4F6F9;
+  font-family: lato-regular, serif;
+  position: relative;
+  height:89%;
+  h2{
+    font-family: gudea-bold,serif;
+    color: $blue-main-title;
+    text-align: left;
+    letter-spacing: normal;
+    line-height: 24px;
+    font-size: 20px;
+  }
+
+  p {
+    text-align: right;
+    padding-right: 20px;
+    color:#14185E;
+    padding-top:15px;
+    position: absolute;
+    bottom:10px;
+    right: 10px;
+  }
+}
+.btn-splitted{
+  width:5%;
+  @include flexbox();
+  @include justify-content(center);
+  @include flex-direction(column);
+  @include align-items(center);
+  .mat-icon-button{
+    @include flexbox();
+    @include justify-content(center);
+  }
+  button{
+    width:70%;
+  }
+  .mat-icon{
+    height: 48px;
+    width: 48px;
+  }
+  mat-icon{
+    font-size:48px;
+    color:#251963;
+    cursor:pointer;
+    &.disabled{
+      color:rgba(0,0,0,0.15);
+      cursor:pointer;
+    }
+  }
+  .mat-icon-button.mat-button-disabled.mat-button-disabled{
+    mat-icon{
+      color: rgba(0,0,0,.26);
+    }
+  }
+}
+

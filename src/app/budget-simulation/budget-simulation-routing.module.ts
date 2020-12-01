@@ -5,7 +5,7 @@ import { BudgetSimulationLayoutComponent } from './budget-simulation-layout/budg
 import { BudgetSimulationComponent } from './budget-simulation/budget-simulation.component';
 
 const routes: Routes = [{
-  path: '', component: BudgetSimulationLayoutComponent, children: [
+  path: '', component: BudgetSimulationLayoutComponent, data: {title: 'ST.MENU.BUDGET_PLANNING', overline : 'ST.MENU.BUDGET'}, children: [
     { path: ':id', component: BudgetSimulationComponent }
   ]
 }];
