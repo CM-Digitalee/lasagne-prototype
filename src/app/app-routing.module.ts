@@ -17,7 +17,7 @@ const routes: Routes = [
       { path: 'test-load', component: DashboardComponent },
       { path: 'administration', data: {title: 'Administration', overline: 'Administration'}, loadChildren: () => import('./administration/administration.module').then(m => m.AdministrationModule) },
       { path: 'administration/translations', data: {title: 'Translations', overline: 'Administration'}, loadChildren: () => import('./translation/translation.module').then(m => m.TranslationModule) },
-      {path: '404', component: NotFoundComponent},
+      {path: '404', component: NotFoundComponent, data: {title: 'Not found', overline: ''}},
 
     ]
   },

@@ -46,6 +46,7 @@ export class MainLayoutComponent  implements OnDestroy {
         })
       )
       .subscribe((routeM: ActivatedRouteSnapshot) => {
+        console.log(routeM);
         if (routeM.data){
           this.title = this.tl.translate(routeM.data.title, 'capitalize');
           this.overline = this.tl.translate(routeM.data.overline, 'uppercase');

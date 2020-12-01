@@ -4,6 +4,7 @@ import { Injectable } from '@angular/core';
 import { ComponentLoaderItem } from './componentLoader-item';
 import { PunchlistComponent} from '../punchlist/punchlist.component';
 import { DashboardComponent} from '../dashboard/dashboard.component';
+import {NotFoundComponent} from '../not-found/not-found.component';
 
 @Injectable()
 export class ComponentLoaderService {
@@ -18,6 +19,7 @@ export class ComponentLoaderService {
       new ComponentLoaderItem(DashboardComponent, {name: 'automatic_control_balance_sheet'}),
       new ComponentLoaderItem(DashboardComponent, {name: 'automatic_control_profit_and_loss'}),
       new ComponentLoaderItem(DashboardComponent, {name: 'automatic_control_aging'}),
+      new ComponentLoaderItem(NotFoundComponent, {name: 'not_found', title: 'Not found'}),
       // new ComponentLoaderItem(DashboardComponent, {name: 'not_found'}), //Page not found in case of no component
     ];
   }
