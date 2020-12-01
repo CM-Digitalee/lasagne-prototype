@@ -84,7 +84,6 @@ export class TranslationComponent implements OnInit, AfterViewInit {
       });
       this.refreshLanguagesList();
       this.refreshEntries();
-      this.refreshEntries();
       // this.refreshTranslations(this.currentLanguage);
   }
 
@@ -123,6 +122,7 @@ export class TranslationComponent implements OnInit, AfterViewInit {
   refreshEntries(): void{
     this.dataSource = undefined;
     this._entries.next(this.dataSource);
+    this.tools.loadElements();
     this.getEntries().subscribe(x => {
       const list = x.answer.texts;
       this.dataSource = new MatTableDataSource<any>(list);
@@ -131,6 +131,7 @@ export class TranslationComponent implements OnInit, AfterViewInit {
       setTimeout(() => this.dataSource.paginator = this.paginator);
       this.jsonEntries = x.answer.texts;
       this._entries.next(this.dataSource);
+      this.tools.finishLoad();
       this.cdr.detectChanges();
     });
   }
@@ -234,6 +235,7 @@ export class TranslationComponent implements OnInit, AfterViewInit {
   refreshTranslations(lg): void{
     this.dataSourceL = undefined;
     this._translationsSource.next(this.dataSourceL);
+    this.tools.loadElements();
     this.getTranslations().subscribe(data => {
       const list = data.answer.texts;
       this.dataSource = new MatTableDataSource<any>(list);
@@ -264,6 +266,7 @@ export class TranslationComponent implements OnInit, AfterViewInit {
         this.jsonTranslations = lista;
         this._translationsSource.next(this.dataSourceL);
         this.cdr.detectChanges();
+        this.tools.finishLoad();
       }).catch(err => {
         console.log(err);
       });

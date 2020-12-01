@@ -78,6 +78,9 @@
 .mat-column-state-entry  {
   flex: 0 0 3%;
 }
+.mat-column-enabled  {
+  flex: 0 0 6%;
+}
 .mat-column-description {
   overflow-x:auto;
 }
@@ -88,7 +91,7 @@
   }
 }
 .mat-column-state {
-  flex: 0 0 4%;
+  flex: 0 0 6%;
   justify-content: center;
   span{
     cursor: pointer;

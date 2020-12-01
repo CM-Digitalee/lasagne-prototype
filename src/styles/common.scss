@@ -30,3 +30,30 @@ i, .unselectable { user-select: none; }
   height:300px;
   width: 100%;
 }
+
+.spinner-wrapper-global{
+  @include flexbox();
+  @include flex-direction(row);
+  @include justify-content(center);
+  @include align-items(center);
+  height:calc(100vh - 60px);
+  width: calc(100vw - 304px);
+  top:60px;
+  left:304px;
+  z-index:100;
+  background: rgba(0,0,0,0.10) !important;
+  position: absolute;
+  * {
+    background: transparent !important;
+  }
+  mat-progress-spinner{
+    background: transparent !important;
+    svg{
+      background: transparent !important;
+      stroke:transparent !important;
+      circle{
+        background: transparent !important;
+      }
+    }
+  }
+}

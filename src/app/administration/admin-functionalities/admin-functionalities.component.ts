@@ -5,6 +5,7 @@ import {TranslationService} from '../../service/translation.service';
 import {MatTableDataSource} from '@angular/material/table';
 import {HttpClientService} from '../../service/http-client.service';
 import {MatPaginator} from '@angular/material/paginator';
+import {Tools} from '../../tools/function';
 
 @Component({
   selector: 'app-admin-functionalities',
@@ -15,11 +16,11 @@ import {MatPaginator} from '@angular/material/paginator';
 export class AdminFunctionalitiesComponent implements OnInit {
   private _functionalities = new BehaviorSubject<any>(null);
   public dataSource;
-  public isLoading$: BehaviorSubject<boolean> = new BehaviorSubject(false);
 
   constructor(private administrationService: AdministrationService,
               private http: HttpClientService,
-              public tl: TranslationService) { }
+              public tl: TranslationService,
+              private tools: Tools) { }
   @ViewChild('paginator') paginator: MatPaginator;
 
   get functionalities() {
@@ -31,7 +32,7 @@ export class AdminFunctionalitiesComponent implements OnInit {
     this.refreshFunctionalities() ;
   }
   refreshFunctionalities(): void{
-    this.isLoading$.next(true);
+    this.tools.loadElements();
     this.administrationService.getFunctionalities().subscribe(x => {
       const list = x.answer.functionalities;
       this.administrationService.getFunctionalitiesActors().subscribe(fActors => {
@@ -46,14 +47,14 @@ export class AdminFunctionalitiesComponent implements OnInit {
         }) ;
         this.dataSource = new MatTableDataSource<any>(updatedList);
         this._functionalities.next(this.dataSource);
-        this.isLoading$.next(false);
+        this.tools.finishLoad();
         setTimeout(() => this.dataSource.paginator = this.paginator);
         // this.dataSource.paginator = this.paginator;
 
 
 
       }, error => {
-        this.isLoading$.next(false);
+        this.tools.finishLoad();
       });
     });
   }

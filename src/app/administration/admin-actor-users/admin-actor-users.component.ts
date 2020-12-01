@@ -30,13 +30,12 @@ export class AdminActorUsersComponent implements OnInit {
     return this._actorsUser.asObservable();
   }
   ngOnInit(): void {
-    this.isLoading$.next(true);
     this.actorId = this.route.snapshot.paramMap.get('id');
     // this.getActor();
     this.refreshActorUsers();
   }
   refreshActorUsers(): void {
-    this.isLoading$.next(true);
+    this.tools.loadElements()
     this.administrationService.getUserActors(this.actorId).subscribe(x => {
       if (x && x.answer && x.answer.users){
         const list = x.answer.users;
@@ -47,14 +46,14 @@ export class AdminActorUsersComponent implements OnInit {
       }else{
         this._actorsUser.next([]);
       }
-        this.isLoading$.next(false);
+        this.tools.finishLoad();
 
     }, err => {//this.tools.redirectNotFound();
-        this.isLoading$.next(false);
+        this.tools.finishLoad();
        },
       () => {
 
-        this.isLoading$.next(false);
+        this.tools.finishLoad();
         console.log(this.isLoading$);
       });
     this.administrationService.getActor(this.actorId).subscribe(x => {

@@ -1,8 +1,9 @@
 import {ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit} from '@angular/core';
 import { ActivatedRoute, ActivatedRouteSnapshot, NavigationEnd, Router } from '@angular/router';
-import { Subscription } from 'rxjs';
+import {BehaviorSubject, Subscription} from 'rxjs';
 import { filter, map } from 'rxjs/operators';
 import {TranslationService} from '../../service/translation.service';
+import {Tools} from '../../tools/function';
 @Component({
   selector: 'app-main-layout',
   template: `
@@ -12,7 +13,12 @@ import {TranslationService} from '../../service/translation.service';
       <app-sidenav class="no-shrink"></app-sidenav>
 -->
       <app-sidemenu class="no-shrink"></app-sidemenu>
-      <div class="fill ov-auto" style="height: calc(100vh - 60px); background-color:#E9EAFF">
+        <div class="spinner-wrapper-global" *ngIf="(tools.displayOverlay | async)">
+            <mat-spinner *ngIf="(tools.isLoading | async) > 0">
+            </mat-spinner>
+        </div>
+
+        <div class="fill ov-auto" style="height: calc(100vh - 60px); background-color:#E9EAFF">
         <div class="p-100" style="height:95%;position:relative;">
             <div class="panel-header">
                 <h2 class="overline">{{overline}}</h2>
@@ -33,7 +39,7 @@ export class MainLayoutComponent  implements OnDestroy {
   public overline;
   subs: Array<Subscription> = [];
 
-  constructor(private router: Router, private route: ActivatedRoute, private tl: TranslationService) {
+  constructor(private router: Router, private route: ActivatedRoute, private tl: TranslationService, public tools: Tools) {
     this.subs[0] = this.router.events
       .pipe(
         filter(event => event instanceof NavigationEnd),

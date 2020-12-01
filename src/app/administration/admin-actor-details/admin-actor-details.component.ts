@@ -16,7 +16,6 @@ import {Tools} from '../../tools/function';
 export class AdminActorDetailsComponent implements OnInit {
   public actorId ;
   public actor ;
-  public isLoading = false;
   private newFunctionalityId ;
   private _functionalities = new BehaviorSubject<any>(null);
   private _actorFunctionalities = new BehaviorSubject<any>(null);
@@ -36,7 +35,6 @@ export class AdminActorDetailsComponent implements OnInit {
   }
   ngOnInit(): void {
     // this.refreshFunctionalities();
-    this.isLoading = true ;
     this.actorId = this.route.snapshot.paramMap.get('id');
     this.administrationService.getActor(this.actorId).subscribe(x => {
       this.actor = x.answer.actor;
@@ -117,6 +115,7 @@ export class AdminActorDetailsComponent implements OnInit {
     });
   }
   refreshList(): void{
+    this.tools.loadElements()
     this.administrationService.getFunctionalities().subscribe(x => {
       this.administrationService.getFunctionalitiesActors(this.actorId).subscribe(y => {
 
@@ -138,7 +137,7 @@ export class AdminActorDetailsComponent implements OnInit {
 
         const alist = [...this.jsonActorFunctionalities] ;
         this._actorFunctionalities.next( alist);
-        this.isLoading = false ;
+        this.tools.finishLoad();
       });
     });
   }

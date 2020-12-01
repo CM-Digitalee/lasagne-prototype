@@ -7,6 +7,7 @@ import {MatDialog} from '@angular/material/dialog';
 import {BehaviorSubject, Observable} from 'rxjs';
 import {MatTableDataSource} from '@angular/material/table';
 import {MatPaginator} from '@angular/material/paginator';
+import {Tools} from '../../tools/function';
 
 @Component({
   selector: 'app-admin-users',
@@ -17,7 +18,6 @@ import {MatPaginator} from '@angular/material/paginator';
 export class AdminUsersComponent implements OnInit {
 
   private _users = new BehaviorSubject<any>(null);
-  public isLoading$: BehaviorSubject<boolean> = new BehaviorSubject(false);
   @ViewChild('paginator') paginator: MatPaginator;
 
   constructor(private  http: HttpClientService,
@@ -25,17 +25,17 @@ export class AdminUsersComponent implements OnInit {
               public tl: TranslationService,
               private route: ActivatedRoute,
               private cdr: ChangeDetectorRef,
-              public dialog: MatDialog) { }
+              public dialog: MatDialog,
+              private tools: Tools) { }
   get users() {
     return this._users.asObservable();
   }
   ngOnInit(): void {
-    this.isLoading$.next(true);
     this.refreshUsers();
   }
 
   refreshUsers(): void {
-    this.isLoading$.next(true);
+    this.tools.loadElements();
     this.administrationService.getFoundationUsers().subscribe(elmt => {
       if(elmt && elmt.answer && elmt.answer.users){
         const list = elmt.answer.users;
@@ -60,15 +60,16 @@ export class AdminUsersComponent implements OnInit {
           this._users.next(dataSourceL);
           setTimeout(() => dataSourceL.paginator = this.paginator);
           this.cdr.detectChanges();
-          this.isLoading$.next(false);
+          this.tools.finishLoad();
         }).catch(err => {
-          console.log(err);
+          this.tools.finishLoad();
+          // console.log(err);
         });
 
 
       }else{
         this._users.next([]);
-        this.isLoading$.next(false);
+        this.tools.finishLoad();
       }
 
     });

@@ -1,12 +1,6 @@
-<div *ngIf="(users | async)" class="main-panel min-height-85">
+<div class="main-panel min-height-85">
   <h2>Users list</h2>
-  <div *ngIf="isLoading$ | async" class="spinner-wrapper">
-    <mat-progress-spinner
-      class="example-margin"
-      mode="indeterminate">
-    </mat-progress-spinner>
-  </div>
-  <div *ngIf="(users | async) && !(isLoading$ | async)" class="table-wrapper">
+  <div *ngIf="(users | async)" class="table-wrapper">
   <mat-table [dataSource]="users | async">
     <ng-container matColumnDef="email">
       <mat-header-cell *matHeaderCellDef> {{tl.translate('ST.WORD.EMAIL')}} </mat-header-cell>
@@ -34,9 +28,10 @@
   </mat-table>
   <mat-paginator #paginator class="paginator" [pageSizeOptions]="[10, 20, 50, 100]"></mat-paginator>
 </div>
-</div>
-<div *ngIf="(!(users | async) || (users | async)?.length==0) && !(isLoading$ | async)" class="not-found">
-  <div>
-    {{tl.translate('ST.ADMIN.NOT_FOUND.USERS_ACTORS')}}
+  <div *ngIf="(!(users | async) || (users | async)?.length==0)" class="not-found">
+    <div>
+      {{tl.translate('ST.ADMIN.NOT_FOUND.USERS')}}
+    </div>
   </div>
 </div>
+

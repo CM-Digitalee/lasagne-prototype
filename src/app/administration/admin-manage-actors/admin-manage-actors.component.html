@@ -1,4 +1,4 @@
-<div class="main-panel"><h2 class="txt-center">{{tl.translate('ST.ADMIN.TITLE.BACK_OFFICE_ACTORS')}}</h2>
+<div class="main-panel"><h2>{{tl.translate('ST.ADMIN.TITLE.BACK_OFFICE_ACTORS')}}</h2>
 
 <!--<mat-radio-group aria-label="Select an actor" [(ngModel)]="comboActor">-->
 <!--  <mat-radio-button value="nadi" (change)="switchType($event)">Foundation actor</mat-radio-button>-->
@@ -7,7 +7,6 @@
 <div *ngIf="comboActor == 'nadi'">
   <div *ngIf="isLoadingBack$ | async" class="spinner-wrapper">
     <mat-progress-spinner
-      class="example-margin"
       mode="indeterminate">
     </mat-progress-spinner>
   </div>
@@ -42,10 +41,9 @@
   </div>
 </div>
 <div class="main-panel">
-  <h2 class="txt-center">{{tl.translate('ST.ADMIN.TITLE.STREETS_ACTORS')}}</h2>
+  <h2>{{tl.translate('ST.ADMIN.TITLE.STREETS_ACTORS')}}</h2>
     <div *ngIf="isLoadingBack$ | async" class="spinner-wrapper">
       <mat-progress-spinner
-        class="example-margin"
         mode="indeterminate">
       </mat-progress-spinner>
     </div>

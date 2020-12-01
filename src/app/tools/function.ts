@@ -11,9 +11,13 @@ export class Tools {
 
   constructor(private router: Router, public dialog: MatDialog, private activatedRoute: ActivatedRoute) {
   }
+  get isLoading() { return this.isLoading$.asObservable(); }
+  get displayOverlay() { return this.displayOverlay$.asObservable(); }
   public isLoading$: BehaviorSubject<number> = new BehaviorSubject(0);
+  public displayOverlay$: BehaviorSubject<boolean> = new BehaviorSubject(false);
 
   loadElements(nb?: number): void{
+    this.displayOverlay$.next(true);
     if (nb){
       this.isLoading$.next(this.isLoading$.value + nb);
     }else{
@@ -28,6 +32,13 @@ export class Tools {
         this.isLoading$.next(this.isLoading$.value - 1);
       }
     }
+    if (this.isLoading$.value === 0){
+      const that = this;
+      setTimeout(() => {that.displayOverlay$.next(false); },200);
+    }
+  }
+  clearLoad(): void{
+    this.isLoading$.next(0);
   }
   displayConfirmBox(element, callback): void{
 

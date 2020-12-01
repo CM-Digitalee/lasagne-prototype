@@ -16,6 +16,7 @@ import {UserService} from '../../core/services';
 import {FormsModule} from '@angular/forms';
 import {ItemsMenuService} from '../../service/items-menu.service';
 import {SettingsService} from '../../service/settings.service';
+import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
 
 
 // tslint:disable-next-line:typedef
@@ -55,7 +56,7 @@ function initializeKeycloak(keycloak: KeycloakService, userService: UserService)
 
 @NgModule({
   declarations: [MainLayoutComponent, SidenavComponent, HeaderComponent],
-  imports: [CommonModule, RouterModule.forRoot([]), BrowserModule, KeycloakAngularModule, HttpClientModule, SidemenuModule, FormsModule],
+  imports: [CommonModule, RouterModule.forRoot([]), BrowserModule, KeycloakAngularModule, HttpClientModule, SidemenuModule, FormsModule, MatProgressSpinnerModule],
   providers: [
     SettingsService,
     {

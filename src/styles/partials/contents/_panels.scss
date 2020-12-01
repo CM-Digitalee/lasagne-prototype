@@ -76,7 +76,10 @@ div.main-panel{
 .table-wrapper{
   margin-top:16px;
   margin-bottom:16px;
-
+  display: flex;
+  flex-direction: column;
+  height: 95%;
+  justify-content: space-between;
   .not-found-table{
     text-align: center;
     font-family: lato-regular, serif;

@@ -33,14 +33,6 @@
               </form>
               <button type="submit" class="actionBtn btn-primary-color" mat-button (click)="openDialogTranslation()">{{tl.translate('ST.BUTTON.ADD')}} </button>
             </div>
-            <div *ngIf="!(entries | async)">
-              <div class="spinner-wrapper">
-                <mat-progress-spinner
-                  class="example-margin"
-                  mode="indeterminate">
-                </mat-progress-spinner>
-              </div>
-            </div>
             <div *ngIf="(entries | async)">
               <mat-table [dataSource]="entries | async">
 
@@ -155,14 +147,6 @@
               </form>
               <button type="submit" class="actionBtn btn-primary-color" mat-button (click)="openDialogLanguage()"> {{tl.translate("ST.BUTTON.ADD_LANGUAGE")}}</button>
             </div>
-              <div *ngIf="!(translationsSource | async)">
-                <div class="spinner-wrapper">
-                  <mat-progress-spinner
-                    class="example-margin"
-                    mode="indeterminate">
-                  </mat-progress-spinner>
-                </div>
-              </div>
               <div *ngIf="(translationsSource | async)">
                 <mat-table [dataSource]="translationsSource | async">
                   <!--                <ng-container matColumnDef="position" >-->
@@ -179,9 +163,9 @@
                 </span>
                     </mat-cell>
                   </ng-container>
-                  <ng-container matColumnDef="state" >
+                  <ng-container matColumnDef="enabled" >
                     <mat-header-cell *matHeaderCellDef class="small-column">
-                      {{tl.translate('ST.WORD.ENABLED', 'capitalize')}}
+<!--                      {{tl.translate('ST.WORD.ENABLED', 'capitalize')}}-->
                     </mat-header-cell>
                     <mat-cell *matCellDef="let row"  class="small-column">
                       <mat-slide-toggle
@@ -239,8 +223,8 @@
                   </ng-container>
 
                   <!-- Header and Row Declarations -->
-                  <mat-header-row *matHeaderRowDef="['state-entry', 'state', 'id', 'description', 'translation', 'action']"></mat-header-row>
-                  <mat-row *matRowDef="let row; columns: ['state-entry', 'state', 'id', 'description','translation', 'action']"></mat-row>
+                  <mat-header-row *matHeaderRowDef="['state-entry', 'enabled', 'id', 'description', 'translation', 'action']"></mat-header-row>
+                  <mat-row *matRowDef="let row; columns: ['state-entry', 'enabled', 'id', 'description','translation', 'action']"></mat-row>
                 </mat-table>
                 <mat-paginator #paginatorL class="paginator" [pageSizeOptions]="[10, 20, 50, 100]"></mat-paginator>
               </div>
