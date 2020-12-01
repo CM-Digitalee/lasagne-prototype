@@ -39,14 +39,16 @@ export class MainLayoutComponent  implements OnDestroy {
         filter(event => event instanceof NavigationEnd),
         map(() => this.route.snapshot),
         map(routeM => {
-          while (routeM.firstChild) {
+          while (routeM.firstChild && routeM.data.title !== 'not_found') {
             routeM = routeM.firstChild;
           }
           return routeM;
         })
       )
       .subscribe((routeM: ActivatedRouteSnapshot) => {
-        console.log(routeM);
+        console.log(routeM)
+        console.log(routeM.data)
+        console.log('title', this.route.root.firstChild.snapshot.data.title);
         if (routeM.data){
           this.title = this.tl.translate(routeM.data.title, 'capitalize');
           this.overline = this.tl.translate(routeM.data.overline, 'uppercase');
