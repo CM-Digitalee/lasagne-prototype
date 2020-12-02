@@ -21,8 +21,10 @@ import {Tools} from '../../tools/function';
         <div class="fill ov-auto" style="height: calc(100vh - 60px); background-color:#E9EAFF">
         <div class="p-100" style="height:95%;position:relative;">
             <div class="panel-header">
-                <h2 class="overline">{{overline}}</h2>
-                <h1>{{title}}</h1>
+                <div *ngIf="!(tools.hideMainTitle | async)">
+                    <h2 class="overline">{{overline}}</h2>
+                    <h1>{{title}}</h1>
+                </div>
             </div>
 <!--        <div class="p-40" style="height:100%;overflow-y: auto;">-->
           <router-outlet></router-outlet>
@@ -40,6 +42,7 @@ export class MainLayoutComponent  implements OnDestroy {
   subs: Array<Subscription> = [];
 
   constructor(private router: Router, private route: ActivatedRoute, private tl: TranslationService, public tools: Tools) {
+    this.tools.showTitle();
     this.subs[0] = this.router.events
       .pipe(
         filter(event => event instanceof NavigationEnd),
@@ -52,9 +55,8 @@ export class MainLayoutComponent  implements OnDestroy {
         })
       )
       .subscribe((routeM: ActivatedRouteSnapshot) => {
-        console.log(routeM)
-        console.log(routeM.data)
-        console.log('title', this.route.root.firstChild.snapshot.data.title);
+        console.log( routeM.component)
+        console.log( this.route.component)
         if (routeM.data){
           this.title = this.tl.translate(routeM.data.title, 'capitalize');
           this.overline = this.tl.translate(routeM.data.overline, 'uppercase');

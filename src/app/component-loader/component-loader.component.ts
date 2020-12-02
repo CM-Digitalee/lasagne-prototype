@@ -5,6 +5,7 @@ import {ComponentLoaderItem} from './componentLoader-item';
 import {ComponentLoaderService} from './component-loader.service';
 import {ActivatedRoute, Router} from '@angular/router';
 import {TranslationService} from '../service/translation.service';
+import {Tools} from '../tools/function';
 
 @Component({
   selector: 'app-component-loader',
@@ -27,11 +28,13 @@ export class ComponentLoaderComponent implements OnInit, OnDestroy {
     private route: ActivatedRoute,
     private componentFactoryResolver: ComponentFactoryResolver,
     private componentLoaderService: ComponentLoaderService,
-    private router: Router, private tl: TranslationService
-  ) { }
+    private router: Router, private tl: TranslationService,
+    private tools: Tools
+  ) {
+    // this.tools.showTitle();
+  }
 
   ngOnInit(): void {
-
 
     this.ads = this.componentLoaderService.getComponents();
 
@@ -39,15 +42,12 @@ export class ComponentLoaderComponent implements OnInit, OnDestroy {
       .data
       .subscribe(v => {
         this.title = v.text;
-        console.log(v);
-        v.title = 'test';
-        v.overline = '';
         if (v && v.component){
           this.componentName = v.component;
           this.activeComponent = this.componentLoaderService.getComponent(this.componentName);
           if(!this.activeComponent){
+            // this.tools.hideTitle();
             this.activeComponent = this.componentLoaderService.getComponent('not_found');
-            this.route.data['value']['title'] = 'not_found';
           }
           this.loadComponent();
         }
@@ -67,9 +67,6 @@ export class ComponentLoaderComponent implements OnInit, OnDestroy {
     viewContainerRef.clear();
     // @ts-ignore
     const componentRef = viewContainerRef.createComponent<CompComponent>(componentFactory);
-    console.log(componentLoaderItem);
     componentRef.instance.data = componentLoaderItem.data;
-    console.log(componentLoaderItem)
-    componentRef.instance.data.title = 'test';
   }
 }

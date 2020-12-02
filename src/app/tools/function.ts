@@ -13,7 +13,9 @@ export class Tools {
   }
   get isLoading() { return this.isLoading$.asObservable(); }
   get displayOverlay() { return this.displayOverlay$.asObservable(); }
+  get hideMainTitle() { return this.hideTitle$.asObservable(); }
   public isLoading$: BehaviorSubject<number> = new BehaviorSubject(0);
+  public hideTitle$: BehaviorSubject<boolean> = new BehaviorSubject(false);
   public displayOverlay$: BehaviorSubject<boolean> = new BehaviorSubject(false);
 
   loadElements(nb?: number): void{
@@ -39,6 +41,12 @@ export class Tools {
   }
   clearLoad(): void{
     this.isLoading$.next(0);
+  }
+  hideTitle(): void{
+    this.hideTitle$.next(true);
+  }
+  showTitle(): void {
+    this.hideTitle$.next(false);
   }
   displayConfirmBox(element, callback): void{
 

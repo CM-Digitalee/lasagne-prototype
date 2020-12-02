@@ -4,6 +4,7 @@ import {Title} from '@angular/platform-browser';
 import {filter, map} from 'rxjs/operators';
 import {Subscription} from 'rxjs';
 import {TranslationService} from '../service/translation.service';
+import {Tools} from '../tools/function';
 
 @Component({
   selector: 'app-not-found',
@@ -17,7 +18,7 @@ export class NotFoundComponent implements OnDestroy {
   public overline;
   subs: Array<Subscription> = [];
 
-  constructor(private router: Router, private route: ActivatedRoute, private tl: TranslationService) {
+  constructor(private router: Router, private route: ActivatedRoute, private tl: TranslationService, private tools : Tools) {
     this.subs[0] = this.router.events
       .pipe(
         filter(event => event instanceof NavigationEnd),
